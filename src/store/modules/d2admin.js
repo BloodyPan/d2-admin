@@ -477,16 +477,24 @@ export default {
      * @class pageOpenedList
      * @description 关闭当前标签左边的标签
      * @param {vuex state} state vuex state
+     * @param {Object} param1 { pageSelect: 当前选中的tagName, vm: vue }
      */
-    d2adminTagCloseLeft (state) {
+    d2adminTagCloseLeft (state, { pageSelect, vm } = {}) {
+      const pageAim = pageSelect || state.pageCurrent
       let currentIndex = 0
       state.pageOpenedList.forEach((page, index) => {
-        if (page.name === state.pageCurrent) {
+        if (page.name === pageAim) {
           currentIndex = index
         }
       })
       if (currentIndex > 0) {
         state.pageOpenedList.splice(1, currentIndex - 1)
+      }
+      state.pageCurrent = pageAim
+      if (vm && vm.$route.name !== pageAim) {
+        vm.$router.push({
+          name: pageAim
+        })
       }
       // 更新设置到数据库
       this.commit('d2adminUtilVuex2DbByUuid', 'pageOpenedList')
@@ -495,15 +503,23 @@ export default {
      * @class pageOpenedList
      * @description 关闭当前标签右边的标签
      * @param {vuex state} state vuex state
+     * @param {Object} param1 { pageSelect: 当前选中的tagName, vm: vue }
      */
-    d2adminTagCloseRight (state) {
+    d2adminTagCloseRight (state, { pageSelect, vm } = {}) {
+      const pageAim = pageSelect || state.pageCurrent
       let currentIndex = 0
       state.pageOpenedList.forEach((page, index) => {
-        if (page.name === state.pageCurrent) {
+        if (page.name === pageAim) {
           currentIndex = index
         }
       })
       state.pageOpenedList.splice(currentIndex + 1)
+      state.pageCurrent = pageAim
+      if (vm && vm.$route.name !== pageAim) {
+        vm.$router.push({
+          name: pageAim
+        })
+      }
       // 更新设置到数据库
       this.commit('d2adminUtilVuex2DbByUuid', 'pageOpenedList')
     },
@@ -511,11 +527,13 @@ export default {
      * @class pageOpenedList
      * @description 关闭当前激活之外的 tag
      * @param {vuex state} state vuex state
+     * @param {Object} param1 { pageSelect: 当前选中的tagName, vm: vue }
      */
-    d2adminTagCloseOther (state) {
+    d2adminTagCloseOther (state, { pageSelect, vm } = {}) {
+      const pageAim = pageSelect || state.pageCurrent
       let currentIndex = 0
       state.pageOpenedList.forEach((page, index) => {
-        if (page.name === state.pageCurrent) {
+        if (page.name === pageAim) {
           currentIndex = index
         }
       })
@@ -524,6 +542,12 @@ export default {
       } else {
         state.pageOpenedList.splice(currentIndex + 1)
         state.pageOpenedList.splice(1, currentIndex - 1)
+      }
+      state.pageCurrent = pageAim
+      if (vm && vm.$route.name !== pageAim) {
+        vm.$router.push({
+          name: pageAim
+        })
       }
       // 更新设置到数据库
       this.commit('d2adminUtilVuex2DbByUuid', 'pageOpenedList')
