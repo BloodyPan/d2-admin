@@ -2,7 +2,6 @@ import screenfull from 'screenfull'
 import util from '@/libs/util.js'
 import db from '@/libs/db.js'
 import themeList from '@/assets/style/theme/list.js'
-import { version } from '../../../package'
 
 const pageOpenedDefult = {
   name: 'index',
@@ -18,12 +17,6 @@ export default {
     userInfo: {
       name: ''
     },
-    // D2Admin 版本
-    version,
-    // 最新版本的信息
-    releasesLatest: {},
-    // 有新版本
-    releasesUpdate: false,
     // 顶栏菜单
     menuHeader: [],
     // 侧栏菜单
