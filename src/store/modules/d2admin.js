@@ -33,7 +33,7 @@ export default {
     // 灰度
     isGrayMode: false,
     // 侧边栏收缩
-    isMenuAsideCollapse: false,
+    isMenuAsideCollapse: true,
     // 主题
     themeList,
     // 现在激活的主题
@@ -323,24 +323,6 @@ export default {
       })
     },
     /**
-     * @description 设置是否有新的 D2Admin 版本
-     * @class releasesUpdate
-     * @param {vuex state} state vuex state
-     * @param {Boolean} releasesUpdate can update
-     */
-    d2adminReleasesUpdateSet (state, releasesUpdate) {
-      state.releasesUpdate = releasesUpdate
-    },
-    /**
-     * @description 设置最新版本的信息
-     * @class releasesLatest
-     * @param {vuex state} state vuex state
-     * @param {Object}} releases releases value
-     */
-    d2adminReleasesLatestSet (state, releases) {
-      state.releasesLatest = releases
-    },
-    /**
      * @class pagePool
      * @description 保存 pagePool (候选池)
      * @param {vuex state} state vuex state
@@ -623,41 +605,12 @@ export default {
     },
     /**
      * @class isGrayMode
-     * @description 切换灰度状态
-     * @param {vuex state} state vuex state
-     */
-    d2adminGrayModeToggle (state) {
-      state.isGrayMode = !state.isGrayMode
-    },
-    /**
-     * @class isGrayMode
      * @description 设置灰度模式
      * @param {vuex state} state vuex state
      * @param {Boolean} value new value
      */
     d2adminGrayModeSet (state, value) {
       state.isGrayMode = value
-    },
-    /**
-     * @class themeActiveName
-     * @description 激活一个主题（应用到dom上）
-     * @param {vuex state} state vuex state
-     * @param {String} themeValue 需要激活的主题名称
-     */
-    d2adminThemeSet (state, themeName) {
-      // 检查这个主题在主题列表里是否存在
-      const theme = state.themeList.find(e => e.name === themeName)
-      if (theme) {
-        // 设置 state
-        state.themeActiveName = themeName
-      } else {
-        // 设置为列表第一个主题
-        state.themeActiveName = state.themeList[0].name
-      }
-      // 将 vuex 中的主题应用到 dom
-      this.commit('d2adminTheme2dom')
-      // 保存到数据库
-      this.commit('d2adminUtilVuex2DbByUuid', 'themeActiveName')
     },
     /**
      * @class themeActiveName

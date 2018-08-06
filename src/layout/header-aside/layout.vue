@@ -19,9 +19,7 @@
         <d2-menu-header/>
         <!-- 顶栏右侧 -->
         <div class="d2-header-right">
-          <d2-header-help/>
           <d2-header-fullscreen/>
-          <d2-header-theme/>
           <d2-header-user/>
         </div>
       </div>
@@ -59,9 +57,7 @@ import menuSide from './components/menu-side'
 import menuHeader from './components/menu-header'
 import tabs from './components/tabs'
 import headerFullscreen from './components/header-fullscreen'
-import headerTheme from './components/header-theme'
 import headerUser from './components/header-user'
-import headerHelp from './components/header-help'
 export default {
   name: 'd2-layout-header-aside',
   components: {
@@ -69,9 +65,7 @@ export default {
     'd2-menu-header': menuHeader,
     'd2-tabs': tabs,
     'd2-header-fullscreen': headerFullscreen,
-    'd2-header-theme': headerTheme,
-    'd2-header-user': headerUser,
-    'd2-header-help': headerHelp
+    'd2-header-user': headerUser
   },
   data () {
     return {
