@@ -32,7 +32,7 @@
       <el-dropdown
         split-button
         @click="handleControlBtnClick"
-        @command="dropdownItemClick">
+        @command="command => handleControlItemClick(command)">
         <d2-icon name="times-circle"/>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="left">
@@ -122,12 +122,6 @@ export default {
      */
     contextmenuClick (command) {
       this.handleControlItemClick(command, this.tagName)
-    },
-    /**
-     * @description 下拉列表接收点击关闭控制上选项的事件
-     */
-    dropdownItemClick (command) {
-      this.handleControlItemClick(command)
     },
     /**
      * @description 接收点击关闭控制上选项的事件

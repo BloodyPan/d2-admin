@@ -16,7 +16,7 @@
 
     <el-table
       :data="tableData"
-      style="width: 100%margin-bottom: 15px"
+      style="width: 100%;margin-bottom: 15px"
       max-height="500"
       :row-class-name="tableRowClassName">
       <el-table-column type="index"></el-table-column>

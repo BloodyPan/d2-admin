@@ -1,4 +1,6 @@
 import screenfull from 'screenfull'
+import dayjs from 'dayjs'
+import get from 'lodash.get'
 import util from '@/libs/util.js'
 import db from '@/libs/db.js'
 import themeList from '@/assets/style/theme/list.js'
@@ -40,7 +42,9 @@ export default {
     // 当前页面
     pageCurrent: '',
     // 用户 UA
-    ua: {}
+    ua: {},
+    // 错误日志
+    log: []
   },
   getters: {
     /**
@@ -63,6 +67,20 @@ export default {
         }
         return true
       }).map(e => e.name)
+    },
+    /**
+     * @description 返回现存 log (all) 的条数
+     * @param {*} state vuex state
+     */
+    d2adminLogLength (state) {
+      return state.log.length
+    },
+    /**
+     * @description 返回现存 log (error) 的条数
+     * @param {*} state vuex state
+     */
+    d2adminLogErrorLength (state) {
+      return state.log.filter(l => l.type === 'error').length
     }
   },
   actions: {
@@ -165,11 +183,12 @@ export default {
      * @class 通用工具
      * @description 从数据库取值到 vuex 需要 uuid
      * @param {vuex state} state vuex state
-     * @param {Object} param1 key and default value
+     * @param {Object} param1 key 键名, defaultValue 取值失败时的默认值, handleFunction 处理函数
      */
-    d2adminUtilDb2VuexByUuid (state, { key, defaultValue }) {
+    d2adminUtilDb2VuexByUuid (state, { key, defaultValue, handleFunction }) {
       const row = db.get(key).find({uuid: util.cookies.get('uuid')}).value()
-      state[key] = row ? row.value : defaultValue
+      const handle = handleFunction || (res => res)
+      state[key] = row ? handle(row.value) : defaultValue
     },
     /**
      * @class 通用工具
@@ -192,11 +211,12 @@ export default {
      * @class 通用工具
      * @description 从数据库取值到 vuex 不需要 uuid 所有用户共享
      * @param {vuex state} state vuex state
-     * @param {Object} param1 key and default value
+     * @param {Object} param1 key 键名, defaultValue 取值失败时的默认值, handleFunction 处理函数
      */
-    d2adminUtilDb2Vuex (state, { key, defaultValue }) {
+    d2adminUtilDb2Vuex (state, { key, defaultValue, handleFunction }) {
       const row = db.get(key).find({pub: 'pub'}).value()
-      state[key] = row ? row.value : defaultValue
+      const handle = handleFunction || (res => res)
+      state[key] = row ? handle(row.value) : defaultValue
     },
     /**
      * @class 通用工具
@@ -386,7 +406,28 @@ export default {
         key: 'pageOpenedList',
         defaultValue: [
           pageOpenedDefult
-        ]
+        ],
+        handleFunction (res) {
+          // 在处理函数中进行数据优化 过滤掉现在已经失效的页签或者已经改变了信息的页签
+          // 以 name 字段为准
+          // 如果页面过多的话可能需要优化算法
+          // 有效列表 1, 1, 0, 1 => 有效, 有效, 失效, 有效
+          const valid = []
+          // 处理数据
+          return res.map(opened => {
+            // 忽略首页
+            if (opened.name === 'index') {
+              valid.push(1)
+              return opened
+            }
+            // 尝试在所有的支持多标签页的页面里找到 name 匹配的页面
+            const find = state.pagePool.find(item => item.name === opened.name)
+            // 记录有效或无效信息
+            valid.push(find ? 1 : 0)
+            // 返回合并后的数据 新的覆盖旧的 但是新的数据中一般不会携带 params 和 query, 所以旧的参数会留存
+            return Object.assign({}, opened, find)
+          }).filter((opened, index) => valid[index] === 1)
+        }
       })
     },
     /**
@@ -604,6 +645,42 @@ export default {
      */
     d2adminGrayModeSet (state, value) {
       state.isGrayMode = value
+    },
+    /**
+     * @class log
+     * @description 添加一个 log
+     * @param {vuex state} state vuex state
+     * @param {Object} param1 { }
+     */
+    d2adminLogAdd (state, { type, err, vm, info }) {
+      state.log.push(Object.assign({
+        // 记录类型
+        type: 'log', // error
+        // 信息
+        info: '',
+        // 错误对象
+        err: '',
+        // vue 实例
+        vm: '',
+        // 当前用户信息
+        user: state.userInfo,
+        // 当前用户的 uuid
+        uuid: util.cookies.get('uuid'),
+        // 当前的 token
+        token: util.cookies.get('token'),
+        // 当前地址
+        url: get(window, 'location.href', ''),
+        // 当前时间
+        time: dayjs().format('YYYY-M-D HH:mm:ss')
+      }, { type, err, vm, info }))
+    },
+    /**
+     * @class log
+     * @description 清空日志
+     * @param {vuex state} state vuex state
+     */
+    d2adminLogClean (state) {
+      state.log = []
     },
     /**
      * @class themeActiveName
