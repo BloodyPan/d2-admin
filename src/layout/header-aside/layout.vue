@@ -21,9 +21,7 @@
         <div class="d2-header-right">
           <!-- 如果你只想在开发环境显示这个按钮请添加 v-if="$env === 'development'" -->
           <d2-header-error-log/>
-          <d2-header-help/>
           <d2-header-fullscreen/>
-          <d2-header-theme/>
           <d2-header-user/>
         </div>
       </div>
@@ -64,9 +62,7 @@ export default {
     'd2-menu-header': () => import('./components/menu-header'),
     'd2-tabs': () => import('./components/tabs'),
     'd2-header-fullscreen': () => import('./components/header-fullscreen'),
-    'd2-header-theme': () => import('./components/header-theme'),
     'd2-header-user': () => import('./components/header-user'),
-    'd2-header-help': () => import('./components/header-help'),
     'd2-header-error-log': () => import('./components/header-error-log')
   },
   data () {
