@@ -18,9 +18,6 @@ import '@/components'
 import '@/plugin/axios'
 import pluginLog from '@/plugin/log'
 import pluginError from '@/plugin/error'
-import pluginImport from '@/plugin/import'
-import pluginExport from '@/plugin/export'
-import pluginOpen from '@/plugin/open'
 import '@/libs/string'
 
 // 菜单和路由设置
@@ -34,9 +31,6 @@ Vue.use(VCharts)
 Vue.use(contentmenu)
 Vue.use(pluginLog)
 Vue.use(pluginError)
-Vue.use(pluginImport)
-Vue.use(pluginExport)
-Vue.use(pluginOpen)
 Vue.use(vueJsonTreeView)
 
 Vue.config.productionTip = false;

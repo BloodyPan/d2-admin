@@ -25,16 +25,16 @@
           <img class="profile" :src="scope.row.profilePhoto">
         </template>
       </el-table-column>
-      <el-table-column prop="phoneNumber" label="手机号" width="250"></el-table-column>
+      <el-table-column prop="test.phoneNumber" label="手机号" width="250"></el-table-column>
       <el-table-column prop="username" label="用户名"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            :type="scope.row.resetFlag ? 'danger' : 'primary'"
-            :disabled="!scope.row.resetFlag"
+            :type="scope.row.test.resetFlag ? 'danger' : 'primary'"
+            :disabled="!scope.row.test.resetFlag"
             @click="handleReset(scope.$index, scope.row)">
-            {{ scope.row.resetFlag ? "重置" : "可用" }}
+            {{ scope.row.test.resetFlag ? "重置" : "可用" }}
           </el-button>
         </template>
       </el-table-column>
@@ -136,7 +136,7 @@
           })
       },
       handleReset(index, row) {
-        row.resetFlag = false
+        row.test.resetFlag = false
         this.$axios({
           method: 'get',
           url: 'ResetUser',

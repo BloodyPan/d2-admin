@@ -148,40 +148,7 @@ util.log.danger = function (text) {
 }
 
 /**
- * @description 检查版本更新
- * @param {Object} vm vue
- */
-util.checkUpdate = function (vm) {
-  if (!process.env.VUE_APP_RELEASES_API) {
-    return
-  }
-  axios.get(process.env.VUE_APP_RELEASES_API)
-    .then(res => {
-      let versionGet = res.tag_name
-      const update = semver.lt(version, versionGet)
-      if (update) {
-        util.log.capsule('D2Admin', `New version ${res.name}`)
-        console.log(`版本号: ${res.tag_name} | 详情${res.html_url}`)
-        vm.$store.commit('d2adminReleasesUpdateSet', true)
-      }
-      vm.$store.commit('d2adminReleasesLatestSet', res)
-    })
-    .catch(err => {
-      console.log('checkUpdate error', err)
-    })
-}
-
-/**
- * @description 显示版本信息
- */
-util.showInfo = function showInfo () {
-  util.log.capsule('D2Admin', `v${version}`)
-  console.log('Github https://github.com/d2-projects/d2-admin')
-  console.log('Doc    http://d2admin.fairyever.com/zh/')
-}
-
-/**
- *  输入时间戳，并格式化输出
+ * @description 输入时间戳，并格式化输出
  */
 util.formatTimestamp = (ts, fmt) => {
 	if (ts.toString().length == 10) {
