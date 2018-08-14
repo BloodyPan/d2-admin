@@ -24,7 +24,6 @@
           <img class="chat-profile chat-profile-right" src="http://pic1.getremark.com/RemarkGuideAvatar.png">
           <ul class="chat-content">
             <li>亲地图反了是什么意思呢～</li>
-            <li>亲地图反了是什么意思呢～</li>
             <li>{{ msg }}</li>
           </ul>
         </div>

@@ -11,7 +11,7 @@
     </div>
     <div class="wrapper" ref="wrapper">
       <ul class="content">
-        <li @click="showChat(index)" class="user-list-li" v-for="(user, index) in listData">
+        <li @click="showChat($event, index)" class="user-list-li" v-for="(user, index) in listData">
           <el-badge :value="user.chat.unread ? user.chat.unread : ''" class="item">
             <img :src="user.profilePhoto">
           </el-badge>
@@ -51,7 +51,8 @@
 				currentPage: 1,
 				currentPageSize: 150,
 				selectSearch: '1',
-				inputSearch: ''
+				inputSearch: '',
+        selectedChat: null
       }
     },
 		mounted() {
@@ -73,8 +74,13 @@
 		methods: {
 			timeFormat: time => util.formatTimestamp(time, "yyyy-MM-dd hh:mm"),
 			preview: text => text.slice(0,12) + '...',
-			showChat(index) {
-				console.log(index)
+			showChat(event, index) {
+				if(this.selectedChat != null){
+					this.selectedChat.style.backgroundColor = "white"
+        }
+				event.currentTarget.style.backgroundColor = "#E5E5E5"
+				this.selectedChat = event.currentTarget
+        this.$emit("showChat", this.listData[index].id)
       },
 			clickicon(event) {
 				let index = event.currentTarget.getAttribute("index")
