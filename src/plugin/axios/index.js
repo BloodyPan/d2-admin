@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import { Message } from 'element-ui'
 import axios from 'axios'
-import store from '@/store'
-import util from '@/libs/util'
-// axios.defaults.baseURL = 'https://api.getremark.com/spotcms/'
+// import util from '@/libs/util'
+
 axios.defaults.baseURL = 'http://api.remark.works/spotcms/'
 axios.defaults.crossDomain = true
 axios.defaults.withCredentials = true

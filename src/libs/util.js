@@ -170,4 +170,10 @@ util.formatTimestamp = (ts, fmt) => {
 	return fmt
 }
 
+
+/**
+ * @description 去空格
+ */
+util.trim = text => text.replace(/(^\s*)|(\s*$)/g, "")
+
 export default util

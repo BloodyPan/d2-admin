@@ -1,37 +1,37 @@
 <template>
   <div style="overflow: scroll; height: 100%;">
-  <div class="search">
-    <el-input placeholder="查找用户" v-model="inputSearch" class="input-with-select">
-      <el-select v-model="selectSearch" slot="prepend" placeholder="请选择">
-        <el-option label="用户名" value="1"></el-option>
-        <el-option label="手机号" value="2"></el-option>
-      </el-select>
-      <el-button slot="append" icon="el-icon-search"></el-button>
-    </el-input>
-  </div>
-  <div class="wrapper" ref="wrapper">
-    <ul class="content">
-      <li @click="showChat(index)" class="user-list-li" v-for="(user, index) in listData">
-        <el-badge :value="user.chat.unread ? user.chat.unread : ''" class="item">
-          <img :src="user.profilePhoto">
-        </el-badge>
-        <ul class="user-list-msg-ul">
-          <li>{{ user.nickname }}</li>
-          <li class="small-font-size short-msg-view">{{ preview(user.chat.message.message) }}</li>
-        </ul>
-        <ul class="user-list-right-ul">
-          <li class="small-font-size">{{ timeFormat(user.chat.message.createdAt) }}</li>
-          <li>
-            <d2-icon-svg
-              @clickicon="clickicon"
-              :index="index"
-              class="star-fav"
-              :name="user.chat.favFlag ? 'star-fav' : 'star-unfav'"/>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </div>
+    <div class="search">
+      <el-input placeholder="查找用户" v-model="inputSearch" class="input-with-select">
+        <el-select v-model="selectSearch" slot="prepend" placeholder="请选择">
+          <el-option label="用户名" value="1"></el-option>
+          <el-option label="手机号" value="2"></el-option>
+        </el-select>
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </div>
+    <div class="wrapper" ref="wrapper">
+      <ul class="content">
+        <li @click="showChat(index)" class="user-list-li" v-for="(user, index) in listData">
+          <el-badge :value="user.chat.unread ? user.chat.unread : ''" class="item">
+            <img :src="user.profilePhoto">
+          </el-badge>
+          <ul class="user-list-msg-ul">
+            <li>{{ user.nickname }}</li>
+            <li class="small-font-size short-msg-view">{{ preview(user.chat.message.message) }}</li>
+          </ul>
+          <ul class="user-list-right-ul">
+            <li class="small-font-size">{{ timeFormat(user.chat.message.createdAt) }}</li>
+            <li>
+              <d2-icon-svg
+                @clickicon="clickicon"
+                :index="index"
+                class="star-fav"
+                :name="user.chat.favFlag ? 'star-fav' : 'star-unfav'"/>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
