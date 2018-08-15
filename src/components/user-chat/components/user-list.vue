@@ -75,7 +75,7 @@ export default {
     timeFormat: time => util.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
     preview: text => text.slice(0, 12) + '...',
     showChat (event, index) {
-    	this.listData[index].chat.unread = 0
+      this.listData[index].chat.unread = 0
       if (this.selectedChat != null) {
         this.selectedChat.style.backgroundColor = 'white'
       }
