@@ -1,5 +1,5 @@
 <template>
-  <div style="line-height: 2.3;">
+  <div style="line-height: 2.3">
     <el-tag
       class="reply-tag"
       v-for="tag in tags"
@@ -17,6 +17,7 @@
       v-model="inputValue"
       ref="saveTagInput"
       size="small"
+      clearable
       @keyup.enter.native="handleInputConfirm"
       @blur="handleInputConfirm">
     </el-input>
@@ -25,38 +26,38 @@
 </template>
 
 <script>
-	export default {
-		name: "chat-quick-reply",
-    data() {
-			return {
-				tags: ['谢谢反馈', '意见在修复啦', '期待下一版哦', '快点去更新新版吧'],
-				inputVisible: false,
-				inputValue: ''
-      }
-    },
-    methods: {
-			showInput() {
-				this.inputVisible = true;
-				this.$nextTick(_ => {
-					this.$refs.saveTagInput.$refs.input.focus();
-				});
-			},
-			sendQuickReply(tag) {
-				this.$emit('send', tag);
-      },
-			handleClose(tag) {
-				this.tags.splice(this.tags.indexOf(tag), 1);
-			},
-			handleInputConfirm() {
-				let inputValue = this.inputValue;
-				if (inputValue) {
-					this.tags.push(inputValue);
-				}
-				this.inputVisible = false;
-				this.inputValue = '';
-			}
+export default {
+  name: 'chat-quick-reply',
+  data () {
+    return {
+      tags: ['谢谢反馈', '意见在修复啦', '期待下一版哦', '快点去更新新版吧'],
+      inputVisible: false,
+      inputValue: ''
     }
-	}
+  },
+  methods: {
+    showInput () {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    sendQuickReply (tag) {
+      this.$emit('send', tag)
+    },
+    handleClose (tag) {
+      this.tags.splice(this.tags.indexOf(tag), 1)
+    },
+    handleInputConfirm () {
+      let inputValue = this.inputValue
+      if (inputValue) {
+        this.tags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -78,7 +79,7 @@
   }
 
   .input-new-tag {
-    width: 90px;
+    width: 120px;
     margin-left: 10px;
     vertical-align: bottom;
   }
@@ -87,7 +88,7 @@
 <style>
   .el-tag .el-icon-close{
     color: #FFFFFF !important;
-    cursor: pointer;
+    cursor: pointer
   }
 
   .el-select .el-input {

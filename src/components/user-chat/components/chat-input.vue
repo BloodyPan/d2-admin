@@ -14,36 +14,36 @@
 </template>
 
 <script>
-	import util from '@/libs/util.js'
-	export default {
-		name: "chat-input",
-    data() {
-			return {
-        chatContent: ""
-      }
-    },
-    methods: {
-      send() {
-				if(util.trim(this.chatContent)){
-					this.$emit("send", this.chatContent)
-				}
-        this.chatContent = ""
-      }
+import util from '@/libs/util.js'
+export default {
+  name: 'chat-input',
+  data () {
+    return {
+      chatContent: ''
     }
-	}
+  },
+  methods: {
+    send () {
+      if (util.trim(this.chatContent)) {
+        this.$emit('send', this.chatContent)
+      }
+      this.chatContent = ''
+    }
+  }
+}
 </script>
 
 <style scoped>
-  .input-div{
+  .input-div {
     margin: 5px 0 5px 5px;
     height: 100%;
   }
 
-  .el-text-area{
+  .el-text-area {
     height: 100%;
   }
 
-  .btn-row{
+  .btn-row {
     position: absolute;
     right: 10px;
     bottom: 10px;
@@ -51,7 +51,7 @@
 </style>
 
 <style>
-  textarea{
+  textarea {
     height: 95%;
     border: 0 !important;
     outline: 0;

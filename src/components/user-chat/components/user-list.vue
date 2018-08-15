@@ -1,18 +1,18 @@
 <template>
   <div style="overflow: scroll; height: 100%;">
     <div class="search">
-      <el-input placeholder="查找用户" v-model="inputSearch" class="input-with-select">
-        <el-select v-model="selectSearch" slot="prepend" placeholder="请选择">
+      <el-input size="mini" placeholder="查找用户" v-model="inputSearch" class="input-with-select">
+        <el-select size="mini" v-model="selectSearch" slot="prepend" placeholder="请选择">
           <el-option label="用户名" value="1"></el-option>
           <el-option label="手机号" value="2"></el-option>
         </el-select>
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button size="mini" slot="append" icon="el-icon-search"></el-button>
       </el-input>
     </div>
     <div class="wrapper" ref="wrapper">
       <ul class="content">
-        <li @click="showChat($event, index)" class="user-list-li" v-for="(user, index) in listData">
-          <el-badge :value="user.chat.unread ? user.chat.unread : ''" class="item">
+        <li :key="index" @click="showChat($event, index)" class="user-list-li" v-for="(user, index) in listData">
+          <el-badge :hidden="user.chat.unread == 0" :value="user.chat.unread" class="item">
             <img :src="user.profilePhoto">
           </el-badge>
           <ul class="user-list-msg-ul">
@@ -36,62 +36,67 @@
 </template>
 
 <script>
-	import util from '@/libs/util.js'
-	import bs from '@/components/common/bs'
+import util from '@/libs/util.js'
+import bs from '@/components/common/bs'
 
-  export default {
-    name: "user-list",
-    mixins:[
-    	bs
-    ],
-    data() {
-    	return {
-				listData: [],
-				total: 0,
-				currentPage: 1,
-				currentPageSize: 150,
-				selectSearch: '1',
-				inputSearch: '',
-        selectedChat: null
+export default {
+  name: 'user-list',
+  mixins: [
+    bs
+  ],
+  data () {
+    return {
+      listData: [],
+      total: 0,
+      currentPage: 1,
+      currentPageSize: 150,
+      selectSearch: '1',
+      inputSearch: '',
+      selectedChat: null
+    }
+  },
+  mounted () {
+    this.$axios({
+      method: 'get',
+      url: 'ChatUserList',
+      params: {
+        limit: this.currentPageSize,
+        offset: (this.currentPage - 1) * this.currentPageSize
       }
+    })
+      .then(res => {
+        this.listData = res.users.persons
+      })
+      .catch(err => {
+        this.$message.error(err)
+      })
+  },
+  methods: {
+    timeFormat: time => util.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
+    preview: text => text.slice(0, 12) + '...',
+    showChat (event, index) {
+    	this.listData[index].chat.unread = 0
+      if (this.selectedChat != null) {
+        this.selectedChat.style.backgroundColor = 'white'
+      }
+      event.currentTarget.style.backgroundColor = '#E5E5E5'
+      this.selectedChat = event.currentTarget
+      this.$emit('showChat', this.listData[index].id)
     },
-		mounted() {
-			this.$axios({
-				method: 'get',
-				url: 'ChatUserList',
-				params: {
-					limit: this.currentPageSize,
-					offset: (this.currentPage - 1) * this.currentPageSize
-				}
-			})
-				.then(res => {
-					this.listData = res.users.persons
-				})
-				.catch(err => {
-					this.$message.error(err)
-				})
-		},
-		methods: {
-			timeFormat: time => util.formatTimestamp(time, "yyyy-MM-dd hh:mm"),
-			preview: text => text.slice(0,12) + '...',
-			showChat(event, index) {
-				if(this.selectedChat != null){
-					this.selectedChat.style.backgroundColor = "white"
-        }
-				event.currentTarget.style.backgroundColor = "#E5E5E5"
-				this.selectedChat = event.currentTarget
-        this.$emit("showChat", this.listData[index].id)
-      },
-			clickicon(event) {
-				let index = event.currentTarget.getAttribute("index")
-        this.listData[index].chat.favFlag = !this.listData[index].chat.favFlag
-				event.stopPropagation();
-			}
+    clickicon (event) {
+      let index = event.currentTarget.getAttribute('index')
+      this.listData[index].chat.favFlag = !this.listData[index].chat.favFlag
+      event.stopPropagation()
     }
   }
+}
 </script>
 
 <style scoped>
+  .search{
+    margin-bottom: 3px;
+  }
+
   ul {
     display: block;
     list-style-type: disc;
@@ -128,28 +133,28 @@
     font-size: 12px;
   }
 
-  .user-list-li img{
+  .user-list-li img {
     border-radius: 50%;
     width: 32px;
   }
 
-  .user-list-msg-ul{
+  .user-list-msg-ul {
     margin-left: 18px;
     list-style: none;
   }
 
-  .short-msg-view{
+  .short-msg-view {
     margin-top: 2px;
   }
 
-  .user-list-right-ul{
+  .user-list-right-ul {
     list-style: none;
     position: absolute;
     right: 10px;
     text-align: right;
   }
 
-  .star-fav{
+  .star-fav {
     width: 18px;
     height: 18px;
     margin-top: 5px;

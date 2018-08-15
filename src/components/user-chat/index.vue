@@ -21,49 +21,49 @@
 </template>
 
 <script>
-  import userList from './components/user-list'
-  import chatInput from './components/chat-input'
-	import chatView from './components/chat-view'
-	import chatQuickReply from './components/chat-quick-reply'
-  export default {
-  	name: 'user-chat',
-  	components: {
-	    'user-list': userList,
-      'chat-input': chatInput,
-      'chat-view': chatView,
-			'chat-quick-reply': chatQuickReply
+import userList from './components/user-list'
+import chatInput from './components/chat-input'
+import chatView from './components/chat-view'
+import chatQuickReply from './components/chat-quick-reply'
+export default {
+  name: 'user-chat',
+  components: {
+    'user-list': userList,
+    'chat-input': chatInput,
+    'chat-view': chatView,
+    'chat-quick-reply': chatQuickReply
+  },
+  data () {
+    return {
+      clientHeight: 0,
+      overlay: true
+    }
+  },
+  mounted () {
+    this.clientHeight = `${document.documentElement.clientHeight}`
+  },
+  watch: {
+    clientHeight: function () {
+      this.changeFixed(this.clientHeight)
+    }
+  },
+  methods: {
+    changeFixed (clientHeight) {
+      this.$refs.chatDiv.style.height = clientHeight - 190 + 'px'
     },
-    data() {
-      return {
-        clientHeight: 0,
-				overlay: true
-      }
+    sendMessage (msg) {
+      this.$refs.chatView.send(msg)
     },
-    mounted () {
-      this.clientHeight = `${document.documentElement.clientHeight}`
-    },
-    watch: {
-      clientHeight: function () {
-        this.changeFixed(this.clientHeight)
-      }
-    },
-    methods: {
-      changeFixed(clientHeight){
-        this.$refs.chatDiv.style.height = clientHeight - 190 + 'px'
-      },
-      sendMessage(msg){
-        this.$refs.chatView.send(msg)
-      },
-			displayChat(uid){
-      	this.overlay = false
-      	console.log(uid)
-      }
+    displayChat (uid) {
+      this.overlay = false
+      console.log(uid)
     }
   }
+}
 </script>
 
 <style scoped>
-  .overlay{
+  .overlay {
     width: 100%;
     height: 100%;
     position: absolute;

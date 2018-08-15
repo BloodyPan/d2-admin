@@ -8,17 +8,16 @@
 </template>
 
 <script>
-  import userChat from '../../../components/user-chat'
-  export default {
-    components: {
-      'user-chat': userChat
-    },
-    data() {
-      return {
-
-      }
+import userChat from '../../../components/user-chat'
+export default {
+  components: {
+    'user-chat': userChat
+  },
+  data () {
+    return {
     }
   }
+}
 </script>
 
 <style>
