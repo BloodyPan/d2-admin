@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
-import axios from 'axios'
-import semver from 'semver'
+// import axios from 'axios'
+// import semver from 'semver'
 import UaParser from 'ua-parser-js'
 import { version } from '../../package.json'
 
@@ -182,5 +182,14 @@ util.formatTimestamp = (ts, fmt) => {
  * @description 去空格
  */
 util.trim = text => text.replace(/(^\s*)|(\s*$)/g, '')
+
+/**
+ * @description post都要带上csrf token
+ */
+util.csrfParam = () => {
+  let params = new URLSearchParams()
+  params.append('csrfmiddlewaretoken', util.cookies.get('csrftoken', false))
+  return params
+}
 
 export default util

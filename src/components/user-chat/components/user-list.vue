@@ -58,7 +58,7 @@ export default {
   mounted () {
     this.$axios({
       method: 'get',
-      url: 'ChatUserList',
+      url: 'UserChat',
       params: {
         limit: this.currentPageSize,
         offset: (this.currentPage - 1) * this.currentPageSize

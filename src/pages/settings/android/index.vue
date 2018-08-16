@@ -133,14 +133,24 @@ export default {
       }
     }
   },
+  mounted () {
+    this.$axios({
+      method: 'get',
+      url: 'AndroidUpdateSetting'
+    })
+      .then(res => {
+        this.form = JSON.parse(res.msg)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  },
   methods: {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let params = new URLSearchParams()
-          for(var k in this.form){
-            params.append(k, this.form[k])
-          }
+          params.append('data', JSON.stringify(this.form))
           params.append('csrfmiddlewaretoken', util.cookies.get('csrftoken', false))
           this.$axios({
             method: 'post',
@@ -155,7 +165,7 @@ export default {
               })
             })
             .catch(err => {
-              console.log(err.response)
+              console.log(err)
             })
         } else {
           this.$message.error('表单验证未通过')

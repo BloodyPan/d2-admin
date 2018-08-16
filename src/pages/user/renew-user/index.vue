@@ -7,6 +7,7 @@
       </div>
       <el-button
         v-for="(item, index) in unbindList"
+        :key="'ubind-btn-' + index"
         :type="item.del ? 'primary' : 'danger'"
         :disabled="item.del"
         @click="unbindTestPhone(index)">
@@ -54,112 +55,115 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        tableData: [],
-        total: 0,
-        currentPage: 1,
-        currentPageSize: 5,
-        unbindList: {
-          0: {
-            del: false,
-            phone: "123"
-          },
-          1: {
-            del: false,
-            phone: "456"
-          },
-          2: {
-            del: false,
-            phone: "789"
-          },
-          3: {
-            del: false,
-            phone: "666"
-          }
+import util from '@/libs/util.js'
+export default {
+  data () {
+    return {
+      tableData: [],
+      total: 0,
+      currentPage: 1,
+      currentPageSize: 5,
+      unbindList: {
+        0: {
+          del: false,
+          phone: '123'
         },
-        unbinded: "{0} 已经可以用来注册啦",
-        noUnbind: "释放 {0} 测试号"
-      }
-    },
-    methods: {
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 2 === 1) {
-          return 'success-row'
+        1: {
+          del: false,
+          phone: '456'
+        },
+        2: {
+          del: false,
+          phone: '789'
+        },
+        3: {
+          del: false,
+          phone: '666'
         }
-        return ''
       },
-      fetch () {
-        this.$axios({
-          method: 'get',
-          url: 'ResetUserList',
-          params: {
-            limit: this.currentPageSize,
-            offset: (this.currentPage - 1) * this.currentPageSize
-          }
-        })
-          .then(res => {
-            this.total = res.users.total
-            this.tableData = res.users.persons
-          })
-          .catch(err => {
-            this.$message.error(err)
-          })
-      },
-      handleSizeChange(val) {
-        this.currentPage = 1
-        this.currentPageSize = val
-        this.fetch()
-      },
-      handleCurrentChange(val) {
-        this.fetch()
-      },
-      unbindTestPhone(index) {
-        this.unbindList[index].del = true
-        this.$axios({
-            method: 'get',
-            url: 'DelTestUser',
-            params: {
-              phone: "13800000" + this.unbindList[index].phone
-            }
-        })
-          .then(res => {
-            this.$notify({
-              title: '释放成功',
-              message: res.msg,
-              duration: 3000
-            })
-          })
-          .catch(err => {
-            this.$message.error(err)
-          })
-      },
-      handleReset(index, row) {
-        row.test.resetFlag = false
-        this.$axios({
-          method: 'get',
-          url: 'ResetUser',
-          params: {
-            id: row.id
-          }
-        })
-          .then(res => {
-            this.$notify({
-              title: "成功重置用户状态",
-              message: res.msg,
-              duration: 3000
-            })
-          })
-          .catch(err => {
-            this.$message.error(err)
-          })
-      }
-    },
-    mounted () {
-      this.fetch()
+      unbinded: '{0} 已经可以用来注册啦',
+      noUnbind: '释放 {0} 测试号'
     }
+  },
+  methods: {
+    tableRowClassName ({row, rowIndex}) {
+      if (rowIndex % 2 === 1) {
+        return 'success-row'
+      }
+      return ''
+    },
+    fetch () {
+      this.$axios({
+        method: 'get',
+        url: 'ResetUser',
+        params: {
+          limit: this.currentPageSize,
+          offset: (this.currentPage - 1) * this.currentPageSize
+        }
+      })
+        .then(res => {
+          this.total = res.users.total
+          this.tableData = res.users.persons
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+    },
+    handleSizeChange (val) {
+      this.currentPage = 1
+      this.currentPageSize = val
+      this.fetch()
+    },
+    handleCurrentChange (val) {
+      this.fetch()
+    },
+    unbindTestPhone (index) {
+      this.unbindList[index].del = true
+
+      let params = util.csrfParam()
+      params.append('phone', '13800000' + this.unbindList[index].phone)
+      this.$axios({
+        method: 'post',
+        url: 'DelTestUser',
+        data: params
+      })
+        .then(res => {
+          this.$notify({
+            title: '释放成功',
+            message: res.msg,
+            duration: 3000
+          })
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+    },
+    handleReset (index, row) {
+      let params = util.csrfParam()
+      params.append('id', row.id)
+      this.$axios({
+        method: 'post',
+        url: 'ResetUser',
+        data: params
+      })
+        .then(res => {
+          row.test.resetFlag = false
+
+          this.$notify({
+            title: '成功重置用户状态',
+            message: res.msg,
+            duration: 3000
+          })
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+    }
+  },
+  mounted () {
+    this.fetch()
   }
+}
 </script>
 
 <style>

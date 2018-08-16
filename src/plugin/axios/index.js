@@ -10,15 +10,14 @@ axios.defaults.withCredentials = true
 axios.interceptors.response.use(res => {
   if (res.data.code !== undefined) {
     if (res.data.code === 403) {
-      // 403 验证错误, 删除登录信息
+      // 403 验证错误, 删除登录信息;
       util.cookies.remove('sessionid', false)
       util.cookies.remove('csrftoken', false)
       util.cookies.remove('uuid')
-      location.href = "/"
+      location.href = '/'
 
       return res.data
-    }
-    else if (res.data.code !== 200) {
+    } else if (res.data.code !== 200) {
       Message.error(res.data.msg)
       return Promise.reject(res.data.msg)
     } else {
@@ -28,7 +27,7 @@ axios.interceptors.response.use(res => {
     return res.data
   }
 }, err => {
-  Message.error('请求接口异常！')
+  Message.error('请求的接口出现异常！')
   return Promise.reject(err)
 })
 

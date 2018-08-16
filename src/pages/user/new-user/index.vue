@@ -46,57 +46,57 @@
 </template>
 
 <script>
-  import util from '@/libs/util.js'
-  export default {
-    data () {
-      return {
-        tableData: [],
-        total: 0,
-        currentPage: 1,
-        currentPageSize: 10,
-        dateIndex: 2
-      }
-    },
-    methods: {
-      timeFormat: time => util.formatTimestamp(time, "yyyy-MM-dd hh:mm:ss"),
-      tableRowClassName({row, rowIndex}) {
-        if (rowIndex % 2 === 1) {
-          return 'success-row'
-        }
-        return ''
-      },
-      dateFilter (index) {
-        this.dateIndex = index;
-        this.$axios({
-          method: 'get',
-          url: 'NewUserList',
-          params: {
-            day: this.dateIndex,
-            limit: this.currentPageSize,
-            offset: (this.currentPage - 1) * this.currentPageSize
-          }
-        })
-          .then(res => {
-            this.total = res.users.total
-            this.tableData = res.users.persons
-          })
-          .catch(err => {
-            this.$message.error(err)
-          })
-      },
-      handleSizeChange(val) {
-        this.currentPage = 1;
-        this.currentPageSize = val;
-        this.dateFilter(this.dateIndex)
-      },
-      handleCurrentChange(val) {
-        this.dateFilter(this.dateIndex)
-      }
-    },
-    mounted () {
-      this.dateFilter(2)
+import util from '@/libs/util.js'
+export default {
+  data () {
+    return {
+      tableData: [],
+      total: 0,
+      currentPage: 1,
+      currentPageSize: 10,
+      dateIndex: 2
     }
+  },
+  methods: {
+    timeFormat: time => util.formatTimestamp(time, 'yyyy-MM-dd hh:mm:ss'),
+    tableRowClassName ({row, rowIndex}) {
+      if (rowIndex % 2 === 1) {
+        return 'success-row'
+      }
+      return ''
+    },
+    dateFilter (index) {
+      this.dateIndex = index
+      this.$axios({
+        method: 'get',
+        url: 'NewUserList',
+        params: {
+          day: this.dateIndex,
+          limit: this.currentPageSize,
+          offset: (this.currentPage - 1) * this.currentPageSize
+        }
+      })
+        .then(res => {
+          this.total = res.users.total
+          this.tableData = res.users.persons
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+    },
+    handleSizeChange (val) {
+      this.currentPage = 1
+      this.currentPageSize = val
+      this.dateFilter(this.dateIndex)
+    },
+    handleCurrentChange (val) {
+      this.dateFilter(this.dateIndex)
+    }
+  },
+  mounted () {
+    this.dateFilter(2)
   }
+}
 </script>
 
 <style lang="scss">
