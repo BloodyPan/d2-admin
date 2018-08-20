@@ -102,8 +102,8 @@ export default {
         }
       })
         .then(res => {
-          this.total = res.users.total
-          this.tableData = res.users.persons
+          this.total = res.content.total
+          this.tableData = res.content.persons
         })
         .catch(err => {
           this.$message.error(err)

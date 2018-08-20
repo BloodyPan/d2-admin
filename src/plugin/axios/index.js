@@ -3,6 +3,9 @@ import { Message } from 'element-ui'
 import axios from 'axios'
 import util from '@/libs/util'
 
+// process.env.NODE_ENV === 'production'
+// process.env.NODE_ENV === 'development'
+// process.env.NODE_ENV === 'offline'
 axios.defaults.baseURL = 'http://api.remark.works/spotcms/'
 axios.defaults.crossDomain = true
 axios.defaults.withCredentials = true

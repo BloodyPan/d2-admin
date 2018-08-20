@@ -105,12 +105,12 @@ export default {
             expires: 0.04
           }
           // 设置 cookie 一定要存 uuid和sessionid，整个系统依赖这个数据进行校验和存储
-          util.cookies.set('uuid', res.users.persons[0].uuid, setting)
-					util.cookies.set('sessionid', res.users.persons[0].token, setting, false)
-					util.cookies.set('csrftoken', res.users.persons[0].csrf, setting, false)
+          util.cookies.set('uuid', res.user.uuid, setting)
+					util.cookies.set('sessionid', res.user.token, setting, false)
+					util.cookies.set('csrftoken', res.user.csrf, setting, false)
           // 设置 vuex 用户信息
           commit('d2adminUserInfoSet', {
-            name: res.users.persons[0].nickname
+            name: res.user.nickname
           })
           // 用户登陆后从数据库加载一系列的设置
           commit('d2adminLoginSuccessLoad')
