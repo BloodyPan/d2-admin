@@ -56,7 +56,7 @@ export default {
     },
     displayChat (uid) {
       this.overlay = false
-      console.log(uid)
+      this.$refs.chatView.fetch(uid)
     }
   }
 }

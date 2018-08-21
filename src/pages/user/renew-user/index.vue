@@ -140,7 +140,7 @@ export default {
     },
     handleReset (index, row) {
       let params = util.csrfParam()
-      params.append('id', row.id)
+      params.append('uid', row.id)
       this.$axios({
         method: 'post',
         url: 'ResetUser',
@@ -148,7 +148,6 @@ export default {
       })
         .then(res => {
           row.test.resetFlag = false
-
           this.$notify({
             title: '成功重置用户状态',
             message: res.msg,

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-// import util from '@/libs/util.js'
+import util from '@/libs/util.js'
 import bs from '@/components/common/bs'
 export default {
   name: 'chat-view',
@@ -43,15 +43,20 @@ export default {
   ],
   data () {
     return {
+      uid: 0,
       msg: '这里是聊天界面'
     }
   },
   methods: {
     fetch (uid) {
-
+      this.uid = uid
+      util.log.capsule('ChatView-Fetch', uid, 'danger')
     },
     send (text) {
-      this.msg = text
+      if (this.uid != 0) {
+        util.log.capsule('ChatView-Content', text, 'danger')
+        this.msg = text
+      }
     }
   }
 }

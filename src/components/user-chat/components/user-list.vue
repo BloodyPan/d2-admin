@@ -105,6 +105,19 @@ export default {
       event.currentTarget.style.backgroundColor = '#E5E5E5'
       this.selectedChat = event.currentTarget
       this.$emit('showChat', this.listData[index].user.id)
+
+      let params = util.csrfParam()
+      params.append('uid', this.listData[index].user.id)
+      this.$axios({
+        method: 'post',
+        url: 'UserChat',
+        data: params
+      })
+        .then(res => {
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
     },
     clickicon (event) {
       let index = event.currentTarget.getAttribute('index')
@@ -119,9 +132,9 @@ export default {
         data: params
       })
         .then(res => {
-          let is_fav = this.listData[index].favFlag
+          let isFav = this.listData[index].favFlag
           let title = '与 ' + this.listData[index].user.username
-          title += is_fav ? ' 的聊天已加入收藏' : ' 的聊天已从收藏中移除'
+          title += isFav ? ' 的聊天已加入收藏' : ' 的聊天已从收藏中移除'
           this.$notify({
             title: title,
             message: '',
