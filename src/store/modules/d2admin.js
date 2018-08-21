@@ -106,8 +106,8 @@ export default {
           }
           // 设置 cookie 一定要存 uuid和sessionid，整个系统依赖这个数据进行校验和存储
           util.cookies.set('uuid', res.user.uuid, setting)
-					util.cookies.set('sessionid', res.user.token, setting, false)
-					util.cookies.set('csrftoken', res.user.csrf, setting, false)
+          util.cookies.set('sessionid', res.user.token, setting, false)
+          util.cookies.set('csrftoken', res.user.csrf, setting, false)
           // 设置 vuex 用户信息
           commit('d2adminUserInfoSet', {
             name: res.user.nickname
@@ -134,8 +134,8 @@ export default {
        */
       function logout () {
         // 删除cookie
-				util.cookies.remove('sessionid', false)
-				util.cookies.remove('csrftoken', false)
+        util.cookies.remove('sessionid', false)
+        util.cookies.remove('csrftoken', false)
         util.cookies.remove('uuid')
         // 跳转路由
         vm.$router.push({
