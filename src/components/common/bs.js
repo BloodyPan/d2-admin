@@ -21,7 +21,6 @@ export default {
   methods: {
     scrollInit () {
       this.$nextTick(_ => {
-        console.log(this.$refs.wrapper)
         this.BS = new BScroll(this.$refs.wrapper, Object.assign({
           mouseWheel: true,
           scrollbar: {
