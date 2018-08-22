@@ -5,8 +5,6 @@ import Vue from 'vue'
 import App from './App'
 // store
 import store from '@/store/index'
-// string common
-import '@/libs/string'
 // 模拟数据
 // import '@/mock'
 // 多国语
