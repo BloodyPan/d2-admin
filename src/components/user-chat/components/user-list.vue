@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import util from '@/libs/util.spot.js'
+import util from '@/libs/util.spot'
 import bs from '@/components/common/bs'
 
 export default {
@@ -58,15 +58,17 @@ export default {
   },
   mounted () {
     this.fetchData()
-    this.BS.on('scroll', (pos) => {
-      // 滚动条滚到95%的地方开始拉新数据
-      if (this.BS.maxScrollY * 0.9 > pos.y) {
-        if (this.freshData === false) {
-          this.freshData = true
-          this.currentPage += 1
-          this.fetchData()
+    this.$nextTick(_ => {
+      this.BS.on('scroll', (pos) => {
+        // 滚动条滚到95%的地方开始拉新数据
+        if (this.BS.maxScrollY * 0.9 > pos.y) {
+          if (this.freshData === false) {
+            this.freshData = true
+            this.currentPage += 1
+            this.fetchData()
+          }
         }
-      }
+      })
     })
   },
   methods: {

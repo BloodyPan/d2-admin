@@ -20,20 +20,23 @@ export default {
   },
   methods: {
     scrollInit () {
-      this.BS = new BScroll(this.$refs.wrapper, Object.assign({
-        mouseWheel: true,
-        scrollbar: {
-          fade: true,
-          interactive: false,
-          bounce: {
-            top: true,
-            bottom: true,
-            left: true,
-            right: true
-          },
-          deceleration: 0.001
-        }
-      }, this.betterScrollOptions))
+      this.$nextTick(_ => {
+        console.log(this.$refs.wrapper)
+        this.BS = new BScroll(this.$refs.wrapper, Object.assign({
+          mouseWheel: true,
+          scrollbar: {
+            fade: true,
+            interactive: false,
+            bounce: {
+              top: true,
+              bottom: true,
+              left: true,
+              right: true
+            },
+            deceleration: 0.001
+          }
+        }, this.betterScrollOptions))
+      })
     },
     scrollDestroy () {
       if (this.BS) {

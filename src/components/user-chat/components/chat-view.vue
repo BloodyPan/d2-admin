@@ -1,7 +1,7 @@
 <template>
-  <div style="height: 100%; overflow: scroll;">
+  <div style="height: 100%; overflow: scroll;" v-if="uid !== 0">
     <div ref="tagGroup" class="detail-user-info">
-      <div class="bg-tag-important">当前好友: 2</div>
+      <div class="bg-tag-important">当前好友: {{ response.user.friendCount }}</div>
       <div class="bg-tag-warning">加入时间: 2018-07-31</div>
       <div class="bg-tag-primary">当前版本: 1.3.4.100</div>
       <div class="bg-tag-info">手机语言: zh-Hans-CN</div>
@@ -11,7 +11,7 @@
       <div class="bg-tag-warning-tint">运营商: 移动</div>
       <div>IP所在地: Hangzhou, China</div>
     </div>
-    <div ref="wrapper" class="wrapper">
+    <div class="wrapper" ref="wrapper">
       <div class="content">
         <div class="chat-content-row">
           <img class="chat-profile" src="http://pic1.getremark.com/5f658c97cbb039228719b294065e39b0-eab605d88b1355cbbb031dd11a423838">
@@ -36,6 +36,7 @@
 <script>
 import util from '@/libs/util.js'
 import bs from '@/components/common/bs'
+
 export default {
   name: 'chat-view',
   mixins: [
@@ -44,12 +45,28 @@ export default {
   data () {
     return {
       uid: 0,
-      msg: '这里是聊天界面'
+      msg: '这里是聊天界面',
+      response: {}
     }
+  },
+  mounted () {
   },
   methods: {
     fetch (uid) {
       this.uid = uid
+      this.$axios({
+        method: 'get',
+        url: 'ChatMessage',
+        params: {
+          uid: uid
+        }
+      })
+        .then(res => {
+          this.response = res
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
       util.log.capsule('ChatView-Fetch', uid, 'danger')
     },
     send (text) {
