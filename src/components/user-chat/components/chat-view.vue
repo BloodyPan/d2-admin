@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%; overflow: scroll;">
     <div ref="tagGroup" class="detail-user-info">
-      <div class="bg-tag-important">当前好友: 1</div>
+      <div class="bg-tag-important">当前好友: 2</div>
       <div class="bg-tag-warning">加入时间: 2018-07-31</div>
       <div class="bg-tag-primary">当前版本: 1.3.4.100</div>
       <div class="bg-tag-info">手机语言: zh-Hans-CN</div>
