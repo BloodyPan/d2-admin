@@ -11,7 +11,7 @@
         :type="item.del ? 'primary' : 'danger'"
         :disabled="item.del"
         @click="unbindTestPhone(index)">
-      {{ item.del ? unbinded.format(item.phone) : noUnbind.format(item.phone) }}
+      {{ item.del ? `${item.phone} 已经可以用来注册啦`: `释放 ${item.phone} 测试号` }}
       </el-button>
     </el-card>
 
@@ -80,9 +80,7 @@ export default {
           del: false,
           phone: '666'
         }
-      },
-      unbinded: '{0} 已经可以用来注册啦',
-      noUnbind: '释放 {0} 测试号'
+      }
     }
   },
   methods: {
