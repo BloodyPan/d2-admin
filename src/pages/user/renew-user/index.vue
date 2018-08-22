@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import util from '@/libs/util.js'
+import util from '@/libs/util.spot.js'
 export default {
   data () {
     return {

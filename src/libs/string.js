@@ -9,7 +9,7 @@ String.EscapeChar = '\''
 /// <param name="searchValue">检索值</param>
 /// <param name="replaceValue">替换值</param>
 String.prototype.replaceAll = function (searchValue, replaceValue) {
-  var regExp = new RegExp(searchValue, "g")
+  var regExp = new RegExp(searchValue, 'g')
   return this.replace(regExp, replaceValue)
 }
 

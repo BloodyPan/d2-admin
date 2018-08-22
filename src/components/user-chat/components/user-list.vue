@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import util from '@/libs/util.js'
+import util from '@/libs/util.spot.js'
 import bs from '@/components/common/bs'
 
 export default {

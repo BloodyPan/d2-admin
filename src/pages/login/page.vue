@@ -66,8 +66,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      'd2adminLogin'
+    ...mapActions('d2admin/account', [
+      'login'
     ]),
     /**
      * @description 提交表单
@@ -79,7 +79,7 @@ export default {
           // 登陆
           // 注意 这里的演示没有传验证码
           // 具体需要传递的数据请自行修改代码
-          this.d2adminLogin({
+          this.login({
             vm: this,
             username: this.formLogin.username,
             password: this.formLogin.password

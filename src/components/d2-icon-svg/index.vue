@@ -19,9 +19,9 @@ export default {
     }
   },
   methods: {
-		iconClick: function (event) {
-			this.$emit('clickicon', event);
-		}
+    iconClick: function (event) {
+      this.$emit('clickicon', event)
+    }
   }
 }
 </script>
