@@ -53,7 +53,7 @@ export default {
       util.log.capsule('ChatView-Fetch', uid, 'danger')
     },
     send (text) {
-      if (this.uid != 0) {
+      if (this.uid !== 0) {
         util.log.capsule('ChatView-Content', text, 'danger')
         this.msg = text
       }
