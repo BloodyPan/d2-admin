@@ -71,10 +71,7 @@
   },
   "lint-staged": {
     "linters": {
-      "*.{js,vue}": [
-        "vue-cli-service lint",
-        "git add"
-      ]
+      "*.{js,vue}": ["vue-cli-service lint","git add"]
     },
     "ignore": [
       "**/dist/*.min.js"
