@@ -73,7 +73,12 @@ export default {
   },
   methods: {
     timeFormat: time => util.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
-    preview: text => text.slice(0, 12) + '...',
+    preview (text) {
+      if (text.length > 12) {
+        text = text.slice(0, 12) + '...'
+      }
+      return text
+    },
     fetchData () {
       let offset = (this.currentPage - 1) * this.currentPageSize
       if (offset > this.total) {

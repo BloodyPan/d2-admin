@@ -1,12 +1,13 @@
 <template>
   <div style="height: 100%; overflow: scroll;">
     <div class="detail-user-info">
-      <div class="bg-tag-important">当前好友: {{ user.friendCount }}</div>
-      <div class="bg-tag-warning">加入时间: {{ user.dateJoined }}</div>
+      <div class="bg-tag-important" v-if="user.friendCount !== null">当前好友: {{ user.friendCount }}</div>
+      <div class="bg-tag-warning" v-if="user.storyCount !== null">当前Story: {{ user.storyCount }}</div>
+      <div class="bg-tag-gray-middle" v-if="user.dateJoined">加入时间: {{ timeFormat(user.dateJoined) }}</div>
       <div class="bg-tag-primary">当前版本: {{ device.appVersion }}</div>
-      <div class="bg-tag-info">手机语言: {{ user.clientLanguage }}</div>
-      <div>手机系统: {{ device.os }}</div>
-      <div class="bg-tag-gray-light">手机型号: iPhone7</div>
+      <div class="bg-tag-info">语言: {{ device.clientLanguage }}</div>
+      <br>
+      <div class="bg-tag-gray-light">型号: {{ getUA(device.userAgent) }}</div>
       <div class="bg-tag-danger-tint" v-if="device.phoneLocation">
         手机归属地: {{ device.phoneLocation }}
       </div>
@@ -58,6 +59,8 @@ export default {
   mounted () {
   },
   methods: {
+    getUA: ua => util.spot.getUAInfo(ua),
+    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
     fetch (uid) {
       this.uid = uid
       this.$axios({
@@ -173,8 +176,8 @@ export default {
   }
 
   .bg-tag-warning {
-    background-color: #f0ad4e !important;
-    color: white;
+    background-color: #E6A23C !important;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .bg-tag-primary {
@@ -193,6 +196,11 @@ export default {
 
   .bg-tag-warning-tint {
     background-color: #fcf8e3 !important;
+  }
+
+  .bg-tag-gray-middle {
+    background-color: #606266 !important;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .bg-tag-gray-light {

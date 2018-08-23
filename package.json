@@ -51,18 +51,18 @@
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.3.0",
-    "@vue/cli-plugin-babel": "^3.0.0",
-    "@vue/cli-plugin-eslint": "^3.0.0",
-    "@vue/cli-plugin-unit-jest": "^3.0.0",
-    "@vue/cli-service": "^3.0.0",
-    "@vue/eslint-config-standard": "^3.0.0",
+    "@vue/cli-plugin-babel": "^3.0.1",
+    "@vue/cli-plugin-eslint": "^3.0.1",
+    "@vue/cli-plugin-unit-jest": "^3.0.1",
+    "@vue/cli-service": "^3.0.1",
+    "@vue/eslint-config-standard": "^3.0.1",
     "@vue/test-utils": "^1.0.0-beta.20",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^23.0.1",
-    "lint-staged": "^7.2.0",
+    "lint-staged": "^7.2.2",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
-    "svg-sprite-loader": "^3.8.0",
+    "svg-sprite-loader": "^3.9.2",
     "text-loader": "0.0.1",
     "vue-template-compiler": "^2.5.17"
   },
@@ -71,7 +71,10 @@
   },
   "lint-staged": {
     "linters": {
-      "*.{js,vue}": ["vue-cli-service lint","git add"]
+      "*.{js,vue}": [
+        "vue-cli-service lint",
+        "git add"
+      ]
     },
     "ignore": [
       "**/dist/*.min.js"
