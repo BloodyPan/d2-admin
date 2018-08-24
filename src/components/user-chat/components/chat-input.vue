@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     send () {
-      if (util.trim(this.chatContent)) {
+      if (util.spot.trim(this.chatContent)) {
         this.$emit('send', this.chatContent)
       }
       this.chatContent = ''

@@ -19,21 +19,15 @@
     </div>
     <div class="wrapper" ref="wrapper">
       <div class="content">
-        <div class="chat-content-row">
-          <img class="chat-profile" src="http://pic1.getremark.com/5f658c97cbb039228719b294065e39b0-eab605d88b1355cbbb031dd11a423838">
-          <ul class="chat-content">
-            <li>地图反了</li>
-            <li><video class="chat-peek" src="http://pic0.getremark.com/Chill-3-CN-V2" autoplay="autoplay" onclick="this.play();"></video></li>
-          </ul>
-        </div>
-        <div class="chat-content-row-right">
-          <img class="chat-profile chat-profile-right" src="http://pic1.getremark.com/RemarkGuideAvatar.png">
-          <ul class="chat-content">
-            <li>亲地图反了是什么意思呢～</li>
-            <li>{{ msg }}</li>
-            <li>{{ msg }}</li>
-          </ul>
-        </div>
+        <template v-for="(chat, index) in chats">
+          <div :key="`chat-row-${index}`" :class="chat.right ? 'chat-content-row-right' : 'chat-content-row'">
+            <img :class="chat.right ? 'chat-profile chat-profile-right' : 'chat-profile'" :src="chat.profilePhoto">
+            <ul class="chat-content">
+              <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">地图反了</li>
+            </ul>
+          </div>
+          <div :key="`clear-div-${index}`" class="clear"></div>
+        </template>
       </div>
     </div>
   </div>
@@ -51,10 +45,12 @@ export default {
   data () {
     return {
       uid: 0,
+      cuid: 0,
       msg: '这里是聊天界面',
-      messages: [],
       user: {},
-      device: {}
+      device: {},
+      chats: [],
+      teamSpotAvatar: 'http://pic1.getremark.com/RemarkGuideAvatar.png'
     }
   },
   mounted () {
@@ -63,6 +59,9 @@ export default {
     getUA: ua => util.spot.getUAInfo(ua),
     timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
     fetch (uid) {
+      if (this.uid === uid) {
+        return
+      }
       this.uid = uid
       this.$axios({
         method: 'get',
@@ -74,7 +73,22 @@ export default {
         .then(res => {
           this.user = res.user
           this.device = res.user.device
-          this.chats = res.content.messages
+          let msgs = res.content.messages
+          let currentIndex = -1
+          for (var index in msgs) {
+            if (msgs[index].uid !== this.cuid) {
+              this.cuid = msgs[index].uid
+              let isNormalUser = this.cuid === this.user.id
+              this.chats.push({
+                right: !isNormalUser,
+                profilePhoto: isNormalUser ? this.user.profilePhoto : this.teamSpotAvatar,
+                rows: [msgs[index]]
+              })
+              currentIndex++
+            } else {
+              this.chats[currentIndex].rows.push(msgs[index])
+            }
+          }
           console.log(res)
         })
         .catch(err => {
@@ -86,6 +100,22 @@ export default {
       if (this.uid !== 0) {
         util.log.capsule('ChatView-Content', text, 'danger')
         this.msg = text
+
+        let params = util.spot.csrfParam()
+        params.append('uid', this.uid)
+        params.append('message', text)
+        params.append('message_type', 0)
+        this.$axios({
+          method: 'post',
+          url: 'ChatMessage',
+          data: params
+        })
+          .then(res => {
+            // 发送消息
+          })
+          .catch(err => {
+            this.$message.error(err)
+          })
       }
     }
   }
@@ -93,6 +123,10 @@ export default {
 </script>
 
 <style scoped>
+  .clear {
+    clear:both;
+  }
+
   .wrapper {
     height: 90%;
     overflow: scroll;

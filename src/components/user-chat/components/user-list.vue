@@ -74,7 +74,7 @@ export default {
   methods: {
     timeFormat: time => util.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
     preview (text) {
-      if (text.length > 12) {
+      if (text.length >= 12) {
         text = text.slice(0, 12) + '...'
       }
       return text
