@@ -1,67 +1,172 @@
 <template>
-  <div style="line-height: 2.3">
-    <el-tag
-      class="reply-tag"
-      v-for="tag in tags"
-      :key="tag"
-      closable
-      :disable-transitions="false"
-      @close="handleClose(tag)"
-      v-on:click.native="sendQuickReply(tag)"
-      color="rgba(0, 0, 0, .5)">
-      {{tag}}
-    </el-tag>
-    <el-input
-      class="input-new-tag"
-      v-if="inputVisible"
-      v-model="inputValue"
-      ref="saveTagInput"
-      size="small"
-      clearable
-      @keyup.enter.native="handleInputConfirm"
-      @blur="handleInputConfirm">
-    </el-input>
-    <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+  <div class="tag-div">
+    <el-button class="button-new-tag" size="small" @click="showDialog">+ New Tag</el-button>
+    <el-tooltip
+      :content="reply.desc"
+      placement="top"
+      :key="reply.qid"
+      v-for="(reply, index) in replies">
+      <el-tag
+        class="reply-tag"
+        closable
+        :disable-transitions="false"
+        @close="handleClose(index, reply.qid)"
+        v-on:click.native="sendQuickReply(reply.desc)"
+        color="rgba(0, 0, 0, .5)">
+        {{ reply.phrase }}
+      </el-tag>
+    </el-tooltip>
+
+    <el-dialog title="添加快捷回复" :visible.sync="dialogFormVisible">
+      <el-form ref="form" :model="form" :rules="rules">
+        <el-form-item label="Tag简单描述"  prop="phrase" :label-width="formLabelWidth">
+          <el-input
+            v-model="form.phrase"
+            auto-complete="off"
+            placeholder="简单的描述">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="具体回复内容"  prop="desc" :label-width="formLabelWidth">
+          <el-input
+            type="textarea"
+            :rows="3"
+            v-model="form.desc"
+            auto-complete="off"
+            placeholder="具体回复给用户的内容">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="是否私有" :label-width="formLabelWidth">
+          <el-switch v-model="form.private" inactive-text="public" active-text="private">
+          </el-switch>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addTag">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import util from '@/libs/util.js'
 export default {
   name: 'chat-quick-reply',
   data () {
     return {
       tags: ['谢谢反馈哦', '敬请期待', '快点去更新新版吧~嘤嘤嘤'],
-      inputVisible: false,
-      inputValue: ''
+      replies: [],
+      dialogFormVisible: false,
+      formLabelWidth: '120px',
+      form: {
+        phrase: '',
+        desc: '',
+        private: false
+      },
+      rules: {
+        phrase: [
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] },
+          { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: ['blur', 'change'] }
+        ],
+        desc: [
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] },
+          { min: 1, max: 256, message: '长度在 1 到 256 个字符', trigger: ['blur', 'change'] }
+        ]
+      }
     }
   },
+  mounted () {
+    this.$axios({
+      method: 'get',
+      url: 'QuickReply'
+    })
+      .then(res => {
+        if (res.content.total > 0) {
+          this.replies = res.content.replies
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  },
   methods: {
-    showInput () {
-      this.inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
+    sendQuickReply (desc) {
+      this.$emit('send', desc)
+    },
+    handleClose (index, qid) {
+      this.replies.splice(index, 1)
+      this.delTag(qid)
+    },
+    showDialog () {
+      this.form.phrase = ''
+      this.form.desc = ''
+      this.dialogFormVisible = true
+      try {
+        this.$refs.form.resetFields()
+      } catch (err) {
+      }
+    },
+    addTag () {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.dialogFormVisible = false
+          let params = util.spot.csrfParam()
+          params.append('data', JSON.stringify(this.form))
+          this.$axios({
+            method: 'post',
+            url: 'QuickReply',
+            data: params
+          })
+            .then(res => {
+              console.log(res)
+              this.replies.push(res.reply)
+              this.$notify({
+                title: '添加成功',
+                message: '快捷回复已经成功添加',
+                duration: 3000
+              })
+            })
+            .catch(err => {
+              this.$message.error(err)
+            })
+        } else {
+          this.$message.error('表单验证未通过')
+          return false
+        }
       })
     },
-    sendQuickReply (tag) {
-      this.$emit('send', tag)
-    },
-    handleClose (tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1)
-    },
-    handleInputConfirm () {
-      let inputValue = this.inputValue
-      if (inputValue) {
-        this.tags.push(inputValue)
-      }
-      this.inputVisible = false
-      this.inputValue = ''
+    delTag (qid) {
+      let params = util.spot.csrfParam()
+      params.append('pk', qid)
+      this.$axios({
+        method: 'post',
+        url: 'DelQuickReply',
+        data: params
+      })
+        .then(res => {
+          this.$notify({
+            title: '删除成功',
+            message: '快捷回复已经成功删除',
+            duration: 3000
+          })
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
     }
   }
 }
 </script>
 
 <style scoped>
-  .el-tag{
+  .tag-div {
+    line-height: 2.3;
+    white-space: nowrap;
+    width: 99%;
+    overflow: scroll;
+  }
+
+  .el-tag {
     color: #FFFFFF !important;
     cursor: pointer;
   }
@@ -71,7 +176,7 @@ export default {
   }
 
   .button-new-tag {
-    margin-left: 10px;
+    margin-right: 10px;
     height: 32px;
     line-height: 30px;
     padding-top: 0;

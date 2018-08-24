@@ -1,5 +1,5 @@
 <template>
-  <div class="input-div">
+  <div class="chat-input-div">
     <el-input
       type="textarea"
       resize="none"
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style scoped>
-  .input-div {
+  .chat-input-div {
     margin: 5px 0 5px 5px;
     height: 100%;
   }
@@ -51,9 +51,9 @@ export default {
 </style>
 
 <style>
-  textarea {
-    height: 95%;
+  .chat-input-div textarea {
+    height: 95% !important;
     border: 0 !important;
-    outline: 0;
+    outline: 0 !important;
   }
 </style>

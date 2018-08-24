@@ -149,9 +149,8 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let params = new URLSearchParams()
+          let params = util.spot.csrfParam()
           params.append('data', JSON.stringify(this.form))
-          params.append('csrfmiddlewaretoken', util.cookies.get('csrftoken', false))
           this.$axios({
             method: 'post',
             url: 'AndroidUpdateSetting',

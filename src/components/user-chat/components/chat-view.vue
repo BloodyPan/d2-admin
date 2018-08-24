@@ -24,7 +24,14 @@
             <img :class="chat.right ? 'chat-profile chat-profile-right' : 'chat-profile'" :src="chat.profilePhoto">
             <ul style="margin: 0;" class="chat-content">
               <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">
-                {{ row.message !== void 0 ? row.message : '未知消息' }}
+                <div v-if="row.messageType === 0">
+                  {{ row.message }}
+                </div>
+                <div v-else-if="row.messageType === 9">
+                  <video :ref="`video-${index}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" autoplay="autoplay" onclick="this.play();"></video>
+                  <img class="chat-peek-doodle" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`video-${index}`)">
+                </div>
+                <div v-else>[未处理消息]</div>
               </li>
             </ul>
           </div>
@@ -138,6 +145,10 @@ export default {
             this.$message.error(err)
           })
       }
+    },
+    playPeek (video) {
+      console.log(video)
+      this.$refs[`${video}`][0].play()
     }
   }
 }
@@ -160,7 +171,8 @@ export default {
 
   .wrapper li {
     list-style-type: none;
-    line-height:23px;
+    line-height: 20px;
+    margin-bottom: 5px;
   }
 
   .chat-content {
@@ -169,6 +181,7 @@ export default {
     font-size: 16px;
     font-weight: bold;
     text-shadow: rgba(0, 0, 0, 0.3) 2px 1px 3px;
+    word-break: break-all;
   }
 
   .chat-profile {
@@ -206,6 +219,13 @@ export default {
     width: 120px;
   }
 
+  .chat-peek-doodle {
+    width: 120px;
+    margin-left: -120px;
+    z-index: 999;
+    position: relative;
+  }
+
   .chat-time {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.3);
@@ -218,7 +238,7 @@ export default {
     font-weight: bold;
     font-size: 14px;
     overflow: scroll;
-    white-space:nowrap;
+    white-space: nowrap;
   }
 
   .detail-user-info div {
