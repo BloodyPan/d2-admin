@@ -112,19 +112,6 @@ export default {
       event.currentTarget.style.backgroundColor = '#E5E5E5'
       this.selectedChat = event.currentTarget
       this.$emit('showChat', this.listData[index].user.id)
-
-      let params = util.csrfParam()
-      params.append('uid', this.listData[index].user.id)
-      this.$axios({
-        method: 'post',
-        url: 'UserChat',
-        data: params
-      })
-        .then(res => {
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
     },
     clickicon (event) {
       let index = event.currentTarget.getAttribute('index')

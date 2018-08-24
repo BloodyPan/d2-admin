@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100%; overflow: scroll;">
     <div class="detail-user-info">
+      <div class="bg-tag-dark" v-if="user.username !== null">用户名: {{ user.username }}</div>
       <div class="bg-tag-important" v-if="user.friendCount !== null">当前好友: {{ user.friendCount }}</div>
       <div class="bg-tag-warning" v-if="user.storyCount !== null">当前Story: {{ user.storyCount }}</div>
       <div class="bg-tag-gray-middle" v-if="user.dateJoined">加入时间: {{ timeFormat(user.dateJoined) }}</div>
@@ -170,9 +171,14 @@ export default {
     margin-right: 5px;
   }
 
+  .bg-tag-dark {
+    background-color: #343a40 !important;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
   .bg-tag-important {
     background-color: #d9534f !important;
-    color: white;
+    color: rgba(255, 255, 255, 0.95);
   }
 
   .bg-tag-warning {
@@ -182,12 +188,12 @@ export default {
 
   .bg-tag-primary {
     background-color: #286090 !important;
-    color: white;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .bg-tag-info {
     background-color: #5bc0de !important;
-    color: white;
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .bg-tag-danger-tint {
