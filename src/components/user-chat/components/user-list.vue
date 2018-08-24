@@ -159,7 +159,7 @@ export default {
   }
 
   .wrapper{
-    height: 90%;
+    height: 98%;
     overflow: scroll;
   }
 
