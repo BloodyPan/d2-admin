@@ -1,6 +1,8 @@
 import cookies from './util.cookies.js'
 const spot = {}
 
+spot.spotHelperId = 5
+
 /**
  * @description 输入时间戳，并格式化输出
  */

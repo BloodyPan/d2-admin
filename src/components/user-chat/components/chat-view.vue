@@ -22,8 +22,10 @@
         <template v-for="(chat, index) in chats">
           <div :key="`chat-row-${index}`" :class="chat.right ? 'chat-content-row-right' : 'chat-content-row'">
             <img :class="chat.right ? 'chat-profile chat-profile-right' : 'chat-profile'" :src="chat.profilePhoto">
-            <ul class="chat-content">
-              <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">地图反了</li>
+            <ul style="margin: 0;" class="chat-content">
+              <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">
+                {{ row.message !== void 0 ? row.message : '未知消息' }}
+              </li>
             </ul>
           </div>
           <div :key="`clear-div-${index}`" class="clear"></div>
@@ -46,7 +48,6 @@ export default {
     return {
       uid: 0,
       cuid: 0,
-      msg: '这里是聊天界面',
       user: {},
       device: {},
       chats: [],
@@ -58,6 +59,32 @@ export default {
   methods: {
     getUA: ua => util.spot.getUAInfo(ua),
     timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
+    generateData (msgs, initChat) {
+      let currentIndex = -1
+      if (initChat) {
+        this.chats = []
+      } else {
+        currentIndex = this.chats.length - 1
+      }
+      for (var index in msgs) {
+        if (msgs[index].uid !== this.cuid) {
+          this.cuid = msgs[index].uid
+          let isNormalUser = this.cuid === this.user.id
+          this.chats.push({
+            right: !isNormalUser,
+            profilePhoto: isNormalUser ? this.user.profilePhoto : this.teamSpotAvatar,
+            rows: [msgs[index]]
+          })
+          currentIndex++
+        } else {
+          this.chats[currentIndex].rows.push(msgs[index])
+        }
+      }
+      this.$nextTick(_ => {
+        this.BS.refresh()
+        this.BS.scrollTo(0, this.BS.maxScrollY)
+      })
+    },
     fetch (uid) {
       if (this.uid === uid) {
         return
@@ -73,22 +100,7 @@ export default {
         .then(res => {
           this.user = res.user
           this.device = res.user.device
-          let msgs = res.content.messages
-          let currentIndex = -1
-          for (var index in msgs) {
-            if (msgs[index].uid !== this.cuid) {
-              this.cuid = msgs[index].uid
-              let isNormalUser = this.cuid === this.user.id
-              this.chats.push({
-                right: !isNormalUser,
-                profilePhoto: isNormalUser ? this.user.profilePhoto : this.teamSpotAvatar,
-                rows: [msgs[index]]
-              })
-              currentIndex++
-            } else {
-              this.chats[currentIndex].rows.push(msgs[index])
-            }
-          }
+          this.generateData(res.content.messages, true)
           console.log(res)
         })
         .catch(err => {
@@ -99,7 +111,16 @@ export default {
     send (text) {
       if (this.uid !== 0) {
         util.log.capsule('ChatView-Content', text, 'danger')
-        this.msg = text
+        let msgs = [
+          {
+            chatType: 0,
+            createdAt: 1535110550,
+            message: text,
+            messageType: 0,
+            uid: util.spot.spotHelperId
+          }
+        ]
+        this.generateData(msgs, false)
 
         let params = util.spot.csrfParam()
         params.append('uid', this.uid)
@@ -111,7 +132,7 @@ export default {
           data: params
         })
           .then(res => {
-            // 发送消息
+
           })
           .catch(err => {
             this.$message.error(err)
@@ -128,7 +149,7 @@ export default {
   }
 
   .wrapper {
-    height: 90%;
+    height: 80%;
     overflow: scroll;
   }
 
@@ -164,6 +185,7 @@ export default {
 
   .chat-content-row-right {
     float: right;
+    margin-top: 16px;
   }
 
   .chat-content-row-right .chat-profile {
@@ -195,6 +217,8 @@ export default {
     color: rgba(0, 0, 0, 0.5);
     font-weight: bold;
     font-size: 14px;
+    overflow: scroll;
+    white-space:nowrap;
   }
 
   .detail-user-info div {

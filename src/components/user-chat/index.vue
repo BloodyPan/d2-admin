@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     changeFixed (clientHeight) {
-      this.$refs.chatDiv.style.height = clientHeight - 190 + 'px'
+      this.$refs.chatDiv.style.height = clientHeight - 160 + 'px'
     },
     sendMessage (msg) {
       this.$refs.chatView.send(msg)

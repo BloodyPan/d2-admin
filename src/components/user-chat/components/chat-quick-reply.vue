@@ -30,7 +30,7 @@ export default {
   name: 'chat-quick-reply',
   data () {
     return {
-      tags: ['谢谢反馈', '意见在修复啦', '期待下一版哦', '快点去更新新版吧'],
+      tags: ['谢谢反馈哦', '敬请期待', '快点去更新新版吧~嘤嘤嘤'],
       inputVisible: false,
       inputValue: ''
     }
