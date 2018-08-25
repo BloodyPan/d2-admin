@@ -58,7 +58,7 @@ export default {
     }
   },
   methods: {
-    timeFormat: time => util.formatTimestamp(time, 'yyyy-MM-dd hh:mm:ss'),
+    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm:ss'),
     tableRowClassName ({row, rowIndex}) {
       if (rowIndex % 2 === 1) {
         return 'success-row'
