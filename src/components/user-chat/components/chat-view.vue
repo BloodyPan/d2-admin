@@ -21,8 +21,8 @@
                 </div>
                 <!-- MESSAGE_TYPE_FACE_MESSAGE -->
                 <div v-else-if="row.messageType === 9">
-                  <video :ref="`video-${index}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" onclick="this.play();"></video>
-                  <img :class="'chat-peek-photo' + (row.extraContext.video != void 0 ? ' chat-peek-doodle' : '')" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`video-${index}`)">
+                  <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" onclick="this.play();"></video>
+                  <img :class="'chat-peek-photo' + (row.extraContext.video != void 0 ? ' chat-peek-doodle' : '')" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`${row.extraContext.video}_${row.extraContext.photo}`)">
                 </div>
                 <!-- MESSAGE_TYPE_GUESS -->
                 <div v-else-if="row.messageType === 30">
@@ -81,7 +81,6 @@ export default {
         if (this.BS.maxScrollY * 0.9 > pos.y) {
           if (this.refreshScroll === false) {
             this.refreshScroll = true
-            console.log('scroll to 90%: ', this.BS.maxScrollY)
             this.BS.refresh()
           }
         }
@@ -143,7 +142,6 @@ export default {
           this.user = res.user
           this.device = res.user.device
           this.generateData(res.content.messages, true)
-          console.log(res)
         })
         .catch(err => {
           this.$message.error(err)
@@ -183,10 +181,10 @@ export default {
     },
     playPeek (video) {
       console.log(video)
+      console.log(this.$refs[`${video}`])
       this.$refs[`${video}`][0].play()
     },
     playVoice (voice) {
-      console.log(voice)
       this.$refs.chatAudio.src = voice
       this.$refs.chatAudio.play()
     }

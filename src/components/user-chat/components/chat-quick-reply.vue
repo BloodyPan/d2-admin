@@ -86,7 +86,7 @@ export default {
         }
       })
       .catch(err => {
-        console.log(err)
+        this.$message.error(err)
       })
   },
   methods: {
@@ -118,7 +118,6 @@ export default {
             data: params
           })
             .then(res => {
-              console.log(res)
               this.replies.push(res.reply)
               this.$notify({
                 title: '添加成功',
