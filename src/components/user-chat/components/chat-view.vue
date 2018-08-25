@@ -8,9 +8,16 @@
             <img :class="chat.right ? 'chat-profile chat-profile-right' : 'chat-profile'" :src="chat.profilePhoto">
             <ul style="margin: 0;" class="chat-content">
               <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">
+                <!-- FEED_BACK -->
+                <div :class="chat.right ? 'bubble bubble-right' : 'bubble'"
+                  v-if="row.chatType === 1">
+                  <div class='feedback'>Feedback</div>
+                  <span>{{ row.message }}</span>
+                </div>
                 <!-- MESSAGE_TYPE_NORMAL -->
-                <div :class="chat.right ? 'bubble bubble-right' : 'bubble'" v-if="row.messageType === 0">
-                  {{ row.message }}
+                <div :class="chat.right ? 'bubble bubble-right' : 'bubble'"
+                  v-else-if="row.messageType === 0"
+                  v-html="row.message.replace(/\n/g, '<br>')">
                 </div>
                 <!-- MESSAGE_TYPE_FACE_MESSAGE -->
                 <div v-else-if="row.messageType === 9">
@@ -245,6 +252,17 @@ export default {
     right: 38px;
   }
 
+  .feedback {
+    border-radius: 3px;
+    padding: 2px 3px;
+    background-color: #d9534f;
+    font-size: 2px;
+    color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  /* 聊天气泡 */
   .bubble {
     border-radius: 10px;
     padding: 5px 10px;
@@ -256,6 +274,7 @@ export default {
     background-color: #A0E75A;
   }
 
+  /* peek相关 */
   .chat-peek {
     width: 120px;
   }
