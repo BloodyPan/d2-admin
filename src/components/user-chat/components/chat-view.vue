@@ -8,12 +8,27 @@
             <img :class="chat.right ? 'chat-profile chat-profile-right' : 'chat-profile'" :src="chat.profilePhoto">
             <ul style="margin: 0;" class="chat-content">
               <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">
+                <!-- MESSAGE_TYPE_NORMAL -->
                 <div :class="chat.right ? 'bubble bubble-right' : 'bubble'" v-if="row.messageType === 0">
                   {{ row.message }}
                 </div>
+                <!-- MESSAGE_TYPE_FACE_MESSAGE -->
                 <div v-else-if="row.messageType === 9">
                   <video :ref="`video-${index}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" onclick="this.play();"></video>
                   <img :class="'chat-peek-photo' + (row.extraContext.video != void 0 ? ' chat-peek-doodle' : '')" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`video-${index}`)">
+                </div>
+                <!-- MESSAGE_TYPE_GUESS -->
+                <div v-else-if="row.messageType === 30">
+                  [猜干嘛] {{ row.message }}
+                </div>
+                <!-- MESSAGE_TYPE_MUSIC_CHAT -->
+                <div class="music-bubble" @click="playVoice(row.lyric.m4aUrl)" v-else-if="row.messageType === 32">
+                    <img class="music-icon" src="//pic7.getremark.com/mc-playing.png">
+                    <div class="music-lyric">{{ row.lyric.lyric }}</div>
+                </div>
+                <!-- MESSAGE_TYPE_VOICE_CHAT -->
+                <div v-else-if="row.messageType === 33">
+                  <button class="voice-icon" @click="playVoice(row.message)"></button>
                 </div>
                 <div v-else>[未处理消息]</div>
               </li>
@@ -23,6 +38,7 @@
         </template>
       </div>
     </div>
+    <audio ref="chatAudio" class="voice-player" src="" controls></audio>
   </div>
 </template>
 
@@ -54,13 +70,12 @@ export default {
   mounted () {
     this.$nextTick(_ => {
       this.BS.on('scroll', (pos) => {
-        // 滚动条滚到90%的地方
+        // 滚动条滚到90%的地方，刷下better-scroll
         if (this.BS.maxScrollY * 0.9 > pos.y) {
           if (this.refreshScroll === false) {
             this.refreshScroll = true
-            console.log('scroll to 90%')
+            console.log('scroll to 90%: ', this.BS.maxScrollY)
             this.BS.refresh()
-            console.log(this.BS.maxScrollY)
           }
         }
       })
@@ -95,7 +110,13 @@ export default {
       this.$nextTick(_ => {
         this.BS.refresh()
         this.BS.scrollTo(0, this.BS.maxScrollY)
-        console.log(this.BS.maxScrollY)
+
+        // 二次刷新
+        let that = this
+        setTimeout(() => {
+          that.BS.refresh()
+          that.BS.scrollTo(0, that.BS.maxScrollY)
+        }, 100)
       })
     },
     fetch (uid) {
@@ -156,6 +177,11 @@ export default {
     playPeek (video) {
       console.log(video)
       this.$refs[`${video}`][0].play()
+    },
+    playVoice (voice) {
+      console.log(voice)
+      this.$refs.chatAudio.src = voice
+      this.$refs.chatAudio.play()
     }
   }
 }
@@ -222,7 +248,7 @@ export default {
   .bubble {
     border-radius: 10px;
     padding: 5px 10px;
-    background-color: #f5f4f4;
+    background-color: #ebebeb;
     display: inline-block;
   }
 
@@ -242,5 +268,53 @@ export default {
 
   .chat-peek-doodle {
     margin-left: -120px;
+  }
+
+  /* 语音信息相关 */
+  .voice-player{
+    width: 0;
+    height: 0;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+  }
+
+  .voice-icon {
+    background: url("http://pic7.getremark.com/cms-voice-icon.png");
+    background-size: contain;
+    width: 40px;
+    height: 40px;
+    border: 0 !important;
+    cursor: pointer;
+    outline: none !important;
+  }
+
+  .voice-icon:active, .voice-icon:visited, .voice-icon:focus {
+    background: url("http://pic7.getremark.com/cms-voice-icon-r.png");
+    background-size: contain;
+  }
+
+  /* Music chat */
+  .music-bubble {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 16px;
+    padding: 8px 12px;
+    font-size: 14px;
+    display: inline-block;
+    cursor: pointer;
+    background: url("//pic7.getremark.com/mc-back.png") no-repeat;
+    background-size: cover;
+    color: white;
+  }
+
+  .music-icon {
+    width: 10px;
+    margin-right: 3px;
+  }
+
+  .music-lyric {
+    display: inline-block;
+    vertical-align: baseline;
   }
 </style>
