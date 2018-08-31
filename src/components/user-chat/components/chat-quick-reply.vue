@@ -54,7 +54,6 @@ export default {
   name: 'chat-quick-reply',
   data () {
     return {
-      tags: ['谢谢反馈哦', '敬请期待', '快点去更新新版吧~嘤嘤嘤'],
       replies: [],
       dialogFormVisible: false,
       formLabelWidth: '120px',

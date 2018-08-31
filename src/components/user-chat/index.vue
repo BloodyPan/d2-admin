@@ -16,7 +16,6 @@
         </SplitPane>
       </template>
     </SplitPane>
-    <chat-quick-reply @send="sendMessage" style="margin-top: 10px;"></chat-quick-reply>
   </div>
 </template>
 
@@ -24,14 +23,12 @@
 import userList from './components/user-list'
 import chatInput from './components/chat-input'
 import chatView from './components/chat-view'
-import chatQuickReply from './components/chat-quick-reply'
 export default {
   name: 'user-chat',
   components: {
     'user-list': userList,
     'chat-input': chatInput,
-    'chat-view': chatView,
-    'chat-quick-reply': chatQuickReply
+    'chat-view': chatView
   },
   data () {
     return {

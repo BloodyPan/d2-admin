@@ -26,8 +26,8 @@
         </el-table-column>
         <el-table-column prop="friendCount" label="好友数"></el-table-column>
         <el-table-column prop="storyCount" label="Story数"></el-table-column>
-        <el-table-column prop="appVersion" label="版本"></el-table-column>
-        <el-table-column prop="os" label="系统"></el-table-column>
+        <el-table-column prop="device.appVersion" label="版本"></el-table-column>
+        <el-table-column prop="device.os" label="系统"></el-table-column>
       </el-table>
       <el-pagination
         ref="userPagination"
