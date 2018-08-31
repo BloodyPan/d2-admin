@@ -182,8 +182,6 @@ export default {
       }
     },
     playPeek (video) {
-      console.log(video)
-      console.log(this.$refs[`${video}`])
       this.$refs[`${video}`][0].play()
     },
     playVoice (voice) {
