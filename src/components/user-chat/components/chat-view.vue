@@ -39,6 +39,8 @@
                 </div>
                 <div v-else>[未处理消息]</div>
               </li>
+              <!-- 分隔 -->
+              <li style="height: 20px;"></li>
             </ul>
           </div>
           <div :key="`clear-div-${index}`" class="clear"></div>
@@ -193,18 +195,22 @@ export default {
 </script>
 
 <style scoped>
+  ul {
+    -webkit-padding-start: 15px !important;
+  }
+
   .clear {
     clear:both;
   }
 
   .wrapper {
-    height: 80%;
+    height: 85%;
     overflow: scroll;
+    padding: 0 25px;
   }
 
   .content {
     list-style: none;
-    padding: 0 25px;
   }
 
   .wrapper li {
@@ -214,11 +220,13 @@ export default {
   }
 
   .chat-content {
-    padding-left: 65px;
     color: rgba(0, 0, 0, 0.9);;
     font-size: 16px;
     font-weight: bold;
     word-break: break-all;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
   }
 
   .chat-profile {
@@ -242,7 +250,7 @@ export default {
   }
   .chat-content-row-right .chat-content {
     text-align: right;
-    padding-right: 65px;
+    padding-right: 15px;
     color: black !important;
   }
 
