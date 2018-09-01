@@ -11,14 +11,15 @@
 ├─ config
 ├─ dist
 ├─ src
+│  ├─ api   // 接口请求
 │  ├─ assets // 资源
 │  │  ├─ icons
 │  │  ├─ image
 │  │  ├─ library
 │  │  └─ style
 │  ├─ components // 组件
-│  │  ├─ core // 核心组件
-│  │  └─ demo // 示例组件
+│  │  ├─ common // 公用组件
+│  │  └─ ......
 │  ├─ i18n // 多国语
 │  ├─ libs // 通用库
 │  ├─ menu // 菜单
@@ -28,7 +29,8 @@
 │  ├─ router // 路由
 │  ├─ store // vuex
 │  ├─ App.vue
-│  └─ main.js //入口
+│  ├─ main.js //入口
+│  └─ setting.js //界面热键设置
 ├─ static // 静态资源
 ├─ .babelrc
 ├─ .editorconfig
