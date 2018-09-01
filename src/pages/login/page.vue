@@ -72,11 +72,11 @@ export default {
     /**
      * @description 提交表单
      */
-    // 提交登陆信息
+    // 提交登录信息
     submit () {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          // 登陆
+          // 登录
           // 注意 这里的演示没有传验证码
           // 具体需要传递的数据请自行修改代码
           this.login({
@@ -85,7 +85,7 @@ export default {
             password: this.formLogin.password
           })
         } else {
-          // 登陆表单校验失败
+          // 登录表单校验失败
           this.$message.error('表单校验失败')
         }
       })

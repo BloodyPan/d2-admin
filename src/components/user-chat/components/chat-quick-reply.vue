@@ -42,14 +42,15 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addTag">确 定</el-button>
+        <el-button type="primary" @click="addReplyTag">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import util from '@/libs/util.js'
+import { GetQuickReply, AddQuickReply, DelQuickReply } from '@/api/components/user-chat/chat-quick-reply'
+
 export default {
   name: 'chat-quick-reply',
   data () {
@@ -75,18 +76,7 @@ export default {
     }
   },
   mounted () {
-    this.$axios({
-      method: 'get',
-      url: 'QuickReply'
-    })
-      .then(res => {
-        if (res.content.total > 0) {
-          this.replies = res.content.replies
-        }
-      })
-      .catch(err => {
-        this.$message.error(err)
-      })
+    this.getTag()
   },
   methods: {
     sendQuickReply (desc) {
@@ -105,52 +95,44 @@ export default {
       } catch (err) {
       }
     },
-    addTag () {
+    addReplyTag () {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.dialogFormVisible = false
-          let params = util.spot.csrfParam()
-          params.append('data', JSON.stringify(this.form))
-          this.$axios({
-            method: 'post',
-            url: 'QuickReply',
-            data: params
-          })
-            .then(res => {
-              this.replies.push(res.reply)
-              this.$notify({
-                title: '添加成功',
-                message: '快捷回复已经成功添加',
-                duration: 3000
-              })
-            })
-            .catch(err => {
-              this.$message.error(err)
-            })
+          this.addTag(this.form)
         } else {
           this.$message.error('表单验证未通过')
           return false
         }
       })
     },
-    delTag (qid) {
-      let params = util.spot.csrfParam()
-      params.append('pk', qid)
-      this.$axios({
-        method: 'post',
-        url: 'DelQuickReply',
-        data: params
+    async getTag (params) {
+      const res = await GetQuickReply(params)
+      if (res.content.total > 0) {
+        this.replies = res.content.replies
+      }
+    },
+    async addTag (data) {
+      const res = await AddQuickReply({
+        data: JSON.stringify(data)
       })
-        .then(res => {
-          this.$notify({
-            title: '删除成功',
-            message: '快捷回复已经成功删除',
-            duration: 3000
-          })
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+      this.replies.push(res.reply)
+      this.$notify({
+        title: '添加成功',
+        message: '快捷回复已经成功添加',
+        duration: 3000
+      })
+    },
+    async delTag (qid) {
+      await DelQuickReply({
+        pk: qid
+      })
+
+      this.$notify({
+        title: '删除成功',
+        message: '快捷回复已经成功删除',
+        duration: 3000
+      })
     }
   }
 }

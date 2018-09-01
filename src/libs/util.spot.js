@@ -109,12 +109,12 @@ spot.getUAInfo = ua => {
 spot.trim = text => text.replace(/(^\s*)|(\s*$)/g, '')
 
 /**
- * @description post都要带上csrf token
+ * @description 清除登录相关的cookie
  */
-spot.csrfParam = () => {
-  let params = new URLSearchParams()
-  params.append('csrfmiddlewaretoken', cookies.get('csrftoken', false))
-  return params
+spot.flushAccount = () => {
+  cookies.remove('sessionid', false)
+  cookies.remove('csrftoken', false)
+  cookies.remove('uuid')
 }
 
 export default spot

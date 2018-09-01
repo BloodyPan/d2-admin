@@ -17,5 +17,3 @@ yarn-error.log*
 *.sln
 *.sw*
 
-# d2admin
-dev/design

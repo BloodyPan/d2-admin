@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import util from '@/libs/util.js'
+import { GetAndroidUpdateSetting, SaveAndroidUpdateSetting } from '@/api/pages/settings/android'
 export default {
   name: 'android',
   data () {
@@ -134,38 +134,27 @@ export default {
     }
   },
   mounted () {
-    this.$axios({
-      method: 'get',
-      url: 'AndroidUpdateSetting'
-    })
-      .then(res => {
-        this.form = JSON.parse(res.msg)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.getSettings()
   },
   methods: {
+    async getSettings () {
+      const res = await GetAndroidUpdateSetting()
+      this.form = JSON.parse(res.msg)
+    },
+    async saveSettings (data) {
+      await SaveAndroidUpdateSetting(data)
+      this.$notify({
+        title: '修改成功',
+        message: '安卓版本更新配置已成功上线',
+        duration: 3000
+      })
+    },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let params = util.spot.csrfParam()
-          params.append('data', JSON.stringify(this.form))
-          this.$axios({
-            method: 'post',
-            url: 'AndroidUpdateSetting',
-            data: params
+          this.saveSettings({
+            data: JSON.stringify(this.form)
           })
-            .then(res => {
-              this.$notify({
-                title: '修改成功',
-                message: '安卓版本更新配置已成功上线',
-                duration: 3000
-              })
-            })
-            .catch(err => {
-              console.log(err)
-            })
         } else {
           this.$message.error('表单验证未通过')
           return false
