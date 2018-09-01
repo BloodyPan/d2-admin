@@ -40,6 +40,7 @@
 <script>
 import util from '@/libs/util.spot'
 import bs from '@/components/common/bs'
+import { UserChatList, FavChat } from '@/api/components/user-chat/user-chat-list'
 
 export default {
   name: 'user-list',
@@ -81,30 +82,23 @@ export default {
       }
       return text
     },
-    fetchData () {
+    async fetchData () {
       let offset = (this.currentPage - 1) * this.currentPageSize
       if (offset > this.total) {
         return
       }
-      this.$axios({
-        method: 'get',
-        url: 'UserChat',
-        params: {
-          limit: this.currentPageSize,
-          offset: offset
-        }
+
+      const res = await UserChatList({
+        limit: this.currentPageSize,
+        offset: offset
       })
-        .then(res => {
-          this.total = res.content.total
-          this.listData = this.listData.concat(res.content.chats)
-          this.$nextTick(() => {
-            this.BS.refresh()
-            this.freshData = false
-          })
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+
+      this.total = res.content.total
+      this.listData = this.listData.concat(res.content.chats)
+      this.$nextTick(() => {
+        this.BS.refresh()
+        this.freshData = false
+      })
     },
     showChat (event, index) {
       this.listData[index].unread = 0
@@ -115,31 +109,24 @@ export default {
       this.selectedChat = event.currentTarget
       this.$emit('showChat', this.listData[index].user.id)
     },
-    clickicon (event) {
+    async clickicon (event) {
       let index = event.currentTarget.getAttribute('index')
       this.listData[index].favFlag = !this.listData[index].favFlag
       event.stopPropagation()
-      let params = util.csrfParam()
-      params.append('uid', this.listData[index].user.id)
-      params.append('fav', this.listData[index].favFlag ? 1 : 0)
-      this.$axios({
-        method: 'post',
-        url: 'FavChat',
-        data: params
+
+      await FavChat({
+        uid: this.listData[index].user.id,
+        fav: this.listData[index].favFlag ? 1 : 0
       })
-        .then(res => {
-          let isFav = this.listData[index].favFlag
-          let title = '与 ' + this.listData[index].user.username
-          title += isFav ? ' 的聊天已加入收藏' : ' 的聊天已从收藏中移除'
-          this.$notify({
-            title: title,
-            message: '',
-            duration: 2000
-          })
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+
+      let isFav = this.listData[index].favFlag
+      let title = '与 ' + this.listData[index].user.username
+      title += isFav ? ' 的聊天已加入收藏' : ' 的聊天已从收藏中移除'
+      this.$notify({
+        title: title,
+        message: '',
+        duration: 2000
+      })
     }
   }
 }

@@ -1,24 +1,31 @@
 import util from '@/libs/util.js'
+import { AccountLogin } from '@/api/sys/login'
 
 export default {
   namespaced: true,
   actions: {
     /**
-     * @description 登陆
+     * @description 登录
      * @param {Object} param context
      * @param {Object} param vm {Object} vue 实例
      * @param {Object} param username {String} 用户账号
      * @param {Object} param password {String} 密码
+     * @param {Object} param route {Object} 登录成功后定向的路由对象
      */
-    login ({ commit }, { vm, username, password }) {
+    login ({
+      commit
+    }, {
+      vm,
+      username,
+      password,
+      route = {
+        name: 'index'
+      }
+    }) {
       // 开始请求登录接口
-      vm.$axios({
-        method: 'post',
-        url: 'Login',
-        data: {
-          username,
-          password
-        }
+      AccountLogin({
+        username,
+        password
       })
         .then(res => {
           const setting = {
@@ -31,21 +38,27 @@ export default {
           commit('d2admin/user/set', {
             name: res.user.nickname
           }, { root: true })
-          // 用户登陆后从持久化数据加载一系列的设置
+          // 设置 vuex 用户信息
+          commit('d2admin/user/set', {
+            name: res.name
+          }, { root: true })
+          // 用户登录后从持久化数据加载一系列的设置
           commit('load')
-          // 跳转路由
-          vm.$router.push({
-            name: 'index'
-          })
+          // 更新路由 尝试去获取 cookie 里保存的需要重定向的页面完整地址
+          const path = util.cookies.get('redirect')
+          // 根据是否存有重定向页面判断如何重定向
+          vm.$router.replace(path ? { path } : route)
+          // 删除 cookie 中保存的重定向页面
+          util.cookies.remove('redirect')
         })
         .catch(err => {
-          console.group('登陆结果')
+          console.group('登录结果')
           console.log('err: ', err)
           console.groupEnd()
         })
     },
     /**
-     * @description 注销用户并返回登陆页面
+     * @description 注销用户并返回登录页面
      * @param {Object} param context
      * @param {Object} param vm {Object} vue 实例
      * @param {Object} param confirm {Boolean} 是否需要确认
@@ -56,9 +69,7 @@ export default {
        */
       function logout () {
         // 删除cookie
-        util.cookies.remove('sessionid', false)
-        util.cookies.remove('csrftoken', false)
-        util.cookies.remove('uuid')
+        util.spot.flushAccount()
         // 跳转路由
         vm.$router.push({
           name: 'login'
@@ -87,7 +98,7 @@ export default {
   },
   mutations: {
     /**
-     * @description 用户登陆后从持久化数据加载一系列的设置
+     * @description 用户登录后从持久化数据加载一系列的设置
      * @param {Object} state vuex state
      */
     load (state) {

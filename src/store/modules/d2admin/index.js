@@ -9,6 +9,7 @@ import ua from './modules/ua'
 import gray from './modules/gray'
 import page from './modules/page'
 import transition from './modules/transition'
+import search from './modules/search'
 
 export default {
   namespaced: true,
@@ -23,6 +24,7 @@ export default {
     ua,
     gray,
     page,
-    transition
+    transition,
+    search
   }
 }

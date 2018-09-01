@@ -13,12 +13,12 @@ import i18n from './i18n'
 import d2Admin from '@/plugin/d2admin'
 
 // [ 可选插件组件 ] 图表
-import VCharts from 'v-charts'
+// import VCharts from 'v-charts'
 // [ 可选插件组件 ] 右键菜单
 import contentmenu from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
 // [ 可选插件组件 ] JSON 树状视图
-import vueJsonTreeView from 'vue-json-tree-view'
+// import vueJsonTreeView from 'vue-json-tree-view'
 // [ 可选插件组件 ] 网格布局组件
 import { GridLayout, GridItem } from 'vue-grid-layout'
 // [ 可选插件组件 ] 区域划分组件
@@ -33,9 +33,9 @@ import { frameInRoutes } from '@/router/routes'
 Vue.use(d2Admin)
 
 // 可选插件组件
-Vue.use(VCharts)
+// Vue.use(VCharts)
 Vue.use(contentmenu)
-Vue.use(vueJsonTreeView)
+// Vue.use(vueJsonTreeView)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)
@@ -50,9 +50,11 @@ new Vue({
     this.$store.commit('d2admin/page/init', frameInRoutes)
     // 设置顶栏菜单
     this.$store.commit('d2admin/menu/headerSet', menuHeader)
+    // 初始化菜单搜索功能
+    this.$store.commit('d2admin/search/init', menuHeader)
   },
   mounted () {
-    // 用户登陆后从数据库加载一系列的设置
+    // 用户登录后从数据库加载一系列的设置
     this.$store.commit('d2admin/account/load')
     // 获取并记录用户 UA
     this.$store.commit('d2admin/ua/get')

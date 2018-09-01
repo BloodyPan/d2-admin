@@ -47,6 +47,8 @@
 
 <script>
 import util from '@/libs/util.js'
+import { NewUserList } from '@/api/pages/user/new-user'
+
 export default {
   data () {
     return {
@@ -65,24 +67,15 @@ export default {
       }
       return ''
     },
-    dateFilter (index) {
+    async dateFilter (index) {
       this.dateIndex = index
-      this.$axios({
-        method: 'get',
-        url: 'NewUserList',
-        params: {
-          day: this.dateIndex,
-          limit: this.currentPageSize,
-          offset: (this.currentPage - 1) * this.currentPageSize
-        }
+      const res = await NewUserList({
+        day: this.dateIndex,
+        limit: this.currentPageSize,
+        offset: (this.currentPage - 1) * this.currentPageSize
       })
-        .then(res => {
-          this.total = res.content.total
-          this.tableData = res.content.persons
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+      this.total = res.content.total
+      this.tableData = res.content.persons
     },
     handleSizeChange (val) {
       this.currentPage = 1

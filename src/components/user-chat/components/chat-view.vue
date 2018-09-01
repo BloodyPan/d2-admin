@@ -55,6 +55,7 @@
 import util from '@/libs/util.js'
 import bs from '@/components/common/bs'
 import chatViewTag from './chat-view-tag'
+import { GetChatMessage, SendChatMessage } from '@/api/components/user-chat/chat-view'
 
 export default {
   name: 'chat-view',
@@ -127,28 +128,20 @@ export default {
         }, 100)
       })
     },
-    fetch (uid) {
+    async fetch (uid) {
       if (this.uid === uid) {
         return
       }
       this.refreshScroll = false
       this.uid = uid
-      this.$axios({
-        method: 'get',
-        url: 'ChatMessage',
-        params: {
-          uid: uid
-        }
-      })
-        .then(res => {
-          this.user = res.user
-          this.device = res.user.device
-          this.generateData(res.content.messages, true)
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+
       util.log.capsule('ChatView-Fetch', uid, 'danger')
+      const res = await GetChatMessage({
+        uid: uid
+      })
+      this.user = res.user
+      this.device = res.user.device
+      this.generateData(res.content.messages, true)
     },
     send (text) {
       if (this.uid !== 0) {
@@ -162,23 +155,12 @@ export default {
             uid: util.spot.spotHelperId
           }
         ]
-        this.generateData(msgs, false)
-
-        let params = util.spot.csrfParam()
-        params.append('uid', this.uid)
-        params.append('message', text)
-        params.append('message_type', 0)
-        this.$axios({
-          method: 'post',
-          url: 'ChatMessage',
-          data: params
+        SendChatMessage({
+          uid: this.uid,
+          message: text,
+          message_type: 0
         })
-          .then(res => {
-
-          })
-          .catch(err => {
-            this.$message.error(err)
-          })
+        this.generateData(msgs, false)
       }
     },
     playPeek (video) {

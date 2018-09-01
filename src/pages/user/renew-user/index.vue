@@ -55,7 +55,8 @@
 </template>
 
 <script>
-import util from '@/libs/util.spot.js'
+import { ResetUser, ResetUserList, DelTestUser } from '@/api/pages/user/renew-user'
+
 export default {
   data () {
     return {
@@ -90,22 +91,13 @@ export default {
       }
       return ''
     },
-    fetch () {
-      this.$axios({
-        method: 'get',
-        url: 'ResetUser',
-        params: {
-          limit: this.currentPageSize,
-          offset: (this.currentPage - 1) * this.currentPageSize
-        }
+    async fetch () {
+      const res = await ResetUserList({
+        limit: this.currentPageSize,
+        offset: (this.currentPage - 1) * this.currentPageSize
       })
-        .then(res => {
-          this.total = res.content.total
-          this.tableData = res.content.persons
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+      this.total = res.content.total
+      this.tableData = res.content.persons
     },
     handleSizeChange (val) {
       this.currentPage = 1
@@ -115,46 +107,27 @@ export default {
     handleCurrentChange (val) {
       this.fetch()
     },
-    unbindTestPhone (index) {
+    async unbindTestPhone (index) {
       this.unbindList[index].del = true
-
-      let params = util.csrfParam()
-      params.append('phone', '13800000' + this.unbindList[index].phone)
-      this.$axios({
-        method: 'post',
-        url: 'DelTestUser',
-        data: params
+      const res = await DelTestUser({
+        phone: '13800000' + this.unbindList[index].phone
       })
-        .then(res => {
-          this.$notify({
-            title: '释放成功',
-            message: res.msg,
-            duration: 3000
-          })
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+      this.$notify({
+        title: '释放成功',
+        message: res.msg,
+        duration: 3000
+      })
     },
-    handleReset (index, row) {
-      let params = util.csrfParam()
-      params.append('uid', row.id)
-      this.$axios({
-        method: 'post',
-        url: 'ResetUser',
-        data: params
+    async handleReset (index, row) {
+      const res = await ResetUser({
+        uid: row.id
       })
-        .then(res => {
-          row.test.resetFlag = false
-          this.$notify({
-            title: '成功重置用户状态',
-            message: res.msg,
-            duration: 3000
-          })
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
+      row.test.resetFlag = false
+      this.$notify({
+        title: '成功重置用户状态',
+        message: res.msg,
+        duration: 3000
+      })
     }
   },
   mounted () {
