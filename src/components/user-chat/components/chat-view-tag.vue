@@ -7,6 +7,7 @@
     <div class="bg-tag-primary">当前版本: {{ device.appVersion }}</div>
     <div class="bg-tag-info">语言: {{ device.clientLanguage }}</div>
     <br>
+    <div class="bg-tag-dark" v-if="user.id !== null">ID: {{ md5Encode(String(user.id)) }}</div>
     <div class="bg-tag-gray-light">型号: {{ getUA(device.userAgent) }}</div>
     <div class="bg-tag-danger-tint" v-if="device.phoneLocation">
       手机归属地: {{ device.phoneLocation }}
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+import md5 from 'js-md5'
 import util from '@/libs/util.js'
 export default {
   name: 'chat-view-tag',
@@ -41,7 +43,8 @@ export default {
   },
   methods: {
     getUA: ua => util.spot.getUAInfo(ua),
-    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm')
+    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
+    md5Encode: str => md5.hex(str)
   }
 }
 </script>
