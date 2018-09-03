@@ -49,10 +49,13 @@
 // 安装依赖
 npm i
 
-// 运行
+// 运行开发环境
 npm run dev
 
-// 打包
+// 测试环境打包
+npm run test
+
+// 正式环境打包
 npm run build
 ```
 
