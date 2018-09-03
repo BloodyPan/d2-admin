@@ -4,7 +4,8 @@ import settings from './modules/settings'
 
 // 菜单 侧边栏
 export const menuAside = [
-  userModule
+  userModule,
+  settings
 ]
 
 // 菜单 顶栏

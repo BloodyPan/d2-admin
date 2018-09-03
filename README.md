@@ -7,9 +7,8 @@
 
 ## 项目结构
 ```
-├─ build
-├─ config
-├─ dist
+├─ public
+├─ dist // 打包生成的文件夹
 ├─ src
 │  ├─ api   // 接口请求
 │  ├─ assets // 资源
