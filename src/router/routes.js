@@ -52,6 +52,23 @@ const userRouter = {
 /**
  * 线上设置
  */
+const entity = {
+  path: '/entity',
+  redirect: { name: 'index' },
+  component: layoutHeaderAside,
+  children: (pre => [
+    {
+      path: 'manager',
+      name: `${pre}manager`,
+      meta: { ...meta, title: '内容管理' },
+      component: () => import('@/pages/entity/manager')
+    }
+  ])('entity-')
+}
+
+/**
+ * 线上设置
+ */
 const settings = {
   path: '/settings',
   redirect: { name: 'index' },
@@ -72,6 +89,7 @@ const settings = {
 const frameIn = [
   index,
   userRouter,
+  entity,
   settings
 ]
 

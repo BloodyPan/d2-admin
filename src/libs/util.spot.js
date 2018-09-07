@@ -2,6 +2,8 @@ import cookies from './util.cookies.js'
 const spot = {}
 
 spot.spotHelperId = 3287
+spot.mediaPrefix = 'http://npic.getremark.com/'
+spot.profilePrefix = 'http://ppic.getremark.com/'
 
 /**
  * @description 输入时间戳，并格式化输出
