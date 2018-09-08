@@ -23,3 +23,11 @@ export function DelEntityStory (data) {
     data: data
   })
 }
+
+export function BanUser (data) {
+  return request({
+    url: '/spotcms/BanUser',
+    method: 'post',
+    data: data
+  })
+}

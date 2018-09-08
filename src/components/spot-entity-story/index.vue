@@ -58,7 +58,7 @@
         </li>
         <li>
           <div class="btn-div">
-            <el-button type="danger" :disabled="disBan" :loading="banLoading" @click="banUser">{{ banWording }}</el-button>
+            <el-button type="danger" :loading="banLoading" @click="banUser">{{ banWording }}</el-button>
             <el-button type="danger" :disabled="disDel" :loading="delLoading" @click="delStory">{{ delWording }}</el-button>
           </div>
         </li>
@@ -81,7 +81,7 @@
 <script>
 import util from '@/libs/util.js'
 import peek from './components/peek'
-import { EntityFeed, DelEntityStory } from '@/api/pages/entity/manager'
+import { EntityFeed, DelEntityStory, BanUser } from '@/api/pages/entity/manager'
 
 export default {
   name: 'entity-story',
@@ -104,17 +104,17 @@ export default {
       entityId: '',
       datas: [],
       moreData: true,
-      /* ------------ 界面展示 -------- */
+      /* ------------ 基本信息 -------- */
       nickname: '',
       username: '',
       profilePhoto: '',
+      banLevel: 0,
       remarkTime: 0,
       remarkMsg: '',
       like: 0,
       dislike: 0,
       seen: 0,
       /* ------------ Btn ----------- */
-      disBan: false,
       disDel: false,
       banWording: '禁言',
       delWording: '删除',
@@ -163,6 +163,7 @@ export default {
         this.username = remark.actor.username
         this.nickname = remark.actor.nickname
         this.profilePhoto = remark.actor.profilePhoto
+        this.banLevel = remark.actor.banLevel
         this.remarkTime = remark.time
         this.remarkMsg = remark.message
         this.like = remark.like
@@ -234,7 +235,16 @@ export default {
       }
     },
     async banUser () {
+      let blockFlag = this.datas[this.currentPage - 1].actor.banLevel === 0 ? 1 : 0
       this.banLoading = true
+      await BanUser({
+        username: this.username,
+        block: blockFlag
+      })
+      this.banLoading = false
+      this.banLevel = true
+      this.datas[this.currentPage - 1].actor.banLevel = blockFlag
+      this.btnWordingHandler()
     },
     async delStory () {
       this.delLoading = true
@@ -249,15 +259,13 @@ export default {
     },
     btnWordingHandler () {
       this.delBtnWording()
-      // this.banBtnWording()
+      this.banBtnWording()
     },
     banBtnWording () {
-      let delFlag = this.datas[this.currentPage - 1].delFlag
-      if (delFlag) {
-        this.disBan = true
-        this.banWording = '已禁言'
+      let banLevel = this.datas[this.currentPage - 1].actor.banLevel
+      if (banLevel === 1) {
+        this.banWording = '解禁'
       } else {
-        this.disBan = false
         this.banWording = '禁言'
       }
     },
