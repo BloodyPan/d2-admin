@@ -96,7 +96,7 @@ export default {
       total: 0,
       limit: 5,
       lid: '0',
-      type: 0,
+      blocked: 0,
       currentPage: 1,
       lastCorrectPage: 1,
       currentPageSize: 1,
@@ -167,7 +167,7 @@ export default {
         this.remarkMsg = remark.message
         this.like = remark.like
         this.dislike = remark.dislike
-        this.seen = remark.viewers.total
+        this.seen = remark.seen
 
         this.$nextTick(() => {
           let content = {}
@@ -187,14 +187,14 @@ export default {
         })
       }
     },
-    fetchData (type, entityId, name) {
+    fetchData (blocked, entityId, name) {
       if (entityId !== this.entityId) {
         this.total = 0
         this.datas = []
         this.handleCurrentChange()
       }
       this.title = name + ' 的一天'
-      this.type = type
+      this.blocked = blocked
       this.entityId = entityId
       this.currentPage = 1
 
@@ -207,11 +207,12 @@ export default {
       const res = await EntityFeed({
         lid: this.lid,
         limit: this.limit,
+        blocked: this.blocked,
         entity_id: this.entityId,
-        first_fetch: '1'
+        first_fetch: 1
       })
-
-      let apiDatas = JSON.parse(res.msg)
+      let apiDatas = res.content
+      console.log(apiDatas)
       this.datas = apiDatas.remarks
       this.total = apiDatas.total
       this.moreData = apiDatas.moreData
@@ -222,10 +223,11 @@ export default {
         const res = await EntityFeed({
           lid: this.datas[this.datas.length - 1].id,
           limit: this.limit,
+          blocked: this.blocked,
           entity_id: this.entityId
         })
 
-        let apiDatas = JSON.parse(res.msg)
+        let apiDatas = res.content
         this.datas = this.datas.concat(apiDatas.remarks)
         this.moreData = apiDatas.moreData
         console.log(apiDatas)
@@ -247,6 +249,17 @@ export default {
     },
     btnWordingHandler () {
       this.delBtnWording()
+      // this.banBtnWording()
+    },
+    banBtnWording () {
+      let delFlag = this.datas[this.currentPage - 1].delFlag
+      if (delFlag) {
+        this.disBan = true
+        this.banWording = '已禁言'
+      } else {
+        this.disBan = false
+        this.banWording = '禁言'
+      }
     },
     delBtnWording () {
       let delFlag = this.datas[this.currentPage - 1].delFlag
