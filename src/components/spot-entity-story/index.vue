@@ -59,7 +59,7 @@
         </li>
         <li>
           <div class="btn-div">
-            <el-button type="primary" v-if="blocked" :loading="unblockLoading" @click="unblock">{{ blockWording }}</el-button>
+            <el-button type="primary" v-if="blocked" :disabled="disUnblock" :loading="unblockLoading" @click="unblock">{{ unblockWording }}</el-button>
             <el-button type="danger" :loading="banLoading" @click="banUser">{{ banWording }}</el-button>
             <el-button type="danger" :disabled="disDel" :loading="delLoading" @click="delStory">{{ delWording }}</el-button>
           </div>
@@ -122,7 +122,7 @@ export default {
       disUnblock: false,
       banWording: '禁言',
       delWording: '删除',
-      blockWording: '正常并忽略',
+      unblockWording: '正常并忽略',
       banLoading: false,
       delLoading: false,
       unblockLoading: false,
@@ -273,7 +273,7 @@ export default {
         entity_id: this.entityId
       })
       this.unblockLoading = false
-      this.datas[this.currentPage - 1].unblock = true
+      this.datas[this.currentPage - 1].unblockFlag = true
       this.btnWordingHandler()
     },
     btnWordingHandler () {
@@ -300,8 +300,8 @@ export default {
       }
     },
     unblockBtnWording () {
-      let unblock = this.datas[this.currentPage - 1].unblock
-      if (unblock) {
+      let unblockFlag = this.datas[this.currentPage - 1].unblockFlag
+      if (unblockFlag) {
         this.disUnblock = true
         this.unblockWording = '已处理'
       } else {
