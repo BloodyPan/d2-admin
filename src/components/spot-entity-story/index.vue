@@ -4,10 +4,10 @@
     :visible.sync="visible"
     width="50%"
     :before-close="handleClose">
-    <button type="button" class="el-carousel__arrow arrow-left">
+    <button type="button" class="el-carousel__arrow arrow-left" @click="prePage">
       <i class="el-icon-arrow-left"></i>
     </button>
-    <button type="button" class="el-carousel__arrow arrow-right">
+    <button type="button" class="el-carousel__arrow arrow-right" @click="nextPage">
       <i class="el-icon-arrow-right"></i>
     </button>
     <div style="padding-left: 10px;">
@@ -16,15 +16,15 @@
         <li>
           <div class="info-common user-info">
             <div class="profile-div">
-              <img class="profile" src="http://ppic.getremark.com/Avatar00.jpg">
+              <img class="profile" :src="profilePhoto">
             </div>
             <div style="margin-top: 5px;">
               <span>昵称</span>
-              <span class="float-right">kingoflu</span>
+              <span class="float-right">{{ nickname }}</span>
             </div>
             <div style="margin-top: 5px;">
               <span>用户名</span>
-              <span class="float-right">o.o</span>
+              <span class="float-right">{{ username }}</span>
             </div>
           </div>
         </li>
@@ -32,7 +32,11 @@
           <div class="info-common story-info">
             <div>
               <span>投稿时间</span>
-              <span class="float-right">2018-09-06 13:14:56</span>
+              <span class="float-right">{{ timeFormat(remarkTime) }}</span>
+            </div>
+            <div>
+              <span>Caption</span>
+              <span class="float-right">{{ remarkMsg }}</span>
             </div>
           </div>
         </li>
@@ -40,22 +44,22 @@
           <div class="info-common like-info">
             <div>
               <img class="info-icon" src="http://pic7.getremark.com/cms-dislike.png">
-              <span class="info-count">1000</span>
+              <span class="info-count">{{ dislike }}</span>
             </div>
             <div>
               <img class="info-icon" src="http://pic7.getremark.com/cms-like.png">
-              <span class="info-count">1000</span>
+              <span class="info-count">{{ like }}</span>
             </div>
             <div style="margin-top: 5px;">
               <img class="info-icon" src="http://pic7.getremark.com/cms-seen.png">
-              <span class="info-count">1000</span>
+              <span class="info-count">{{ seen }}</span>
             </div>
           </div>
         </li>
         <li>
           <div class="btn-div">
-            <el-button type="danger">封禁</el-button>
-            <el-button type="danger">删除</el-button>
+            <el-button type="danger" :disabled="disBan" :loading="banLoading" @click="banUser">{{ banWording }}</el-button>
+            <el-button type="danger" :disabled="disDel" :loading="delLoading" @click="delStory">{{ delWording }}</el-button>
           </div>
         </li>
       </ul>
@@ -66,6 +70,7 @@
           :current-page.sync="currentPage"
           :page-size="currentPageSize"
           background
+          layout="total, prev, pager, next"
           :total="total">
         </el-pagination>
       </div>
@@ -74,7 +79,9 @@
 </template>
 
 <script>
+import util from '@/libs/util.js'
 import peek from './components/peek'
+import { EntityFeed, DelEntityStory } from '@/api/pages/entity/manager'
 
 export default {
   name: 'entity-story',
@@ -85,32 +92,171 @@ export default {
     return {
       title: '',
       visible: false,
+      /* ------------ 分页相关 -------- */
       total: 0,
+      limit: 5,
+      lid: '0',
+      type: 0,
       currentPage: 1,
+      lastCorrectPage: 1,
       currentPageSize: 1,
+      /* ------------ 接口数据 -------- */
+      entityId: '',
+      datas: [],
+      moreData: true,
+      /* ------------ 界面展示 -------- */
+      nickname: '',
+      username: '',
+      profilePhoto: '',
+      remarkTime: 0,
+      remarkMsg: '',
+      like: 0,
+      dislike: 0,
+      seen: 0,
+      /* ------------ Btn ----------- */
+      disBan: false,
+      disDel: false,
+      banWording: '禁言',
+      delWording: '删除',
+      banLoading: false,
+      delLoading: false,
       /* ------------ peek 组件 -------- */
       content: {}
     }
   },
   methods: {
+    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
     handleClose (done) {
       this.$refs.peek.stopPeek()
       done()
     },
+    prePage () {
+      let page = this.currentPage - 1
+      if (page > 0) {
+        this.currentPage = page
+        this.handleCurrentChange()
+      }
+    },
+    nextPage () {
+      let page = this.currentPage + 1
+      if (page <= this.total) {
+        this.currentPage = page
+        this.handleCurrentChange()
+      }
+    },
     handleCurrentChange () {
-      console.log('asdasd')
+      let dataIndex = this.currentPage - 1
+      if (dataIndex > this.datas.length * 0.5) {
+        this.requestMoreFeedDatas()
+      }
+      if (dataIndex >= this.datas.length) {
+        this.currentPage = this.lastCorrectPage + 1
+        dataIndex = this.lastCorrectPage
+      }
+      if (this.datas.length > 0 && this.currentPage <= this.datas.length) {
+        this.btnWordingHandler()
+        let remark = this.datas[dataIndex]
+        util.cookies.set('entity_lid_' + this.entityId, remark.id)
+        this.lastCorrectPage = this.currentPage
+
+        this.lid = remark.id
+        this.username = remark.actor.username
+        this.nickname = remark.actor.nickname
+        this.profilePhoto = remark.actor.profilePhoto
+        this.remarkTime = remark.time
+        this.remarkMsg = remark.message
+        this.like = remark.like
+        this.dislike = remark.dislike
+        this.seen = remark.viewers.total
+
+        this.$nextTick(() => {
+          let content = {}
+          if (remark.type === 0) {
+            content = {
+              video: '',
+              photo: remark.picture
+            }
+          } else {
+            content = {
+              video: remark.video,
+              photo: remark.doodle
+            }
+          }
+          this.content = content
+          this.$refs.peek.playPeek()
+        })
+      }
     },
     fetchData (type, entityId, name) {
+      if (entityId !== this.entityId) {
+        this.total = 0
+        this.datas = []
+        this.handleCurrentChange()
+      }
       this.title = name + ' 的一天'
+      this.type = type
+      this.entityId = entityId
+      this.currentPage = 1
+
+      let cookieLid = util.cookies.get('entity_lid_' + this.entityId)
+      this.lid = cookieLid === void 0 ? '0' : this.lid
       this.visible = true
-      this.$nextTick(() => {
-        this.content = {
-          lid: '',
-          video: 'http://npic.getremark.com/e24e594f8a02da1cd32cec866060ca9b-810cb9398bc5b554ef3ecfd76b605aad',
-          photo: 'http://npic.getremark.com/1a3ab24a74e60ece764a7a815b1433ad-70b00595bc514332f1c4a7e92bcdc0bb'
-        }
-        this.$refs.peek.playPeek()
+      this.requestFeedDatas()
+    },
+    async requestFeedDatas () {
+      const res = await EntityFeed({
+        lid: this.lid,
+        limit: this.limit,
+        entity_id: this.entityId,
+        first_fetch: '1'
       })
+
+      let apiDatas = JSON.parse(res.msg)
+      this.datas = apiDatas.remarks
+      this.total = apiDatas.total
+      this.moreData = apiDatas.moreData
+      this.handleCurrentChange()
+    },
+    async requestMoreFeedDatas () {
+      if (this.moreData) {
+        const res = await EntityFeed({
+          lid: this.datas[this.datas.length - 1].id,
+          limit: this.limit,
+          entity_id: this.entityId
+        })
+
+        let apiDatas = JSON.parse(res.msg)
+        this.datas = this.datas.concat(apiDatas.remarks)
+        this.moreData = apiDatas.moreData
+        console.log(apiDatas)
+      }
+    },
+    async banUser () {
+      this.banLoading = true
+    },
+    async delStory () {
+      this.delLoading = true
+      await DelEntityStory({
+        rid: this.lid,
+        username: this.username,
+        entity_id: this.entityId
+      })
+      this.delLoading = false
+      this.datas[this.currentPage - 1].delFlag = true
+      this.btnWordingHandler()
+    },
+    btnWordingHandler () {
+      this.delBtnWording()
+    },
+    delBtnWording () {
+      let delFlag = this.datas[this.currentPage - 1].delFlag
+      if (delFlag) {
+        this.disDel = true
+        this.delWording = '已删除'
+      } else {
+        this.disDel = false
+        this.delWording = '删除'
+      }
     }
   }
 }

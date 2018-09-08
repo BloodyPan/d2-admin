@@ -10,7 +10,7 @@
     </video>
     <img
       class="chat-peek-photo chat-peek-doodle"
-      v-if="peekContent.video"
+      v-if="peekContent.video && peekContent.photo"
       :src="peekContent.photo"
       @click="playPeek">
     <img
