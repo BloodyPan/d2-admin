@@ -31,3 +31,11 @@ export function BanUser (data) {
     data: data
   })
 }
+
+export function UnBlockStory (data) {
+  return request({
+    url: '/spotcms/UnBlockStory',
+    method: 'post',
+    data: data
+  })
+}

@@ -4,10 +4,11 @@
     :visible.sync="visible"
     width="50%"
     :before-close="handleClose">
-    <button type="button" class="el-carousel__arrow arrow-left" @click="prePage">
+    <div v-if="overlay" class="overlay">没有新的内容了</div>
+    <button type="button" v-if="!overlay" class="el-carousel__arrow arrow-left" @click="prePage">
       <i class="el-icon-arrow-left"></i>
     </button>
-    <button type="button" class="el-carousel__arrow arrow-right" @click="nextPage">
+    <button type="button" v-if="!overlay" class="el-carousel__arrow arrow-right" @click="nextPage">
       <i class="el-icon-arrow-right"></i>
     </button>
     <div style="padding-left: 10px;">
@@ -58,6 +59,7 @@
         </li>
         <li>
           <div class="btn-div">
+            <el-button type="primary" v-if="blocked" :loading="unblockLoading" @click="unblock">{{ blockWording }}</el-button>
             <el-button type="danger" :loading="banLoading" @click="banUser">{{ banWording }}</el-button>
             <el-button type="danger" :disabled="disDel" :loading="delLoading" @click="delStory">{{ delWording }}</el-button>
           </div>
@@ -81,7 +83,7 @@
 <script>
 import util from '@/libs/util.js'
 import peek from './components/peek'
-import { EntityFeed, DelEntityStory, BanUser } from '@/api/pages/entity/manager'
+import { EntityFeed, DelEntityStory, BanUser, UnBlockStory } from '@/api/pages/entity/manager'
 
 export default {
   name: 'entity-story',
@@ -92,6 +94,7 @@ export default {
     return {
       title: '',
       visible: false,
+      overlay: true,
       /* ------------ 分页相关 -------- */
       total: 0,
       limit: 5,
@@ -118,8 +121,10 @@ export default {
       disDel: false,
       banWording: '禁言',
       delWording: '删除',
+      blockWording: '正常并忽略',
       banLoading: false,
       delLoading: false,
+      unblockLoading: false,
       /* ------------ peek 组件 -------- */
       content: {}
     }
@@ -156,7 +161,7 @@ export default {
       if (this.datas.length > 0 && this.currentPage <= this.datas.length) {
         this.btnWordingHandler()
         let remark = this.datas[dataIndex]
-        util.cookies.set('entity_lid_' + this.entityId, remark.id)
+        util.cookies.set('entity_lid_' + this.entityId + '_' + this.blocked, remark.id)
         this.lastCorrectPage = this.currentPage
 
         this.lid = remark.id
@@ -189,9 +194,10 @@ export default {
       }
     },
     fetchData (blocked, entityId, name) {
-      if (entityId !== this.entityId) {
+      if (entityId !== this.entityId || blocked !== this.blocked) {
         this.total = 0
         this.datas = []
+        this.currentPage = 1
         this.handleCurrentChange()
       }
       this.title = name + ' 的一天'
@@ -199,8 +205,8 @@ export default {
       this.entityId = entityId
       this.currentPage = 1
 
-      let cookieLid = util.cookies.get('entity_lid_' + this.entityId)
-      this.lid = cookieLid === void 0 ? '0' : this.lid
+      let cookieLid = util.cookies.get('entity_lid_' + this.entityId + '_' + this.blocked)
+      this.lid = cookieLid === void 0 ? this.lid : cookieLid
       this.visible = true
       this.requestFeedDatas()
     },
@@ -213,11 +219,13 @@ export default {
         first_fetch: 1
       })
       let apiDatas = res.content
-      console.log(apiDatas)
-      this.datas = apiDatas.remarks
       this.total = apiDatas.total
-      this.moreData = apiDatas.moreData
-      this.handleCurrentChange()
+      if (this.total > 0) {
+        this.datas = apiDatas.remarks
+        this.moreData = apiDatas.moreData
+        this.handleCurrentChange()
+      }
+      this.overlay = this.total === 0
     },
     async requestMoreFeedDatas () {
       if (this.moreData) {
@@ -231,7 +239,6 @@ export default {
         let apiDatas = res.content
         this.datas = this.datas.concat(apiDatas.remarks)
         this.moreData = apiDatas.moreData
-        console.log(apiDatas)
       }
     },
     async banUser () {
@@ -256,6 +263,15 @@ export default {
       this.delLoading = false
       this.datas[this.currentPage - 1].delFlag = true
       this.btnWordingHandler()
+    },
+    async unblock () {
+      this.unblockLoading = true
+      await UnBlockStory({
+        rid: this.lid,
+        username: this.username,
+        entity_id: this.entityId
+      })
+      this.unblockLoading = false
     },
     btnWordingHandler () {
       this.delBtnWording()
@@ -284,6 +300,23 @@ export default {
 </script>
 
 <style scoped>
+  .overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: rgba(0,0,0,.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #ececec;
+    top: 0;
+    left: 0;
+  }
+
   .float-right {
     float: right;
   }
