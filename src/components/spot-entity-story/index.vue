@@ -119,6 +119,7 @@ export default {
       seen: 0,
       /* ------------ Btn ----------- */
       disDel: false,
+      disUnblock: false,
       banWording: '禁言',
       delWording: '删除',
       blockWording: '正常并忽略',
@@ -272,10 +273,13 @@ export default {
         entity_id: this.entityId
       })
       this.unblockLoading = false
+      this.datas[this.currentPage - 1].unblock = true
+      this.btnWordingHandler()
     },
     btnWordingHandler () {
       this.delBtnWording()
       this.banBtnWording()
+      this.unblockBtnWording()
     },
     banBtnWording () {
       let banLevel = this.datas[this.currentPage - 1].actor.banLevel
@@ -293,6 +297,16 @@ export default {
       } else {
         this.disDel = false
         this.delWording = '删除'
+      }
+    },
+    unblockBtnWording () {
+      let unblock = this.datas[this.currentPage - 1].unblock
+      if (unblock) {
+        this.disUnblock = true
+        this.unblockWording = '已处理'
+      } else {
+        this.disUnblock = false
+        this.unblockWording = '正常并忽略'
       }
     }
   }
