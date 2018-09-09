@@ -97,7 +97,7 @@ export default {
       overlay: true,
       /* ------------ 分页相关 -------- */
       total: 0,
-      limit: 5,
+      limit: 30,
       lid: '0',
       blocked: 0,
       currentPage: 1,
