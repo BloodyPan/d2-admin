@@ -60,7 +60,7 @@
         <li>
           <div class="btn-div">
             <el-button type="primary" v-if="blocked" :disabled="disUnblock" :loading="unblockLoading" @click="unblock">{{ unblockWording }}</el-button>
-            <el-button type="danger" :loading="banLoading" @click="banUser">{{ banWording }}</el-button>
+            <el-button :type="banBtnType" :loading="banLoading" @click="banUser" plain>{{ banWording }}</el-button>
             <el-button type="danger" :disabled="disDel" :loading="delLoading" @click="delStory">{{ delWording }}</el-button>
           </div>
         </li>
@@ -126,6 +126,7 @@ export default {
       banLoading: false,
       delLoading: false,
       unblockLoading: false,
+      banBtnType: 'warning',
       /* ------------ peek 组件 -------- */
       content: {}
     }
@@ -285,8 +286,10 @@ export default {
       let banLevel = this.datas[this.currentPage - 1].actor.banLevel
       if (banLevel === 1) {
         this.banWording = '解禁'
+        this.banBtnType = 'success'
       } else {
         this.banWording = '禁言'
+        this.banBtnType = 'warning'
       }
     },
     delBtnWording () {
