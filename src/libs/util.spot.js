@@ -92,7 +92,6 @@ spot.getUAInfo = ua => {
   let osInfo = result[2]
   if (uaInfo.Android) {
     osInfo = osInfo.replace(/android/g, 'Android ')
-    console.log(`${phoneInfo}; ${osInfo}`)
     return `${phoneInfo}; ${osInfo}`
   } else if (uaInfo.iPhone) {
     let phoneList = ['5', '5S', '6', '6P', '6S', '6SP', '7', '7P', '8', '8P', 'X']

@@ -35,10 +35,10 @@
               <span>投稿时间</span>
               <span class="float-right">{{ timeFormat(remarkTime) }}</span>
             </div>
-            <div>
+            <!-- <div>
               <span>Caption</span>
               <span class="float-right">{{ remarkMsg }}</span>
-            </div>
+            </div> -->
           </div>
         </li>
         <li>
@@ -113,7 +113,7 @@ export default {
       profilePhoto: '',
       banLevel: 0,
       remarkTime: 0,
-      remarkMsg: '',
+      // remarkMsg: '',
       like: 0,
       dislike: 0,
       seen: 0,
@@ -172,7 +172,7 @@ export default {
         this.profilePhoto = remark.actor.profilePhoto
         this.banLevel = remark.actor.banLevel
         this.remarkTime = remark.time
-        this.remarkMsg = remark.message
+        // this.remarkMsg = remark.message
         this.like = remark.like
         this.dislike = remark.dislike
         this.seen = remark.seen
