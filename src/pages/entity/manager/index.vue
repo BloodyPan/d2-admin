@@ -1,7 +1,7 @@
 <template>
   <d2-container type="card">
     <template slot="header">
-      校园管理
+      校园一天管理
     </template>
     <el-table
       :data="tableData"
@@ -22,18 +22,27 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="primary"
-            @click="viewStroy(0, scope.row.entityId, scope.row.name)">
-            查看Story
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="viewStroy(1, scope.row.entityId, scope.row.name)">
-            审查违规内容
-          </el-button>
+          <el-button-group>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="viewStroy(0, scope.row.entityId, scope.row.name)">
+              查看Story
+            </el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="viewStroy(1, scope.row.entityId, scope.row.name)">
+              审查违规内容
+            </el-button>
+            <el-button
+              size="mini"
+              type="info"
+              plain
+              @click="viewStroy(2, scope.row.entityId, scope.row.name)">
+              历史数据
+            </el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -69,6 +78,11 @@ export default {
       this.tableData = res.content.areas
     },
     viewStroy (type, entityId, name) {
+      // enum FeedType{
+      //   FEED_ENTITY = 0;
+      //   FEED_BLOCKED_ENTITY = 1;
+      //   FEED_ENTITY_HISTORY = 2;
+      // }
       this.$refs.story.fetchData(type, entityId, name)
     }
   },

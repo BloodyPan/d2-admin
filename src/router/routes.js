@@ -34,12 +34,12 @@ const userRouter = {
       meta: { ...meta, title: '官方回复' },
       component: () => import('@/pages/user/chat')
     },
-    {
-      path: 'new-user',
-      name: `${pre}new-user`,
-      meta: { ...meta, title: '新注册用户' },
-      component: () => import('@/pages/user/new-user')
-    },
+    // {
+    //   path: 'new-user',
+    //   name: `${pre}new-user`,
+    //   meta: { ...meta, title: '新注册用户' },
+    //   component: () => import('@/pages/user/new-user')
+    // },
     {
       path: 'renew-user',
       name: `${pre}renew-user`,

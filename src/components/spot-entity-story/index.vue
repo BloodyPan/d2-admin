@@ -2,7 +2,7 @@
   <el-dialog
     :title="title"
     :visible.sync="visible"
-    width="50%"
+    width="650px"
     :before-close="handleClose">
     <div v-if="overlay" class="overlay">没有新的内容了</div>
     <button type="button" v-if="!overlay" class="el-carousel__arrow arrow-left" @click="prePage">
@@ -58,8 +58,8 @@
           </div>
         </li>
         <li>
-          <div class="btn-div">
-            <el-button type="primary" v-if="blocked" :disabled="disUnblock" :loading="unblockLoading" @click="unblock">{{ unblockWording }}</el-button>
+          <div v-if="showBtns" class="btn-div">
+            <el-button type="primary" v-if="feedType" :disabled="disUnblock" :loading="unblockLoading" @click="unblock">{{ unblockWording }}</el-button>
             <el-button :type="banBtnType" :loading="banLoading" @click="banUser" plain>{{ banWording }}</el-button>
             <el-button type="danger" :disabled="disDel" :loading="delLoading" @click="delStory">{{ delWording }}</el-button>
           </div>
@@ -97,9 +97,9 @@ export default {
       overlay: true,
       /* ------------ 分页相关 -------- */
       total: 0,
-      limit: 30,
+      limit: 20,
       lid: '0',
-      blocked: 0,
+      feedType: 0,
       currentPage: 1,
       lastCorrectPage: 1,
       currentPageSize: 1,
@@ -118,6 +118,7 @@ export default {
       dislike: 0,
       seen: 0,
       /* ------------ Btn ----------- */
+      showBtns: true,
       disDel: false,
       disUnblock: false,
       banWording: '禁言',
@@ -132,7 +133,7 @@ export default {
     }
   },
   methods: {
-    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
+    timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm:ss'),
     handleClose (done) {
       this.$refs.peek.stopPeek()
       done()
@@ -163,7 +164,7 @@ export default {
       if (this.datas.length > 0 && this.currentPage <= this.datas.length) {
         this.btnWordingHandler()
         let remark = this.datas[dataIndex]
-        util.cookies.set('entity_lid_' + this.entityId + '_' + this.blocked, remark.id)
+        util.cookies.set('entity_lid_' + this.entityId + '_' + this.feedType, remark.id)
         this.lastCorrectPage = this.currentPage
 
         this.lid = remark.id
@@ -195,19 +196,20 @@ export default {
         })
       }
     },
-    fetchData (blocked, entityId, name) {
-      if (entityId !== this.entityId || blocked !== this.blocked) {
+    fetchData (feedType, entityId, name) {
+      this.showBtns = !(feedType === 2)
+      if (entityId !== this.entityId || feedType !== this.feedType) {
         this.total = 0
         this.datas = []
         this.currentPage = 1
         this.handleCurrentChange()
       }
       this.title = name + ' 的一天'
-      this.blocked = blocked
+      this.feedType = feedType
       this.entityId = entityId
       this.currentPage = 1
 
-      let cookieLid = util.cookies.get('entity_lid_' + this.entityId + '_' + this.blocked)
+      let cookieLid = util.cookies.get('entity_lid_' + this.entityId + '_' + this.feedType)
       this.lid = cookieLid === void 0 ? this.lid : cookieLid
       this.visible = true
       this.requestFeedDatas()
@@ -216,7 +218,7 @@ export default {
       const res = await EntityFeed({
         lid: this.lid,
         limit: this.limit,
-        blocked: this.blocked,
+        feed_type: this.feedType,
         entity_id: this.entityId,
         first_fetch: 1
       })
@@ -234,7 +236,7 @@ export default {
         const res = await EntityFeed({
           lid: this.datas[this.datas.length - 1].id,
           limit: this.limit,
-          blocked: this.blocked,
+          feed_type: this.feedType,
           entity_id: this.entityId
         })
 
@@ -356,7 +358,7 @@ export default {
     margin-left: 20px;
     border-radius: 5px;
     padding: 20px;
-    width: 85%;
+    min-width: 85%;
     font-size: 16px;
     font-weight: bold;
   }
