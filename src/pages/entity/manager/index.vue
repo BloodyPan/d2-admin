@@ -20,29 +20,26 @@
           <span>{{ timeFormat(scope.row.createAt) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" fixed="right" width="250">
         <template slot-scope="scope">
-          <el-button-group>
-            <el-button
-              size="mini"
-              type="primary"
-              @click="viewStroy(0, scope.row.entityId, scope.row.name)">
-              查看Story
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="viewStroy(1, scope.row.entityId, scope.row.name)">
-              审查违规内容
-            </el-button>
-            <el-button
-              size="mini"
-              type="info"
-              plain
-              @click="viewStroy(2, scope.row.entityId, scope.row.name)">
-              历史数据
-            </el-button>
-          </el-button-group>
+          <el-button
+            size="mini"
+            type="text"
+            @click="viewStroy(0, scope.row.entityId, scope.row.name)">
+            查看Story
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="viewStroy(1, scope.row.entityId, scope.row.name)">
+            审查违规内容
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="viewStroy(2, scope.row.entityId, scope.row.name)">
+            历史数据
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
