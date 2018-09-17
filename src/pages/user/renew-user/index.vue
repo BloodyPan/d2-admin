@@ -11,8 +11,9 @@
       <el-button
         v-for="(item, index) in unbindList"
         :key="'ubind-btn-' + index"
-        :type="item.del ? 'primary' : 'danger'"
+        :type="item.del ? 'primary' : (item.type ? item.type : 'danger')"
         :disabled="item.del"
+        :plain="item.plain"
         @click="unbindTestPhone(index)">
       {{ item.del ? `${item.phone} 已经可以用来注册啦`: `释放 ${item.phone} 测试号` }}
       </el-button>
@@ -86,6 +87,8 @@ export default {
         },
         4: {
           del: false,
+          type: 'warning',
+          plain: true,
           phone: '000'
         }
       }
