@@ -3,6 +3,9 @@
     <el-card class="box-card" slot="header">
       <div slot="header" class="clearfix">
         <span>释放测试号(释放后可以走注册流程)</span>
+        <div style="color: red;">注: </div>
+        <div style="color: red;">1. 000是给App Store审核用账号，最好不要使用</div>
+        <div style="color: red;">2. 重置的账号只能用于测试注册后下发的用户引导, 走不了注册流程</div>
         <!--<el-button style="float: right padding: 3px 0" type="text">操作按钮</el-button>-->
       </div>
       <el-button
@@ -80,6 +83,10 @@ export default {
         3: {
           del: false,
           phone: '666'
+        },
+        4: {
+          del: false,
+          phone: '000'
         }
       }
     }
