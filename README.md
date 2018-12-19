@@ -2,8 +2,9 @@
 
 ## 开源项目
 
-[Github 仓库](https://github.com/d2-projects/d2-admin) |
-[项目文档](http://d2admin.fairyever.com/zh/)
+<a href="https://github.com/d2-projects/d2-admin" target="_blank">
+	<img src="https://raw.githubusercontent.com/FairyEver/d2-admin/master/doc/image/d2-admin@2x.png" width="200">
+</a>
 
 ## 项目结构
 ```
