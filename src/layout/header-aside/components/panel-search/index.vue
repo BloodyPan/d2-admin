@@ -1,6 +1,12 @@
 <template>
-  <div class="panel-search" flex="dir:top">
-    <div class="panel-search__input-group" flex-box="0" flex="dir:top main:center cross:center">
+  <div
+    class="panel-search"
+    flex="dir:top">
+    <div
+      class="panel-search__input-group"
+      flex-box="0"
+      flex="dir:top main:center cross:center"
+      @click.self="handlePanelClick">
       <d2-icon-svg
         class="panel-search__logo"
         name="spot"/>
@@ -15,17 +21,15 @@
         :clearable="true"
         @keydown.esc.native="handleEsc"
         @select="handleSelect">
-        <d2-panel-search-item slot-scope="{ item }" :item="item"/>
+        <d2-panel-search-item
+          slot-scope="{ item }"
+          :item="item"/>
       </el-autocomplete>
       <div class="panel-search__tip">
         您可以使用快捷键
-        <span class="panel-search__key">
-          {{hotkey.open}}
-        </span>
+        <span class="panel-search__key">{{hotkey.open}}</span>
         唤醒搜索面板，按
-        <span class="panel-search__key">
-          {{hotkey.close}}
-        </span>
+        <span class="panel-search__key">{{hotkey.close}}</span>
         关闭
       </div>
     </div>
@@ -160,6 +164,12 @@ export default {
       }
     },
     /**
+     * @augments 接收用户点击空白区域的关闭
+     */
+    handlePanelClick () {
+      this.handleEsc()
+    },
+    /**
      * @augments 接收用户触发的关闭
      */
     handleEsc () {
@@ -173,7 +183,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@/assets/style/public.scss';
 .panel-search {
   margin: 20px;
   .panel-search__input-group {

@@ -94,11 +94,13 @@ export default {
       })
 
       this.total = res.content.total
-      this.listData = this.listData.concat(res.content.chats)
-      this.$nextTick(() => {
-        this.BS.refresh()
-        this.freshData = false
-      })
+      if (this.total > 0) {
+        this.listData = this.listData.concat(res.content.chats)
+        this.$nextTick(() => {
+          this.BS.refresh()
+          this.freshData = false
+        })
+      }
     },
     showChat (event, index) {
       this.listData[index].unread = 0

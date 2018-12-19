@@ -7,7 +7,7 @@
           :x="contentmenuX"
           :y="contentmenuY">
           <d2-contextmenu-list
-            :menulist="tagName === 'index' ? contextmenuListIndex : contextmenuList"
+            :menulist="tagName === '/index' ? contextmenuListIndex : contextmenuList"
             @rowClick="contextmenuClick"/>
         </d2-contextmenu>
         <el-tabs
@@ -19,10 +19,10 @@
           @edit="handleTabsEdit"
           @contextmenu.native="handleContextmenu">
           <el-tab-pane
-            v-for="(page, index) in opened"
-            :key="index"
+            v-for="page in opened"
+            :key="page.fullPath"
             :label="page.meta.title || '未命名'"
-            :name="page.name"/>
+            :name="page.fullPath"/>
         </el-tabs>
       </div>
     </div>
@@ -30,6 +30,7 @@
       class="d2-multiple-page-control-btn"
       flex-box="0">
       <el-dropdown
+        size="default"
         split-button
         @click="handleControlBtnClick"
         @command="command => handleControlItemClick(command)">
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   components: {
     D2Contextmenu: () => import('../contextmenu'),
@@ -78,7 +79,7 @@ export default {
         { icon: 'times', title: '关闭其它', value: 'other' },
         { icon: 'times-circle', title: '关闭全部', value: 'all' }
       ],
-      tagName: 'index'
+      tagName: '/index'
     }
   },
   computed: {
@@ -88,7 +89,7 @@ export default {
     ])
   },
   methods: {
-    ...mapMutations('d2admin/page', [
+    ...mapActions('d2admin/page', [
       'close',
       'closeLeft',
       'closeRight',
@@ -100,7 +101,6 @@ export default {
      */
     handleContextmenu (event) {
       let target = event.target
-
       // 解决 https://github.com/d2-projects/d2-admin/issues/54
       let flag = false
       if (target.className.indexOf('el-tabs__item') > -1) flag = true
@@ -108,7 +108,6 @@ export default {
         target = target.parentNode
         flag = true
       }
-
       if (flag) {
         event.preventDefault()
         event.stopPropagation()
@@ -164,7 +163,7 @@ export default {
      */
     handleClick (tab, event) {
       // 找到点击的页面在 tag 列表里是哪个
-      const page = this.opened.find(page => page.name === tab.name)
+      const page = this.opened.find(page => page.fullPath === tab.name)
       const { name, params, query } = page
       if (page) {
         this.$router.push({ name, params, query })

@@ -1,6 +1,4 @@
-import { version } from '../package'
-
-const setting = {
+export default {
   // 快捷键
   // 支持快捷键 例如 ctrl+shift+s
   hotkey: {
@@ -11,24 +9,20 @@ const setting = {
   },
   // 侧边栏默认折叠状态
   menu: {
-    asideCollapse: false
+    asideCollapse: true
   },
   // 在读取持久化数据失败时默认页面
   page: {
     opened: [
       {
         name: 'index',
+        fullPath: '/index',
         meta: {
           title: '首页',
-          requiresAuth: false
+          auth: false
         }
       }
     ]
-  },
-  // 版本
-  releases: {
-    version: version,
-    api: 'https://api.github.com/repos/FairyEver/d2-admin/releases/latest'
   },
   // 菜单搜索
   search: {
@@ -38,7 +32,7 @@ const setting = {
   theme: {
     list: [
       {
-        title: 'd2admin 经典',
+        title: 'Spot CMS',
         name: 'd2',
         preview: 'image/theme/d2/preview@2x.png'
       }
@@ -55,5 +49,3 @@ const setting = {
     }
   }
 }
-
-export default setting

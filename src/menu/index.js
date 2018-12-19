@@ -1,12 +1,10 @@
 // user相关
-import userModule from './modules/user-module'
+import userModule from './modules/user'
 import settings from './modules/settings'
-import entity from './modules/entity-manager'
 
 // 菜单 侧边栏
 export const menuAside = [
   userModule,
-  entity,
   settings
 ]
 
@@ -18,6 +16,5 @@ export const menuHeader = [
     icon: 'home'
   },
   userModule,
-  entity,
   settings
 ]

@@ -3,31 +3,14 @@
     <div class="d2-page-cover__logo">
       <slot/>
     </div>
-    <p class="d2-page-cover__title">{{title}}</p>
-    <p class="d2-page-cover__sub-title d2-mt-0">{{subTitle}}</p>
+    <p class="d2-page-cover__title">Spot CMS</p>
+    <p class="d2-page-cover__sub-title">大扎好，我四渣嘎辉，斯伯特CMS，介四里没有挽过的船新版本，挤需体验三番钟，里造会干我一样</p>
+    <p class="d2-page-cover__build-time">FINAL BUILD TIME {{$buildTime}}</p>
     <slot name="footer"/>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      required: false,
-      default: 'Title'
-    },
-    subTitle: {
-      type: String,
-      required: false,
-      default: 'subTitle'
-    }
-  }
-}
-</script>
-
 <style lang="scss" scoped>
-@import '~@/assets/style/public.scss';
 .d2-page-cover {
   @extend %full;
   @extend %unable-select;
@@ -41,10 +24,21 @@ export default {
     }
   }
   .d2-page-cover__title {
+    margin: 0px;
+    margin-bottom: 20px;
+    font-weight: bold;
     color: $color-text-main;
   }
   .d2-page-cover__sub-title {
-    color: $color-text-sub;
+    margin: 0px;
+    margin-bottom: 5px;
+    color: $color-text-normal;
+  }
+  .d2-page-cover__build-time {
+    margin: 0px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: $color-text-placehoder;
   }
 }
 </style>

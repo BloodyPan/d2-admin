@@ -1,10 +1,9 @@
 import Cookies from 'js-cookie'
-import setting from '@/setting.js'
 
 const cookies = {}
 
 function GetCookieName (name, prefix) {
-  return prefix ? `spot-cms-${setting.releases.version}-${name}` : name
+  return prefix ? `spot-cms-${process.env.VUE_APP_VERSION}-${name}` : name
 }
 
 /**
