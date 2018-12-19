@@ -1,5 +1,5 @@
 import util from '@/libs/util.js'
-import { AccountLogin } from '@/api/sys/login'
+import { AccountLogin } from '@api/sys.login'
 
 export default {
   namespaced: true,
@@ -10,11 +10,9 @@ export default {
      * @param {Object} param vm {Object} vue 实例
      * @param {Object} param username {String} 用户账号
      * @param {Object} param password {String} 密码
-     * @param {Object} param route {Object} 登录成功后定向的路由对象
+     * @param {Object} param route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
      */
-    login ({
-      commit
-    }, {
+    login ({ dispatch }, {
       vm,
       username,
       password,
@@ -22,40 +20,35 @@ export default {
         name: 'index'
       }
     }) {
-      // 开始请求登录接口
-      AccountLogin({
-        username,
-        password
+      return new Promise((resolve, reject) => {
+        // 开始请求登录接口
+        AccountLogin({
+          username,
+          password
+        })
+          .then(async res => {
+            const setting = {
+              expires: 0.04
+            }
+            util.cookies.set('uuid', res.user.uuid, setting)
+            util.cookies.set('sessionid', res.user.token, setting, false)
+            util.cookies.set('csrftoken', res.user.csrf, setting, false)
+
+            // 设置 vuex 用户信息
+            await dispatch('d2admin/user/set', {
+              name: res.user.nickname
+            }, {
+              root: true
+            })
+            // 用户登录后从持久化数据加载一系列的设置
+            await dispatch('load')
+            resolve()
+          })
+          .catch(err => {
+            console.log('err: ', err)
+            reject(err)
+          })
       })
-        .then(res => {
-          const setting = {
-            expires: 0.04
-          }
-          util.cookies.set('uuid', res.user.uuid, setting)
-          util.cookies.set('sessionid', res.user.token, setting, false)
-          util.cookies.set('csrftoken', res.user.csrf, setting, false)
-          // 设置 vuex 用户信息
-          commit('d2admin/user/set', {
-            name: res.user.nickname
-          }, { root: true })
-          // 设置 vuex 用户信息
-          commit('d2admin/user/set', {
-            name: res.name
-          }, { root: true })
-          // 用户登录后从持久化数据加载一系列的设置
-          commit('load')
-          // 更新路由 尝试去获取 cookie 里保存的需要重定向的页面完整地址
-          const path = util.cookies.get('redirect')
-          // 根据是否存有重定向页面判断如何重定向
-          vm.$router.replace(path ? { path } : route)
-          // 删除 cookie 中保存的重定向页面
-          util.cookies.remove('redirect')
-        })
-        .catch(err => {
-          console.group('登录结果')
-          console.log('err: ', err)
-          console.groupEnd()
-        })
     },
     /**
      * @description 注销用户并返回登录页面
@@ -94,24 +87,28 @@ export default {
       } else {
         logout()
       }
-    }
-  },
-  mutations: {
+    },
     /**
      * @description 用户登录后从持久化数据加载一系列的设置
      * @param {Object} state vuex state
      */
-    load (state) {
-      // DB -> store 加载用户名
-      this.commit('d2admin/user/load')
-      // DB -> store 加载主题
-      this.commit('d2admin/theme/load')
-      // DB -> store 加载页面过渡效果设置
-      this.commit('d2admin/transition/load')
-      // DB -> store 持久化数据加载上次退出时的多页列表
-      this.commit('d2admin/page/openedLoad')
-      // DB -> store 持久化数据加载这个用户之前设置的侧边栏折叠状态
-      this.commit('d2admin/menu/asideCollapseLoad')
+    load ({ commit, dispatch }) {
+      return new Promise(async resolve => {
+        // DB -> store 加载用户名
+        await dispatch('d2admin/user/load', null, { root: true })
+        // DB -> store 加载主题
+        await dispatch('d2admin/theme/load', null, { root: true })
+        // DB -> store 加载页面过渡效果设置
+        await dispatch('d2admin/transition/load', null, { root: true })
+        // DB -> store 持久化数据加载上次退出时的多页列表
+        await dispatch('d2admin/page/openedLoad', null, { root: true })
+        // DB -> store 持久化数据加载侧边栏折叠状态
+        await dispatch('d2admin/menu/asideCollapseLoad', null, { root: true })
+        // DB -> store 持久化数据加载全局尺寸
+        await dispatch('d2admin/size/load', null, { root: true })
+        // end
+        resolve()
+      })
     }
   }
 }

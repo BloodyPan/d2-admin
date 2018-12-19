@@ -1,7 +1,8 @@
-// layout
 import layoutHeaderAside from '@/layout/header-aside'
+import userRouter from './modules/user'
+import settingsRouter from './modules/settings'
 
-const meta = { requiresAuth: true }
+const meta = { auth: true }
 
 /**
  * 首页路由
@@ -11,76 +12,38 @@ const index = {
   redirect: { name: 'index' },
   component: layoutHeaderAside,
   children: [
+    // 首页 必须 name:index
     {
       path: 'index',
       name: 'index',
       meta,
       component: () => import('@/pages/index')
+    },
+    // 刷新页面 必须保留
+    {
+      path: 'refresh',
+      name: 'refresh',
+      hidden: true,
+      component: {
+        beforeRouteEnter (to, from, next) {
+          next(vm => vm.$router.replace(from.fullPath))
+        },
+        render: h => h()
+      }
+    },
+    // 页面重定向 必须保留
+    {
+      path: 'redirect/:route*',
+      name: 'redirect',
+      hidden: true,
+      component: {
+        beforeRouteEnter (to, from, next) {
+          next(vm => vm.$router.replace(JSON.parse(from.params.route)))
+        },
+        render: h => h()
+      }
     }
   ]
-}
-
-/**
- * 用户相关模块路由
- */
-const userRouter = {
-  path: '/user',
-  redirect: { name: 'index' },
-  component: layoutHeaderAside,
-  children: (pre => [
-    {
-      path: 'chat',
-      name: `${pre}chat`,
-      meta: { ...meta, title: '官方回复' },
-      component: () => import('@/pages/user/chat')
-    },
-    // {
-    //   path: 'new-user',
-    //   name: `${pre}new-user`,
-    //   meta: { ...meta, title: '新注册用户' },
-    //   component: () => import('@/pages/user/new-user')
-    // },
-    {
-      path: 'renew-user',
-      name: `${pre}renew-user`,
-      meta: { ...meta, title: '重置测试号' },
-      component: () => import('@/pages/user/renew-user')
-    }
-  ])('user-')
-}
-
-/**
- * 线上设置
- */
-const entity = {
-  path: '/entity',
-  redirect: { name: 'index' },
-  component: layoutHeaderAside,
-  children: (pre => [
-    {
-      path: 'manager',
-      name: `${pre}manager`,
-      meta: { ...meta, title: '内容管理' },
-      component: () => import('@/pages/entity/manager')
-    }
-  ])('entity-')
-}
-
-/**
- * 线上设置
- */
-const settings = {
-  path: '/settings',
-  redirect: { name: 'index' },
-  component: layoutHeaderAside,
-  children: (pre => [
-    {
-      path: 'android',
-      name: `${pre}android`,
-      meta: { ...meta, title: '安卓更新' },
-      component: () => import('@/pages/settings/android')
-    }
-  ])('')
 }
 
 /**
@@ -89,8 +52,7 @@ const settings = {
 const frameIn = [
   index,
   userRouter,
-  entity,
-  settings
+  settingsRouter
 ]
 
 /**

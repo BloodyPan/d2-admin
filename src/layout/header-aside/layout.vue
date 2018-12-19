@@ -11,19 +11,20 @@
       <div
         class="d2-theme-header"
         :style="{
-          opacity: this.searchActive ? 0.3 : 1
+          opacity: this.searchActive ? 0.5 : 1
         }"
-        flex-box="0">
-        <div class="logo-group" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}">
+        flex-box="0"
+        flex>
+        <div class="logo-group" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}" flex-box="0">
           <img v-if="asideCollapse" :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`">
           <img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">
         </div>
-        <div class="toggle-aside-btn" @click="handleToggleAside">
+        <div class="toggle-aside-btn" @click="handleToggleAside" flex-box="0">
           <d2-icon name="bars"/>
         </div>
-        <d2-menu-header/>
+        <d2-menu-header flex-box="1"/>
         <!-- 顶栏右侧 -->
-        <div class="d2-header-right">
+        <div class="d2-header-right" flex-box="0">
           <!-- 如果你只想在开发环境显示这个按钮请添加 v-if="$env === 'development'" -->
           <d2-header-search @click="handleSearchClick"/>
           <d2-header-error-log/>
@@ -40,7 +41,7 @@
           class="d2-theme-container-aside"
           :style="{
             width: asideCollapse ? asideWidthCollapse : asideWidth,
-            opacity: this.searchActive ? 0.3 : 1
+            opacity: this.searchActive ? 0.5 : 1
           }">
           <d2-menu-side/>
         </div>
@@ -78,7 +79,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import d2MenuSide from './components/menu-side'
+import d2MenuHeader from './components/menu-header'
+import d2Tabs from './components/tabs'
+import d2HeaderFullscreen from './components/header-fullscreen'
+import d2HeaderSearch from './components/header-search'
+import d2HeaderUser from './components/header-user'
+import d2HeaderErrorLog from './components/header-error-log'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import mixinSearch from './mixins/search'
 export default {
   name: 'd2-layout-header-aside',
@@ -86,13 +94,13 @@ export default {
     mixinSearch
   ],
   components: {
-    'd2-menu-side': () => import('./components/menu-side'),
-    'd2-menu-header': () => import('./components/menu-header'),
-    'd2-tabs': () => import('./components/tabs'),
-    'd2-header-fullscreen': () => import('./components/header-fullscreen'),
-    'd2-header-search': () => import('./components/header-search'),
-    'd2-header-user': () => import('./components/header-user'),
-    'd2-header-error-log': () => import('./components/header-error-log')
+    d2MenuSide,
+    d2MenuHeader,
+    d2Tabs,
+    d2HeaderFullscreen,
+    d2HeaderSearch,
+    d2HeaderUser,
+    d2HeaderErrorLog
   },
   data () {
     return {
@@ -104,12 +112,12 @@ export default {
   },
   computed: {
     ...mapState('d2admin', {
+      keepAlive: state => state.page.keepAlive,
       grayActive: state => state.gray.active,
       transitionActive: state => state.transition.active,
       asideCollapse: state => state.menu.asideCollapse
     }),
     ...mapGetters('d2admin', {
-      keepAlive: 'page/keepAlive',
       themeActiveSetting: 'theme/activeSetting'
     }),
     /**
@@ -124,14 +132,14 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({
-      menuAsideCollapseToggle: 'd2admin/menu/asideCollapseToggle'
-    }),
+    ...mapActions('d2admin/menu', [
+      'asideCollapseToggle'
+    ]),
     /**
      * 接收点击切换侧边栏的按钮
      */
     handleToggleAside () {
-      this.menuAsideCollapseToggle()
+      this.asideCollapseToggle()
     }
   }
 }
