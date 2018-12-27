@@ -180,13 +180,13 @@ export default {
   }
   // main
   .page-login--logo {
-    width: 240px;
-    margin-bottom: 2em;
+    width: 200px;
     margin-top: -2em;
   }
   // 登录表单
   .page-login--form {
     width: 280px;
+    margin-top: -35px;
     // 卡片
     .el-card {
       margin-bottom: 15px;

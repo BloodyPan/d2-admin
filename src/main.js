@@ -24,7 +24,7 @@ import { GridLayout, GridItem } from 'vue-grid-layout'
 // [ 可选插件组件 ] 区域划分组件
 import SplitPane from 'vue-splitpane'
 // [ 可选插件组件 ] UEditor
-import VueUeditorWrap from 'vue-ueditor-wrap'
+// import VueUeditorWrap from 'vue-ueditor-wrap'
 
 // 菜单和路由设置
 import router from './router'
@@ -36,12 +36,12 @@ Vue.use(d2Admin)
 
 // 可选插件组件
 // Vue.use(VCharts)
-Vue.use(contentmenu)
 // Vue.use(vueJsonTreeView)
+Vue.use(contentmenu)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)
-Vue.component('VueUeditorWrap', VueUeditorWrap)
+// Vue.component('VueUeditorWrap', VueUeditorWrap)
 
 new Vue({
   router,

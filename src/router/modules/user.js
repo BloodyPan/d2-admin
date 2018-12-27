@@ -26,6 +26,14 @@ export default {
         title: '重置测试号'
       },
       component: () => import('@/pages/user/renew-user')
+    },
+    {
+      path: 'user-locate',
+      name: `${pre}user-locate`,
+      meta: { ...meta,
+        title: '修改定位'
+      },
+      component: () => import('@/pages/user/user-locate')
     }
   ])('user-')
 }

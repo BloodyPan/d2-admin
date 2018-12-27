@@ -12,8 +12,8 @@ import d2VueFiltersDate from '@d2-projects/vue-filters-date'
 // 功能插件
 import pluginAxios from '@/plugin/axios'
 import pluginError from '@/plugin/error'
-import pluginExport from '@d2-projects/vue-table-export'
-import pluginImport from '@d2-projects/vue-table-import'
+// import pluginExport from '@d2-projects/vue-table-export'
+// import pluginImport from '@d2-projects/vue-table-import'
 import pluginLog from '@/plugin/log'
 import pluginOpen from '@/plugin/open'
 
@@ -37,8 +37,8 @@ export default {
     // 插件
     Vue.use(pluginAxios)
     Vue.use(pluginError)
-    Vue.use(pluginExport)
-    Vue.use(pluginImport)
+    // Vue.use(pluginExport)
+    // Vue.use(pluginImport)
     Vue.use(pluginLog)
     Vue.use(pluginOpen)
   }

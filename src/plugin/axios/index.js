@@ -107,6 +107,9 @@ service.interceptors.response.use(
         case 202:
           warnCreat(`${dataAxios.msg}`)
           break
+        case 204:
+          warnCreat(`${dataAxios.msg}`)
+          break
         case 403:
           logout()
           errorCreat(`Code ${code}: ${dataAxios.msg}`)

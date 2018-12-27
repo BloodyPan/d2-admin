@@ -118,4 +118,15 @@ spot.flushAccount = () => {
   cookies.remove('uuid')
 }
 
+spot.getHttpProfileUrl = (photo, suffix) => {
+  if (photo.indexOf('http') === -1) {
+    photo = spot.profilePrefix + photo
+  }
+
+  if (photo.indexOf('getremark.com') !== -1 && suffix !== undefined) {
+    photo += '!' + suffix
+  }
+  return photo
+}
+
 export default spot
