@@ -50,7 +50,10 @@
         </div>
         <div class="page-login--content-footer">
           <p class="page-login--content-footer-copyright">
-            Copyright <d2-icon name="copyright"/> 2018 Spot 出品
+            © 2019 深圳这个什么科技有限公司 All rights reserved. 
+            <a href="http://www.miitbeian.gov.cn" target="_blank">
+              粤ICP备15071842号-3
+            </a>
           </p>
         </div>
       </div>
@@ -236,10 +239,11 @@ export default {
     .page-login--content-footer-copyright {
       padding: 0px;
       margin: 0px;
-      font-size: 12px;
+      font-size: 14px;
       color: $color-text-normal;
       a {
-        color: $color-text-normal;
+        cursor: pointer;
+        text-decoration: underline !important;
       }
     }
   }

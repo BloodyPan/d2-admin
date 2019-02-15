@@ -1,6 +1,7 @@
 import store from '@/store'
 import router from '@/router'
 import axios from 'axios'
+import Qs from 'qs'
 import { Message } from 'element-ui'
 import util from '@/libs/util'
 
@@ -70,11 +71,12 @@ service.interceptors.request.use(
     if (!(/^https:\/\/|http:\/\//.test(config.url))) {
       if (config.method === 'post') {
         // POST dict 转 URLSearchParams
-        let params = new URLSearchParams()
-        for (let key in config.data) {
-          params.append(key, config.data[key])
-        }
-        config.data = params
+        // let params = new URLSearchParams()
+        // for (let key in config.data) {
+        //   params.append(key, config.data[key])
+        // }
+        // URLSearchParams不兼容ie, 改用Qs
+        config.data = Qs.stringify(config.data)
         // POST统一设置 X-CSRFTOKEN 头
         let csrftoken = util.cookies.get('csrftoken', false)
         if (csrftoken !== void 0) {

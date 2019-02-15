@@ -1,13 +1,13 @@
 <template>
   <div class="detail-user-info">
     <div class="bg-tag-dark" v-if="user.username !== null">用户名: {{ user.username }}</div>
-    <div class="bg-tag-important" v-if="user.friendCount !== null">当前好友: {{ user.friendCount }}</div>
-    <div class="bg-tag-warning" v-if="user.storyCount !== null">当前Story: {{ user.storyCount }}</div>
+    <div class="bg-tag-id" v-if="user.id !== null">用户ID: {{ md5Encode(user.id) }}</div>
+    <div class="bg-tag-important" v-if="user.friendCount !== null">好友: {{ user.friendCount }}</div>
+    <!-- <div class="bg-tag-warning" v-if="user.storyCount !== null">当前Story: {{ user.storyCount }}</div> -->
     <div class="bg-tag-gray-middle" v-if="user.dateJoined">加入时间: {{ timeFormat(user.dateJoined) }}</div>
-    <div class="bg-tag-primary">当前版本: {{ device.appVersion }}</div>
+    <div class="bg-tag-primary">版本: {{ device.appVersion }}</div>
     <div class="bg-tag-info">语言: {{ device.clientLanguage }}</div>
     <br>
-    <div class="bg-tag-dark" v-if="user.id !== null">ID: {{ md5Encode(String(user.id)) }}</div>
     <div class="bg-tag-gray-light">型号: {{ getUA(device.userAgent) }}</div>
     <div class="bg-tag-danger-tint" v-if="device.phoneLocation">
       手机归属地: {{ device.phoneLocation }}
@@ -16,6 +16,7 @@
       运营商: {{ device.carrier }}
     </div>
     <div v-if="device.ipGeoLocation">IP所在地: {{ device.ipGeoLocation }}</div>
+    <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(user.id)}`" class="amplitude" target="_blank">Amplitude</a>
   </div>
 </template>
 
@@ -44,7 +45,7 @@ export default {
   methods: {
     getUA: ua => util.spot.getUAInfo(ua),
     timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
-    md5Encode: str => md5.hex(str)
+    md5Encode: str => md5.hex(String(str))
   }
 }
 </script>
@@ -69,6 +70,11 @@ export default {
 
   .bg-tag-dark {
     background-color: #343a40 !important;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .bg-tag-id {
+    background-color: rgba(61, 46, 85, 0.705) !important;
     color: rgba(255, 255, 255, 0.9);
   }
 
@@ -108,5 +114,15 @@ export default {
   .bg-tag-gray-light {
     background-color: #999 !important;
     color: rgba(255, 255, 255, 0.9);
+  }
+
+  .amplitude {
+    background-color: #FF6A00;
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
   }
 </style>

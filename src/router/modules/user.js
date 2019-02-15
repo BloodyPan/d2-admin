@@ -20,6 +20,15 @@ export default {
       component: () => import('@/pages/user/chat')
     },
     {
+      path: 'vip',
+      name: `${pre}vip`,
+      meta: {
+        ...meta,
+        title: 'VIP用户'
+      },
+      component: () => import('@/pages/user/vip')
+    },
+    {
       path: 'renew-user',
       name: `${pre}renew-user`,
       meta: { ...meta,

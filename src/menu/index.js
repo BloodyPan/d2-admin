@@ -1,9 +1,11 @@
 // user相关
 import userModule from './modules/user'
 import settings from './modules/settings'
+import operate from './modules/operate'
 
 // 菜单 侧边栏
 export const menuAside = [
+  operate,
   userModule,
   settings
 ]
@@ -15,6 +17,7 @@ export const menuHeader = [
     title: '首页',
     icon: 'home'
   },
+  operate,
   userModule,
   settings
 ]

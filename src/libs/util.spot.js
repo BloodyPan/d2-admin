@@ -63,6 +63,7 @@ spot.checkUA = ua => {
     // 是否web程序，没有头部与底部
     webApp: u.indexOf('Safari') === -1,
     iPhone5: u.indexOf('iPhone5,1') > -1 || u.indexOf('iPhone5,2') > -1,
+    iPhone5C: u.indexOf('iPhone5,3') > -1 || u.indexOf('iPhone5,4') > -1,
     iPhone5S: u.indexOf('iPhone6,1') > -1 || u.indexOf('iPhone6,2') > -1,
     iPhone6: u.indexOf('iPhone7,2') > -1,
     iPhone6P: u.indexOf('iPhone7,1') > -1,
@@ -72,7 +73,10 @@ spot.checkUA = ua => {
     iPhone7P: u.indexOf('iPhone9,2') > -1 || u.indexOf('iPhone9,4') > -1,
     iPhone8: u.indexOf('iPhone10,1') > -1 || u.indexOf('iPhone10,4') > -1,
     iPhone8P: u.indexOf('iPhone10,2') > -1 || u.indexOf('iPhone10,5') > -1,
-    iPhoneX: u.indexOf('iPhone10,3') > -1 || u.indexOf('iPhone10,6') > -1
+    iPhoneX: u.indexOf('iPhone10,3') > -1 || u.indexOf('iPhone10,6') > -1,
+    iPhoneXR: u.indexOf('iPhone11,8') > -1,
+    iPhoneXS: u.indexOf('iPhone11,2') > -1,
+    iPhoneXSMax: u.indexOf('iPhone11,4') > -1 || u.indexOf('iPhone11,6') > -1
   }
 }
 
