@@ -42,6 +42,7 @@
     "lowdb": "^1.0.0",
     "mapbox-gl": "^0.52.0-beta.2",
     "marked": "^0.5.2",
+    "matchit": "^1.0.7",
     "mockjs": "^1.0.1-beta3",
     "nprogress": "^0.2.0",
     "qs": "^6.6.0",
