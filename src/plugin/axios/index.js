@@ -7,9 +7,16 @@ import util from '@/libs/util'
 
 function logout () {
   util.spot.flushAccount()
-  router.push({
-    name: 'login'
+  Message({
+    message: '登陆信息已过期,请重新登陆!',
+    type: 'error',
+    duration: 3 * 1000
   })
+  setTimeout(() => {
+    router.push({
+      name: 'login'
+    })
+  }, 1000)
 }
 
 // 创建一个错误

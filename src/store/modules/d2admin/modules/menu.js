@@ -87,6 +87,15 @@ export default {
     asideSet (state, menu) {
       // store 赋值
       state.aside = menu
+    },
+    /**
+     * @description 设置有权限访问的侧边栏菜单项
+     * @param {Object} state vuex state
+     * @param {Array} menu menu setting
+     */
+    fullAsideSet (state, menu) {
+      // store 赋值
+      state.fullAside = menu
     }
   }
 }

@@ -2,7 +2,6 @@ import layoutHeaderAside from '@/layout/header-aside'
 import userRouter from './modules/user'
 import settingsRouter from './modules/settings'
 import historyRouter from './modules/history'
-import mngauthRouter from './modules/mngauth'
 
 const meta = { auth: true }
 
@@ -55,7 +54,6 @@ const frameIn = [
   index,
   userRouter,
   settingsRouter,
-  mngauthRouter,
   historyRouter
 ]
 
