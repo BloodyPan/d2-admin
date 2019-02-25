@@ -28,6 +28,7 @@
             </template>
           </el-table-column>
           <el-table-column align="right">
+            <!-- eslint-disable-next-line vue/no-unused-vars -->
             <template slot="header" slot-scope="scope">
               <el-input
                 v-model="search"
