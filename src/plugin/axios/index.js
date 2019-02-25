@@ -20,14 +20,14 @@ function logout () {
 }
 
 // 创建一个错误
-function errorCreat (msg) {
+function errorCreate (msg) {
   const err = new Error(msg)
   errorLog(err)
   throw err
 }
 
 // 警告
-function warnCreat (msg) {
+function warnCreate (msg) {
   const warn = new Error(msg)
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
@@ -114,19 +114,19 @@ service.interceptors.response.use(
         case 200:
           return dataAxios
         case 202:
-          warnCreat(`${dataAxios.msg}`)
+          warnCreate(`${dataAxios.msg}`)
           break
         case 204:
-          warnCreat(`${dataAxios.msg}`)
+          warnCreate(`${dataAxios.msg}`)
           break
         case 403:
           logout()
-          errorCreat(`Code ${code}: ${dataAxios.msg}`)
+          errorCreate(`[ code: ${code}] ${dataAxios.msg}`)
           break
         default:
           // 不是正确的 code
           // errorCreat(`${dataAxios.msg}: ${response.config.url}`)
-          errorCreat(`${dataAxios.msg}`)
+          errorCreate(`${dataAxios.msg}`)
           break
       }
     }

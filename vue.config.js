@@ -7,14 +7,14 @@ const resolve = dir => require('path').join(__dirname, dir)
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY-M-D HH:mm:ss')
 
-// 基础路径
-const baseUrl = ''
+// 基础路径 注意发布之前要先修改这里
+let publicPath = '/'
 
 module.exports = {
-  baseUrl: baseUrl, // 根据你的实际情况更改这里
+  publicPath, // 根据你的实际情况更改这里
   lintOnSave: true,
   devServer: {
-    publicPath: baseUrl
+    publicPath // 和 publicPath 保持一致
   },
   css: {
     loaderOptions: {
@@ -98,18 +98,13 @@ module.exports = {
       .end()
     // 重新设置 alias
     config.resolve.alias
-      .set('@', resolve('src'))
       .set('@api', resolve('src/api'))
     // node
     config.node
       .set('__dirname', true)
       .set('__filename', true)
-    // babel-polyfill 加入 entry
-    const entry = config.entry('app')
-    entry
-      .add('babel-polyfill')
-      .end()
     // 判断环境加入模拟数据
+    const entry = config.entry('app')
     if (process.env.VUE_APP_BUILD_MODE !== 'nomock') {
       entry
         .add('@/mock')

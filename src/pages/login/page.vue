@@ -121,7 +121,6 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.login({
-            vm: this,
             username: this.formLogin.username,
             password: this.formLogin.password
           })

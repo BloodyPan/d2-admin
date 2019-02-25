@@ -3,8 +3,6 @@ import userRouter from './modules/user'
 import settingsRouter from './modules/settings'
 import historyRouter from './modules/history'
 
-const meta = { auth: true }
-
 /**
  * 首页路由
  */
@@ -17,7 +15,9 @@ const index = {
     {
       path: 'index',
       name: 'index',
-      meta,
+      meta: {
+        auth: true
+      },
       component: () => import('@/pages/index')
     },
     // 刷新页面 必须保留
@@ -27,7 +27,7 @@ const index = {
       hidden: true,
       component: {
         beforeRouteEnter (to, from, next) {
-          next(vm => vm.$router.replace(from.fullPath))
+          next(instance => instance.$router.replace(from.fullPath))
         },
         render: h => h()
       }
@@ -39,7 +39,7 @@ const index = {
       hidden: true,
       component: {
         beforeRouteEnter (to, from, next) {
-          next(vm => vm.$router.replace(JSON.parse(from.params.route)))
+          next(instance => instance.$router.replace(JSON.parse(from.params.route)))
         },
         render: h => h()
       }

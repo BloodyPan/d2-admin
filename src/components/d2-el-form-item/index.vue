@@ -25,7 +25,7 @@ export default {
     error: String,
     validateStatus: String
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
