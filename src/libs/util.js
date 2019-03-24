@@ -2,14 +2,12 @@ import cookies from './util.cookies'
 import db from './util.db'
 import log from './util.log'
 import spot from './util.spot'
-import permission from './util.permission'
 
 const util = {
   cookies,
   db,
   log,
-  spot,
-  permission
+  spot
 }
 
 /**
