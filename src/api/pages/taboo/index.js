@@ -1,6 +1,6 @@
 import request from '@/plugin/axios'
 
-export function GetTaboos(params) {
+export function GetTaboos (params) {
   return request({
     url: '/spotcms/Taboo',
     method: 'get',
@@ -8,7 +8,7 @@ export function GetTaboos(params) {
   })
 }
 
-export function AddTaboo(data) {
+export function AddTaboo (data) {
   return request({
     url: '/spotcms/Taboo',
     method: 'post',
@@ -16,7 +16,7 @@ export function AddTaboo(data) {
   })
 }
 
-export function RemoveTaboo(data) {
+export function RemoveTaboo (data) {
   return request({
     url: '/spotcms/Taboo',
     method: 'post',

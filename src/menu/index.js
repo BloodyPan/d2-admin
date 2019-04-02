@@ -2,12 +2,14 @@
 import userModule from './modules/user'
 import settings from './modules/settings'
 import operate from './modules/operate'
+import group from './modules/group'
 
 // 菜单 侧边栏
 export const menuAside = [
-  operate,
+  group,
   userModule,
-  settings
+  settings,
+  operate
 ]
 
 // 菜单 顶栏
@@ -17,7 +19,8 @@ export const menuHeader = [
     title: '首页',
     icon: 'home'
   },
-  operate,
+  group,
   userModule,
-  settings
+  settings,
+  operate
 ]

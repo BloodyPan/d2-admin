@@ -129,7 +129,7 @@ export default {
     flyto () {
       let centerPoint = [this.locationForm.longitude, this.locationForm.latitude]
       this.flying = true
-      this.map.flyTo({center: centerPoint, speed: 10, zoom: 14})
+      this.map.flyTo({ center: centerPoint, speed: 10, zoom: 14 })
       this.crossHair.setLngLat(centerPoint)
     },
     submitForm (formName) {

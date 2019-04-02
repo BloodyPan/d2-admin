@@ -50,7 +50,7 @@
         </div>
         <div class="page-login--content-footer">
           <p class="page-login--content-footer-copyright">
-            © 2019 深圳这个什么科技有限公司 All rights reserved. 
+            © 2019 深圳这个什么科技有限公司 All rights reserved.
             <a href="http://www.miitbeian.gov.cn" target="_blank">
               粤ICP备15071842号-3
             </a>

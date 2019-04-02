@@ -44,14 +44,24 @@
       <el-form-item label="needUpdate">
         <el-switch v-model="form.needUpdate"></el-switch>
       </el-form-item>
+      <el-form-item label="describe url cn" prop="describeUrlCN">
+        <el-col :span="15">
+          <el-input v-model="form.describeUrlCN"></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="describe url en" prop="describeUrlEN">
+        <el-col :span="15">
+          <el-input v-model="form.describeUrlEN"></el-input>
+        </el-col>
+      </el-form-item>
       <el-form-item label="describe cn" prop="describeCN">
         <el-col :span="8">
-          <el-input type="textarea" :autosize="{ minRows: 4}" v-model="form.describeCN"></el-input>
+          <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.describeCN"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="describe en" prop="describeEN">
         <el-col :span="8">
-          <el-input type="textarea" :autosize="{ minRows: 4}" v-model="form.describeEN"></el-input>
+          <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.describeEN"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -83,6 +93,10 @@
         describe:
         <div>更新描述，分中英文</div>
       </div>
+      <div class="text item">
+        describe url:
+        <div>新版描述图片链接地址</div>
+      </div>
     </el-card>
   </d2-container>
 </template>
@@ -94,17 +108,19 @@ export default {
   data () {
     return {
       form: {
-        'url': 'https://s3.cn-north-1.amazonaws.com.cn/dev.android.package/',
-        'apkName': 'spot_201807091000.apk',
-        'md5crc': '20f62056f54e41ceda633a889432c3a4',
-        'versionName': '1.2.7',
-        'versionCode': 1,
-        'minCode': 1,
-        'minSysVer': '1',
-        'dbVersion': '1',
-        'needUpdate': false,
-        'describeCN': 'Spot - Walkie Talkie Map\nHello world!\nNew version!',
-        'describeEN': 'Spot - Walkie Talkie Map\nHello world!\nNew version!'
+        url: 'https://s3.cn-north-1.amazonaws.com.cn/dev.android.package/',
+        apkName: 'spot_201807091000.apk',
+        md5crc: '20f62056f54e41ceda633a889432c3a4',
+        versionName: '1.2.7',
+        versionCode: 1,
+        minCode: 1,
+        minSysVer: '1',
+        dbVersion: '1',
+        needUpdate: false,
+        describeCN: 'Spot - Walkie Talkie Map\nHello world!\nNew version!',
+        describeEN: 'Spot - Walkie Talkie Map\nHello world!\nNew version!',
+        describeUrlCN: '',
+        describeUrlEN: ''
       },
       rules: {
         url: [
@@ -121,13 +137,16 @@ export default {
         versionName: [
           { required: true, trigger: ['blur', 'change'] }
         ],
-        dbVersion: [
-          { required: true, trigger: ['blur', 'change'] }
-        ],
         describeCN: [
           { required: true, trigger: ['blur', 'change'] }
         ],
         describeEN: [
+          { required: true, trigger: ['blur', 'change'] }
+        ],
+        describeUrlCN: [
+          { required: true, trigger: ['blur', 'change'] }
+        ],
+        describeUrlEN: [
           { required: true, trigger: ['blur', 'change'] }
         ]
       }
@@ -137,11 +156,11 @@ export default {
     this.getSettings()
   },
   methods: {
-    async getSettings () {
+    getSettings: async function () {
       const res = await GetAndroidUpdateSetting()
       this.form = JSON.parse(res.msg)
     },
-    async saveSettings (data) {
+    saveSettings: async function (data) {
       await SaveAndroidUpdateSetting(data)
       this.$notify({
         title: '修改成功',
@@ -149,7 +168,7 @@ export default {
         duration: 3000
       })
     },
-    submitForm (formName) {
+    submitForm: function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.saveSettings({
@@ -161,7 +180,7 @@ export default {
         }
       })
     },
-    resetForm () {
+    resetForm: function () {
       this.$refs.form.resetFields()
     }
   }

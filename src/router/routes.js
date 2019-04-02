@@ -2,6 +2,7 @@ import layoutHeaderAside from '@/layout/header-aside'
 import userRouter from './modules/user'
 import settingsRouter from './modules/settings'
 import historyRouter from './modules/history'
+import groupRouter from './modules/group'
 
 /**
  * 首页路由
@@ -52,6 +53,7 @@ const index = {
  */
 const frameIn = [
   index,
+  groupRouter,
   userRouter,
   settingsRouter,
   historyRouter

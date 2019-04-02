@@ -48,7 +48,7 @@ export default {
     }
   },
   methods: {
-    tableRowClassName ({row, rowIndex}) {
+    tableRowClassName ({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return 'success-row'
       }

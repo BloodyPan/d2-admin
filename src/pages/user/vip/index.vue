@@ -92,7 +92,7 @@ export default {
     amplitude: function (id) {
       window.open('https://analytics.amplitude.com/spot/project/188397/search/' + id)
     },
-    tableRowClassName ({row, rowIndex}) {
+    tableRowClassName ({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return 'success-row'
       }
