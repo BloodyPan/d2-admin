@@ -76,7 +76,11 @@ export default {
     }
   },
   mounted () {
-    this.getTag()
+    var params = {
+      limit: 200,
+      offset: 0
+    }
+    this.getTag(params)
   },
   methods: {
     sendQuickReply (desc) {
