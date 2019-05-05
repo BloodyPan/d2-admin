@@ -3,10 +3,12 @@ import userModule from './modules/user'
 import settings from './modules/settings'
 import operate from './modules/operate'
 import group from './modules/group'
+import examine from './modules/examine'
 
 // 菜单 侧边栏
 export const menuAside = [
   group,
+  examine,
   userModule,
   settings,
   operate
@@ -20,6 +22,7 @@ export const menuHeader = [
     icon: 'home'
   },
   group,
+  examine,
   userModule,
   settings,
   operate

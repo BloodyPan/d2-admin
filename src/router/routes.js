@@ -3,6 +3,7 @@ import userRouter from './modules/user'
 import settingsRouter from './modules/settings'
 import historyRouter from './modules/history'
 import groupRouter from './modules/group'
+import examineRouter from './modules/examine'
 
 /**
  * 首页路由
@@ -56,7 +57,8 @@ const frameIn = [
   groupRouter,
   userRouter,
   settingsRouter,
-  historyRouter
+  historyRouter,
+  examineRouter
 ]
 
 /**
