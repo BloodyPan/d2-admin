@@ -3,39 +3,45 @@
     <div slot="header" flex="main:justify">
       <el-date-picker size="mini" type="date" v-model="value" format="yyyy-MM-dd" placeholder="选择一个日期" @change="dateChanged"/>
     </div>
+    <el-dialog
+    title="详情"
+    :visible.sync="dialogVisible"
+    width="50%">
+      <chat-message ref="chatMessage"></chat-message>
+    </el-dialog>
     <div style="overflow: scroll; height: 100%;">
-    <div class="wrapper" ref="wrapper">
-      <el-table
-        class="content"
-        :data="tableData"
-        style="width: 100%;margin-bottom: 15px"
-        max-height="800"
-        :row-class-name="tableRowClassName">
-        <el-table-column type="index"></el-table-column>
-        <el-table-column label="头像">
-          <template slot-scope="scope">
-            <img class="profile" :src="scope.row.user.profilePhoto">
-          </template>
-        </el-table-column>
-        <el-table-column prop="user.nickname" label="昵称"></el-table-column>
-        <el-table-column prop="user.username" label="用户名"></el-table-column>
-        <el-table-column prop="type" label="举报类型">
-          <template slot-scope="scope">
-            {{ getInapporiateName(scope.row.inappropriateType) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="primary"
-              @click="detail(scope.$index, scope.row)">
-              查看详情
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+      <div class="wrapper" ref="wrapper">
+        <el-table
+          class="content"
+          :data="tableData"
+          style="width: 100%;margin-bottom: 15px"
+          max-height="800"
+          :row-class-name="tableRowClassName">
+          <el-table-column type="index"></el-table-column>
+          <el-table-column label="头像">
+            <template slot-scope="scope">
+              <img class="profile" :src="scope.row.user.profilePhoto">
+            </template>
+          </el-table-column>
+          <el-table-column prop="user.nickname" label="昵称"></el-table-column>
+          <el-table-column prop="user.username" label="用户名"></el-table-column>
+          <el-table-column prop="type" label="举报类型">
+            <template slot-scope="scope">
+              {{ getInapporiateName(scope.row.inappropriateType) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="primary"
+                @click="detail(scope.row.whistleblower.id, scope.row)">
+                查看详情
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
 </d2-container>
 </template>
@@ -43,12 +49,16 @@
 <script>
 import dayjs from 'dayjs'
 import bs from '@/components/common/bs'
+import chatMessage from '../../../components/user-chat/components/chat-message'
 import { Inappropriates } from '@/api/pages/examine/inappropriate'
 
 export default {
   mixins: [
     bs
   ],
+  components: {
+    'chat-message': chatMessage
+  },
   data () {
     return {
       tableData: [],
@@ -107,8 +117,13 @@ export default {
         })
       }
     },
-    detail () {
-      console.log(1)
+    detail (uid, row) {
+      this.dialogVisible = true
+      console.log(uid, row)
+      this.$nextTick(() => {
+        this.$refs.chatMessage.fetch(uid, row.chatId, row.createdAt)
+        // this.$refs.chatMessage.fetch(45038, 'group_103', 1552896518)
+      })
     }
   },
   mounted () {
