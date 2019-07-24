@@ -13,7 +13,7 @@
           <el-input v-model="searchForm.keys" :rows="2" placeholder="请输入内容" type="textarea" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item class="form-item-search margin-btm-0">
-          <el-button type="primary" @click="submitForm('searchForm')">查找</el-button>
+          <el-button type="primary" @click="submitForm()">查找</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -33,18 +33,6 @@
           </el-table-column>
           <el-table-column prop="nickname" label="昵称"></el-table-column>
           <el-table-column prop="username" label="用户名"></el-table-column>
-          <el-table-column prop="test.phoneNumber" label="手机"></el-table-column>
-          <el-table-column prop="friendCount" sortable label="好友数"></el-table-column>
-          <el-table-column prop="time" sortable label="注册时间">
-            <template slot-scope="scope">
-              {{ rowTime(scope.row.dateJoined) }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="time" sortable label="活跃时间">
-            <template slot-scope="scope">
-              {{ rowTime(scope.row.lastActive) }}
-            </template>
-          </el-table-column>
           <el-table-column align="right">
             <!-- eslint-disable-next-line vue/no-unused-vars -->
             <template slot="header" slot-scope="scope">
@@ -68,7 +56,7 @@
 </template>
 
 <script>
-import { VipUserList } from '@/api/pages/user/vip'
+import { SearchUser } from '@/api/pages/user/data-visor'
 import dayjs from 'dayjs'
 import md5 from 'js-md5'
 import bs from '@/components/common/bs'
@@ -83,17 +71,16 @@ export default {
         keys: ''
       },
       tableData: [],
-      total: 0,
-      currentPage: 1,
-      currentPageSize: 20,
       search: '',
       freshData: false
     }
   },
   mounted () {
     let height = document.getElementsByClassName('d2-container-full__body')[0].clientHeight
-    this.fetch()
     this.$refs.wrapper.style = 'height: ' + (height - 40) + 'px'
+    if (this.$route.query.userid !== void 0) {
+      this.fetch(this.$route.query.userid)
+    }
   },
   methods: {
     rowTime: ts => dayjs(ts * 1000).format('YYYY-MM-DD HH:mm:ss'),
@@ -107,19 +94,21 @@ export default {
       }
       return ''
     },
-    async fetch () {
-      let offset = (this.currentPage - 1) * this.currentPageSize
-      if (offset > this.total) {
-        return
-      }
-      const res = await VipUserList({
-        limit: this.currentPageSize,
-        offset: (this.currentPage - 1) * this.currentPageSize
+    submitForm: function () {
+      this.$refs.searchForm.validate((valid) => {
+        if (valid) {
+          this.fetch(this.searchForm.keys.split('\n').join(','))
+        } else {
+          this.$message.error('表单验证未通过')
+          return false
+        }
       })
-      this.total += res.content.total
-      if (this.total > 0) {
-        this.tableData = this.tableData.concat(res.content.persons)
-      }
+    },
+    async fetch (query) {
+      const res = await SearchUser({
+        query: query
+      })
+      this.tableData = res.content.persons
     }
   }
 }
