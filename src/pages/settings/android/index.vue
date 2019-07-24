@@ -11,6 +11,11 @@
           <el-input v-model="form.apkName"></el-input>
         </el-col>
       </el-form-item>
+      <el-form-item label="googleApkName" prop="googleApkName">
+        <el-col :span="15">
+          <el-input v-model="form.googleApkName"></el-input>
+        </el-col>
+      </el-form-item>
       <el-form-item label="md5crc" prop="md5crc">
         <el-col :span="15">
           <el-input v-model="form.md5crc"></el-input>
@@ -110,6 +115,7 @@ export default {
       form: {
         url: 'https://s3.cn-north-1.amazonaws.com.cn/dev.android.package/',
         apkName: 'spot_201807091000.apk',
+        googleApkName: '',
         md5crc: '20f62056f54e41ceda633a889432c3a4',
         versionName: '1.2.7',
         versionCode: 1,
@@ -117,8 +123,8 @@ export default {
         minSysVer: '1',
         dbVersion: '1',
         needUpdate: false,
-        describeCN: 'Spot - Walkie Talkie Map\nHello world!\nNew version!',
-        describeEN: 'Spot - Walkie Talkie Map\nHello world!\nNew version!',
+        describeCN: 'Spot - Walkie Talkie Map',
+        describeEN: 'Spot - Walkie Talkie Map',
         describeUrlCN: '',
         describeUrlEN: ''
       },
@@ -129,6 +135,9 @@ export default {
         apkName: [
           { required: true, trigger: ['blur', 'change'] }
           // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        googleApkName: [
+          { required: true, trigger: ['blur', 'change'] }
         ],
         md5crc: [
           { required: true, trigger: ['blur', 'change'] },

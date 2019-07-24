@@ -29,6 +29,15 @@ export default {
       component: () => import('@/pages/user/vip')
     },
     {
+      path: 'data-visor',
+      name: `${pre}data-visor`,
+      meta: {
+        ...meta,
+        title: 'DataVisor'
+      },
+      component: () => import('@/pages/user/data-visor')
+    },
+    {
       path: 'renew-user',
       name: `${pre}renew-user`,
       meta: { ...meta,
