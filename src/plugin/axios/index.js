@@ -65,6 +65,7 @@ function errorLog (err) {
 
 // 创建一个 axios 实例
 const service = axios.create({
+  url: 'spotcms/Welcome',
   baseURL: process.env.VUE_APP_API,
   crossDomain: true,
   withCredentials: true,

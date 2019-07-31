@@ -47,15 +47,8 @@
     :visible.sync="dialogVisible"
     @closed="handleClose"
     width="450px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="敏感词" prop="phrase">
-          <el-input
-            v-model="form.phrase"
-            auto-complete="off"
-            placeholder="请输入敏感词">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="敏感词" prop="level">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="敏感词等级" prop="level">
           <el-select v-model="form.level" placeholder="请选择">
             <el-option
               v-for="item in options"
@@ -64,6 +57,15 @@
               :value="item.value">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label-width="0" prop="phrase">
+          <el-input
+            type="textarea"
+            rows=5
+            v-model="form.phrase"
+            auto-complete="off"
+            placeholder="可以一次添加一个/多个，以换行符作为多个的分隔符">
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -105,8 +107,7 @@ export default {
       },
       rules: {
         phrase: [
-          { required: true, message: '不能为空', trigger: ['blur', 'change'] },
-          { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: ['blur', 'change'] }
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] }
         ],
         level: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] }
