@@ -1,63 +1,63 @@
 <template>
     <div style="display: flex;justify-content: space-evenly;">
-      <!-- <peek ref="peek" :content="content"></peek> -->
-      <div v-if="showLoading" class="blank" v-html="loadingText"></div>
-      <peek ref="peek" v-else-if="showPeek" :content="content"></peek>
-      <div class="chat-message">
-          <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
-      </div>
-      <ul class="inline-block">
-        <li v-if="userData.user">
-          <div class="info-common user-info">
-            <div class="profile-div">
-              <img class="profile" :src="userData.user.profilePhoto">
+        <div v-if="showOverlay" class="overlay">Loading...</div>
+        <div v-if="showLoading" class="blank" v-html="loadingText"></div>
+        <peek class="peek" ref="peek" v-else-if="showPeek" :content="content"></peek>
+        <div class="chat-message" v-if="showChat">
+            <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
+        </div>
+        <ul class="inline-block">
+            <li v-if="userData.user">
+            <div class="info-common user-info">
+                <div class="profile-div">
+                <img class="profile" :src="userData.user.profilePhoto">
+                </div>
+                <div style="margin-top: 5px;">
+                <span>昵称</span>
+                <span class="float-right">{{ userData.user.nickname }}</span>
+                </div>
+                <div style="margin-top: 5px;">
+                <span>用户名</span>
+                <span class="float-right">{{ userData.user.username }}</span>
+                </div>
+                <div style="margin-top: 5px;">
+                <span>IP所在地</span>
+                <span class="float-right">{{ userData.user.device.ipGeoLocation }}</span>
+                </div>
+                <div style="margin-top: 5px;">
+                <span>注册时间</span>
+                <span class="float-right">{{ timeFormat(userData.user.dateJoined) }}</span>
+                </div>
+                <div style="margin-top: 5px;">
+                <span>手机型号</span>
+                <span class="float-right">{{ getUA(userData.user.device.userAgent) }}</span>
+                </div>
             </div>
-            <div style="margin-top: 5px;">
-              <span>昵称</span>
-              <span class="float-right">{{ userData.user.nickname }}</span>
+            </li>
+            <li v-if="userData.inapporiateName">
+            <div class="info-common story-info">
+                <div>
+                <span>举报类型</span>
+                <span class="float-right">{{ userData.inapporiateName }}</span>
+                </div>
+                <div>
+                <span>举报时间</span>
+                <span class="float-right">{{ timeFormat(userData.createdAt) }}</span>
+                </div>
+                <div>
+                <span>场所</span>
+                <span class="float-right">{{ userData.scene }}</span>
+                </div>
             </div>
-            <div style="margin-top: 5px;">
-              <span>用户名</span>
-              <span class="float-right">{{ userData.user.username }}</span>
+            </li>
+            <li>
+            <div v-if="showBtns" class="btn-div">
+                <el-button type="info" :disabled="disIgnore" :loading="ignoreLoading" @click="ignore(userData)">{{ ignoreWording }}</el-button>
+                <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
+                <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
             </div>
-            <div style="margin-top: 5px;">
-              <span>IP所在地</span>
-              <span class="float-right">{{ userData.user.device.ipGeoLocation }}</span>
-            </div>
-            <div style="margin-top: 5px;">
-              <span>注册时间</span>
-              <span class="float-right">{{ timeFormat(userData.user.dateJoined) }}</span>
-            </div>
-            <div style="margin-top: 5px;">
-              <span>手机型号</span>
-              <span class="float-right">{{ getUA(userData.user.device.userAgent) }}</span>
-            </div>
-          </div>
-        </li>
-        <li v-if="userData.inapporiateName">
-          <div class="info-common story-info">
-            <div>
-              <span>举报类型</span>
-              <span class="float-right">{{ userData.inapporiateName }}</span>
-            </div>
-            <div>
-              <span>举报时间</span>
-              <span class="float-right">{{ timeFormat(userData.createdAt) }}</span>
-            </div>
-            <div>
-              <span>场所</span>
-              <span class="float-right">{{ userData.scene }}</span>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div v-if="showBtns" class="btn-div">
-            <el-button type="info" :disabled="disIgnore" :loading="ignoreLoading" @click="ignore(userData)">{{ ignoreWording }}</el-button>
-            <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
-            <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
-          </div>
-        </li>
-      </ul>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -83,7 +83,6 @@ export default {
     return {
       title: '',
       visible: false,
-      overlay: true,
       /* ------------ 基本信息 -------- */
       userData: {},
       loadingText: 'loading...',
@@ -99,8 +98,10 @@ export default {
       blockLoading: false,
       showWarning: true,
       /* ------------ 展示控件 ----------- */
+      showOverlay: true,
       showLoading: true,
       showPeek: false,
+      showChat: true,
       /* ------------ peek 组件 -------- */
       content: {}
     }
@@ -115,18 +116,32 @@ export default {
   methods: {
     timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm:ss'),
     getUA: ua => util.spot.getUAInfo(ua),
-    handleClose (done) {
-      this.$refs.peek.stopPeek()
-      done()
-    },
-    msgLoaded () {
-      this.showLoading = false
+    reset () {
+      if (this.showPeek) {
+        this.$refs.peek.stopPeek()
+      }
+      this.showOverlay = true
+      this.showLoading = true
       this.showPeek = false
+      this.showChat = true
+    },
+    msgLoaded (flag) {
+      this.showPeek = false
+      this.showOverlay = false
+      if (flag === 0) {
+        this.showLoading = true
+        this.showChat = false
+        this.loadingText = '没有聊天'
+      } else {
+        this.showLoading = false
+      }
     },
     showPanel () {
       var chatId = this.userData.chatId
       var chatItems = chatId.split('_')
       if (chatItems.length === 3) {
+        this.showChat = false
+        this.showOverlay = false
         this.getPeek(chatItems[1], chatItems[2])
       } else {
         this.$refs.chatMessage.fetch(this.userData.whistleblower.id, this.userData.chatId, this.userData.createdAt)
@@ -289,6 +304,9 @@ export default {
       justify-content: center;
       align-items: center;
       font-weight: bolder;
+  }
+
+  .peek {
   }
 
   .chat-message {

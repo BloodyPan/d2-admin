@@ -129,8 +129,12 @@ export default {
         time: time
       })
       console.log(res)
-      this.$emit('loaded')
-      this.generateData(res.content.messages, true)
+      if (res.content === void 0) {
+        this.$emit('loaded', 0)
+      } else {
+        this.$emit('loaded', 1)
+        this.generateData(res.content.messages, true)
+      }
     },
     playPeek (video) {
       this.$refs[`${video}`][0].play()

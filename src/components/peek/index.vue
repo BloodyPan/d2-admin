@@ -57,22 +57,23 @@ export default {
 <style scoped>
   .peek-div {
     display: inline-block;
-    border: 2px solid #FAFAFA;
+    border: 2px solid #FF6A00;
+    border-radius: 5px;
   }
 
   .chat-peek {
-    width: 200px;
+    width: 210px;
     cursor: pointer;
   }
 
   .chat-peek-photo {
-    width: 200px;
+    width: 210px;
     z-index: 999;
     position: relative;
   }
 
   .chat-peek-doodle {
-    margin-left: -200px;
+    margin-left: -210px;
     cursor: pointer;
   }
 </style>

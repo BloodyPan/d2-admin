@@ -6,6 +6,7 @@
     <el-dialog
     title="详情"
     :visible.sync="dialogVisible"
+    :before-close="handleClose"
     width="65%">
       <inappropriate ref="inappropriate" :message="userData" @close="closeDialog"></inappropriate>
     </el-dialog>
@@ -106,6 +107,10 @@ export default {
     },
     md5Encode: str => md5.hex(String(str)),
     rowTime: ts => dayjs(ts * 1000).format('YYYY-MM-DD HH:mm:ss'),
+    handleClose (done) {
+      this.$refs.inappropriate.reset()
+      done()
+    },
     getScene (row) {
       var scene = ''
       var chatIds = row.chatId.split('_')
