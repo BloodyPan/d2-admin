@@ -10,13 +10,13 @@
     </video>
     <img
       class="chat-peek-photo chat-peek-doodle"
-      v-if="peekContent.video && peekContent.photo"
-      :src="peekContent.photo"
+      v-if="peekContent.video && peekContent.doodle"
+      :src="peekContent.doodle"
       @click="playPeek">
     <img
       class="chat-peek-photo"
       v-if="peekContent.video == '' || peekContent.video == void 0"
-      :src="peekContent.photo">
+      :src="peekContent.picture">
   </div>
 </template>
 
@@ -36,6 +36,7 @@ export default {
   watch: {
     content: function (val) {
       this.peekContent = val
+      console.log(val)
     }
   },
   methods: {
@@ -56,6 +57,7 @@ export default {
 <style scoped>
   .peek-div {
     display: inline-block;
+    border: 2px solid #FAFAFA;
   }
 
   .chat-peek {

@@ -1,6 +1,10 @@
 <template>
-    <div style="padding-left: 10px;">
-      <peek ref="peek" :content="content"></peek>
+    <div style="display: flex;justify-content: space-evenly;">
+      <!-- <peek ref="peek" :content="content"></peek> -->
+      <div v-if="showLoading" class="blank">
+          Loading...
+      </div>
+      <peek ref="peek" v-else-if="showPeek" :content="content"></peek>
       <ul class="inline-block">
         <li v-if="userData.user">
           <div class="info-common user-info">
@@ -59,6 +63,7 @@
 <script>
 import util from '@/libs/util.js'
 import peek from '../peek'
+import { FeedDetail } from '@/api/pages/feed'
 import { IngoreInappropriate, FlagUser } from '@/api/pages/examine/inappropriate'
 
 export default {
@@ -93,6 +98,9 @@ export default {
       warnLoading: false,
       blockLoading: false,
       showWarning: true,
+      /* ------------ 展示控件 ----------- */
+      showLoading: true,
+      showPeek: false,
       /* ------------ peek 组件 -------- */
       content: {}
     }
@@ -101,7 +109,7 @@ export default {
     message: function (val) {
       this.userData = val
       this.showWarning = val.user.banLevel === 0
-      console.log(this.userData)
+      this.showPanel()
     }
   },
   methods: {
@@ -110,6 +118,17 @@ export default {
     handleClose (done) {
       this.$refs.peek.stopPeek()
       done()
+    },
+    showPanel () {
+      var chatId = this.userData.chatId
+      var chatItems = chatId.split('_')
+      if (chatItems.length === 3) {
+        this.getPeek(chatItems[1], chatItems[2])
+      } else {
+        this.showLoading = true
+        this.showPeek = false
+        this.content = {}
+      }
     },
     async ignore (row) {
       this.ignoreLoading = true
@@ -148,6 +167,17 @@ export default {
         duration: 3000
       })
       this.$emit('close')
+    },
+    async getPeek (userId, feedId) {
+      var res = await FeedDetail({
+        user_id: userId,
+        feed_id: feedId
+      })
+      this.showLoading = false
+      this.showPeek = true
+      this.$nextTick(_ => {
+        this.content = res.remark
+      })
     }
   }
 }
@@ -247,5 +277,15 @@ export default {
   .btn-div {
     text-align: right;
     margin-top: 20px;
+  }
+
+  .blank {
+      width: 200px;
+      height: 400px;
+      background-color: rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bolder;
   }
 </style>
