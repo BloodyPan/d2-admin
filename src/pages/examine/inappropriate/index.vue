@@ -6,7 +6,7 @@
     <el-dialog
     title="详情"
     :visible.sync="dialogVisible"
-    width="50%">
+    width="65%">
       <inappropriate ref="inappropriate" :message="userData" @close="closeDialog"></inappropriate>
     </el-dialog>
     <div style="overflow: scroll; height: 100%;">

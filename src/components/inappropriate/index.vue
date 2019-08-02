@@ -1,10 +1,11 @@
 <template>
     <div style="display: flex;justify-content: space-evenly;">
       <!-- <peek ref="peek" :content="content"></peek> -->
-      <div v-if="showLoading" class="blank">
-          Loading...
-      </div>
+      <div v-if="showLoading" class="blank" v-html="loadingText"></div>
       <peek ref="peek" v-else-if="showPeek" :content="content"></peek>
+      <div class="chat-message">
+          <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
+      </div>
       <ul class="inline-block">
         <li v-if="userData.user">
           <div class="info-common user-info">
@@ -63,13 +64,15 @@
 <script>
 import util from '@/libs/util.js'
 import peek from '../peek'
+import chatMessage from '../user-chat/components/chat-message'
 import { FeedDetail } from '@/api/pages/feed'
 import { IngoreInappropriate, FlagUser } from '@/api/pages/examine/inappropriate'
 
 export default {
   name: 'inappropriate',
   components: {
-    'peek': peek
+    'peek': peek,
+    'chat-message': chatMessage
   },
   props: {
     message: {
@@ -83,10 +86,7 @@ export default {
       overlay: true,
       /* ------------ 基本信息 -------- */
       userData: {},
-      // remarkMsg: '',
-      like: 0,
-      dislike: 0,
-      seen: 0,
+      loadingText: 'loading...',
       /* ------------ Btn ----------- */
       showBtns: true,
       disBlock: false,
@@ -119,15 +119,17 @@ export default {
       this.$refs.peek.stopPeek()
       done()
     },
+    msgLoaded () {
+      this.showLoading = false
+      this.showPeek = false
+    },
     showPanel () {
       var chatId = this.userData.chatId
       var chatItems = chatId.split('_')
       if (chatItems.length === 3) {
         this.getPeek(chatItems[1], chatItems[2])
       } else {
-        this.showLoading = true
-        this.showPeek = false
-        this.content = {}
+        this.$refs.chatMessage.fetch(this.userData.whistleblower.id, this.userData.chatId, this.userData.createdAt)
       }
     },
     async ignore (row) {
@@ -280,12 +282,17 @@ export default {
   }
 
   .blank {
-      width: 200px;
-      height: 400px;
+      width: 500px;
+      height: 500px;
       background-color: rgba(0, 0, 0, 0.1);
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: bolder;
+  }
+
+  .chat-message {
+      width: 500px;
+      height: 500px;
   }
 </style>

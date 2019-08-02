@@ -19,6 +19,10 @@
                   v-else-if="row.messageType === 0"
                   v-html="row.message.replace(/\n/g, '<br>')">
                 </div>
+                <!-- MESSAGE_TYPE_NORMAL -->
+                <div v-else-if="row.messageType === 1">
+                  <img class="sticker" :src="row.sticker.origin.gif"/>
+                </div>
                 <!-- MESSAGE_TYPE_FACE_MESSAGE -->
                 <div v-else-if="row.messageType === 9">
                   <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" onclick="this.play();"></video>
@@ -64,27 +68,14 @@ export default {
   data () {
     return {
       uid: 0,
+      chatId: '',
       cuid: 0,
       user: {},
       device: {},
       chats: [],
       chats_tmp: [],
-      refreshScroll: false,
-      teamSpotAvatar: 'http://pic1.getremark.com/RemarkGuideAvatar.png'
+      refreshScroll: false
     }
-  },
-  mounted () {
-    this.$nextTick(_ => {
-      this.BS.on('scroll', (pos) => {
-        // 滚动条滚到90%的地方，刷下better-scroll
-        if (this.BS.maxScrollY * 0.9 > pos.y) {
-          if (this.refreshScroll === false) {
-            this.refreshScroll = true
-            this.BS.refresh()
-          }
-        }
-      })
-    })
   },
   methods: {
     timeFormat: time => util.spot.formatTimestamp(time, 'yyyy-MM-dd hh:mm'),
@@ -125,11 +116,12 @@ export default {
       })
     },
     async fetch (uid, chatId, time) {
-      if (this.uid === uid) {
+      if (this.chatId === chatId) {
         return
       }
       this.refreshScroll = false
       this.uid = uid
+      this.chatId = chatId
 
       const res = await ChatMessages({
         uid: uid,
@@ -137,6 +129,7 @@ export default {
         time: time
       })
       console.log(res)
+      this.$emit('loaded')
       this.generateData(res.content.messages, true)
     },
     playPeek (video) {
@@ -243,17 +236,23 @@ export default {
 
   /* peek相关 */
   .chat-peek {
-    width: 120px;
+    width: 100px;
   }
 
   .chat-peek-photo {
-    width: 120px;
+    width: 100px;
     z-index: 999;
     position: relative;
+    border: 2px solid #FF6A00;
+    border-radius: 10px;
   }
 
   .chat-peek-doodle {
     margin-left: -120px;
+  }
+
+  .sticker {
+    width: 100px;
   }
 
   /* 语音信息相关 */
