@@ -24,12 +24,12 @@
             </template>
           </el-table-column>
           <el-table-column type="index"></el-table-column>
-          <el-table-column label="头像" width="55px">
+          <!-- <el-table-column label="头像" width="55px">
             <template slot-scope="scope">
               <img class="profile" :src="scope.row.user.profilePhoto">
             </template>
           </el-table-column>
-          <el-table-column prop="user.username" label="用户名"></el-table-column>
+          <el-table-column prop="user.username" label="用户名"></el-table-column> -->
           <el-table-column prop="type" label="举报类型">
             <template slot-scope="scope">
               {{ getInapporiateName(scope.row) }}
@@ -58,7 +58,7 @@
                 @click="detail(scope.row)">
                 查看详情
               </el-button>
-              <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" class="amplitude" target="_blank">A</a>
+              <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" class="amplitude" target="_blank">Amplitude</a>
             </template>
           </el-table-column>
         </el-table>

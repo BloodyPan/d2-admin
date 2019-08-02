@@ -9,46 +9,46 @@
         <ul class="inline-block">
             <li v-if="userData.user">
             <div class="info-common user-info">
-                <div class="profile-div">
-                <img class="profile" :src="userData.user.profilePhoto">
+                <!-- <div class="profile-div">
+                    <img class="profile" :src="userData.user.profilePhoto">
+                </div> -->
+                <!-- <div style="margin-top: 5px;">
+                    <span>昵称</span>
+                    <span class="float-right">{{ userData.user.nickname }}</span>
                 </div>
                 <div style="margin-top: 5px;">
-                <span>昵称</span>
-                <span class="float-right">{{ userData.user.nickname }}</span>
+                    <span>用户名</span>
+                    <span class="float-right">{{ userData.user.username }}</span>
+                </div> -->
+                <div style="margin-top: 5px;">
+                    <span>IP所在地</span>
+                    <span class="float-right">{{ userData.user.device.ipGeoLocation }}</span>
                 </div>
                 <div style="margin-top: 5px;">
-                <span>用户名</span>
-                <span class="float-right">{{ userData.user.username }}</span>
+                    <span>注册时间</span>
+                    <span class="float-right">{{ timeFormat(userData.user.dateJoined) }}</span>
                 </div>
                 <div style="margin-top: 5px;">
-                <span>IP所在地</span>
-                <span class="float-right">{{ userData.user.device.ipGeoLocation }}</span>
-                </div>
-                <div style="margin-top: 5px;">
-                <span>注册时间</span>
-                <span class="float-right">{{ timeFormat(userData.user.dateJoined) }}</span>
-                </div>
-                <div style="margin-top: 5px;">
-                <span>手机型号</span>
-                <span class="float-right">{{ getUA(userData.user.device.userAgent) }}</span>
+                    <span>手机型号</span>
+                    <span class="float-right">{{ getUA(userData.user.device.userAgent) }}</span>
                 </div>
             </div>
             </li>
             <li v-if="userData.inapporiateName">
-            <div class="info-common story-info">
-                <div>
-                <span>举报类型</span>
-                <span class="float-right">{{ userData.inapporiateName }}</span>
+                <div class="info-common story-info">
+                    <div>
+                        <span>举报类型</span>
+                        <span class="float-right">{{ userData.inapporiateName }}</span>
+                    </div>
+                    <div>
+                        <span>举报时间</span>
+                        <span class="float-right">{{ timeFormat(userData.createdAt) }}</span>
+                    </div>
+                    <div>
+                        <span>场所</span>
+                        <span class="float-right">{{ userData.scene }}</span>
+                    </div>
                 </div>
-                <div>
-                <span>举报时间</span>
-                <span class="float-right">{{ timeFormat(userData.createdAt) }}</span>
-                </div>
-                <div>
-                <span>场所</span>
-                <span class="float-right">{{ userData.scene }}</span>
-                </div>
-            </div>
             </li>
             <li>
             <div v-if="showBtns" class="btn-div">
@@ -304,9 +304,6 @@ export default {
       justify-content: center;
       align-items: center;
       font-weight: bolder;
-  }
-
-  .peek {
   }
 
   .chat-message {
