@@ -163,7 +163,8 @@ export default {
       this.warnLoading = true
       var res = await FlagUser({
         username: row.user.username,
-        flag: 1
+        flag: 1,
+        flag_type: row.inappropriateType
       })
       this.warnLoading = false
       this.showWarning = false
