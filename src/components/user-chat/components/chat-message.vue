@@ -25,7 +25,7 @@
                 </div>
                 <!-- MESSAGE_TYPE_FACE_MESSAGE -->
                 <div v-else-if="row.messageType === 9">
-                  <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" onclick="this.play();"></video>
+                  <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" controls onclick="this.play();"></video>
                   <img :class="'chat-peek-photo' + (row.extraContext.video != void 0 ? ' chat-peek-doodle' : '')" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`${row.extraContext.video}_${row.extraContext.photo}`)">
                 </div>
                 <!-- MESSAGE_TYPE_GUESS -->
@@ -316,7 +316,7 @@ export default {
   }
 
   .chat-peek-doodle {
-    margin-left: -120px;
+    margin-left: -102px;
   }
 
   .sticker {

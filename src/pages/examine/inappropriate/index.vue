@@ -7,7 +7,7 @@
     title="详情"
     :visible.sync="dialogVisible"
     :before-close="handleClose"
-    width="65%">
+    width="55rem">
       <inappropriate ref="inappropriate" :message="userData" @close="closeDialog"></inappropriate>
     </el-dialog>
     <div style="overflow: scroll; height: 100%;">
@@ -19,7 +19,7 @@
           max-height="800"
           :row-class-name="tableRowClassName">
           <el-table-column label="" width="80px">
-            <template slot-scope="scope">
+            <template slot-scope="scope" v-if="scope.row.user">
               <div v-if="scope.row.user.banLevel === 1" class="warning-tag">警告</div>
             </template>
           </el-table-column>
@@ -35,18 +35,20 @@
               {{ getInapporiateName(scope.row) }}
             </template>
           </el-table-column>
-          <el-table-column prop="user.username" label="场所">
+          <el-table-column prop="chatType" label="场所">
             <template slot-scope="scope">
               {{ getScene(scope.row) }}
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="举报时间">
+          <el-table-column prop="counter" label="观众人数">
+          </el-table-column>
+          <el-table-column prop="createdAt" sortable label="举报时间">
             <template slot-scope="scope">
               {{ rowTime(scope.row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column prop="user.username" label="用户类别">
-            <template slot-scope="scope">
+          <el-table-column prop="userType" label="用户类别">
+            <template slot-scope="scope" v-if="scope.row.user">
               {{ getUserType(scope.row.user) }}
             </template>
           </el-table-column>
@@ -58,7 +60,7 @@
                 @click="detail(scope.row)">
                 查看详情
               </el-button>
-              <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" class="amplitude" target="_blank">Amplitude</a>
+              <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" v-if="scope.row.user" class="amplitude" target="_blank">Amplitude</a>
             </template>
           </el-table-column>
         </el-table>
@@ -113,10 +115,20 @@ export default {
     },
     getScene (row) {
       var scene = ''
-      var chatIds = row.chatId.split('_')
+      var chatItems = row.chatId.split(':')
+      var chatIds = row.chatId
+      if (chatItems.length === 2) {
+        chatIds = chatItems[1].split('_')
+      } else {
+        chatIds = row.chatId.split('_')
+      }
       var chatType = chatIds[0]
       if (chatType === 'feed') {
         scene = '日常'
+      } else if (chatType === 'status') {
+        scene = '状态'
+      } else if (chatType === 'url') {
+        scene = '链接'
       } else if (chatType === 'group') {
         scene = '群聊'
       } else if (chatType === 'channel') {

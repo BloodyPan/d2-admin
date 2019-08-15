@@ -109,7 +109,9 @@ export default {
   watch: {
     message: function (val) {
       this.userData = val
-      this.showWarning = val.user.banLevel === 0
+      if (val.user) {
+        this.showWarning = val.user.banLevel === 0
+      }
       this.showPanel()
     }
   },
@@ -122,6 +124,9 @@ export default {
       }
       this.showOverlay = true
       this.showLoading = true
+      this.ignoreLoading = false
+      this.warnLoading = false
+      this.blockLoading = false
       this.showPeek = false
       this.showChat = true
     },
@@ -142,7 +147,10 @@ export default {
       if (chatItems.length === 3) {
         this.showChat = false
         this.showOverlay = false
-        this.getPeek(chatItems[1], chatItems[2])
+
+        var chatPrefixs = chatItems[0].split(':')
+        var status = (chatPrefixs.length === 2 && chatPrefixs[1] === 'status') ? 1 : 0
+        this.getPeek(chatItems[1], chatItems[2], status)
       } else {
         this.$refs.chatMessage.fetch(this.userData.whistleblower.id, this.userData.chatId, this.userData.createdAt)
       }
@@ -186,10 +194,11 @@ export default {
       })
       this.$emit('close')
     },
-    async getPeek (userId, feedId) {
+    async getPeek (userId, feedId, status) {
       var res = await FeedDetail({
         user_id: userId,
-        feed_id: feedId
+        feed_id: feedId,
+        status: status
       })
       this.showLoading = false
       this.showPeek = true
@@ -241,7 +250,7 @@ export default {
     margin-left: 20px;
     border-radius: 5px;
     padding: 20px;
-    min-width: 85%;
+    min-width: 25rem;
     font-size: 16px;
     font-weight: bold;
   }
@@ -294,7 +303,13 @@ export default {
 
   .btn-div {
     text-align: right;
-    margin-top: 20px;
+    display: inline-block;
+    margin-left: 20px;
+    border-radius: 5px;
+    min-width: 25rem;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 20px 0 20px 40px
   }
 
   .blank {
