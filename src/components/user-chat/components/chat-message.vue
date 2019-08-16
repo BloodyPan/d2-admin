@@ -6,7 +6,7 @@
           <div :key="`chat-row-${index}`" :class="chat.right ? 'chat-content-row-right' : 'chat-content-row'">
             <img :class="chat.right ? 'chat-profile chat-profile-right' : 'chat-profile'" :src="chat.profilePhoto">
             <ul style="margin: 0;" class="chat-content">
-              <li class="nickname">{{ chat.nickname }}</li>
+              <li :class="chat.nickClass">{{ chat.nickname }}</li>
               <li :key="`chat-li-${index}`" v-for="(row, index) in chat.rows">
                 <!-- FEED_BACK -->
                 <div :class="chat.right ? 'bubble bubble-right' : 'bubble'"
@@ -172,16 +172,12 @@ export default {
             this.userIndex[this.cuid] = fakeId
           }
           var userFakeId = this.userIndex[this.cuid]
-          // this.chats_tmp.push({
-          //   right: false,
-          //   profilePhoto: msgs[index].user.profilePhoto,
-          //   nickname: msgs[index].user.nickname,
-          //   rows: [msgs[index]]
-          // })
+          var inappropriatesFlag = msgs[index].user.id !== this.uid
           this.chats_tmp.push({
             right: false,
             profilePhoto: 'http://wpic.getremark.com/' + this.fakeUser[userFakeId].profilePhoto,
-            nickname: this.fakeUser[userFakeId].nickname,
+            nickname: this.fakeUser[userFakeId].nickname + (inappropriatesFlag ? ' 【被举报】' : ''),
+            nickClass: inappropriatesFlag ? 'nickname-inappropriates' : 'nickname',
             rows: [msgs[index]]
           })
           currentIndex++
@@ -313,6 +309,12 @@ export default {
   .nickname {
     color: gray;
     font-size: 12px;
+  }
+
+  .nickname-inappropriates {
+    color: red !important;
+    font-size: 12px;
+    font-weight: bolder;
   }
 
   /* 聊天气泡 */
