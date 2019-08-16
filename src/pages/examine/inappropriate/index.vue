@@ -113,6 +113,20 @@ export default {
       this.$refs.inappropriate.reset()
       done()
     },
+    closeDialog () {
+      this.dialogVisible = false
+    },
+    detail (row) {
+      this.dialogVisible = true
+
+      row.day = dayjs(this.value).format('YYYYMMDD')
+      this.$nextTick(() => {
+        if (this.userData.chatId && this.userData.chatId === row.chatId) {
+          this.$refs.inappropriate.showPanel()
+        }
+        this.userData = row
+      })
+    },
     getScene (row) {
       var scene = ''
       var chatItems = row.chatId.split(':')
@@ -201,17 +215,6 @@ export default {
           this.freshData = false
         })
       }
-    },
-    detail (row) {
-      this.dialogVisible = true
-
-      row.day = dayjs(this.value).format('YYYYMMDD')
-      this.$nextTick(() => {
-        this.userData = row
-      })
-    },
-    closeDialog () {
-      this.dialogVisible = false
     }
   },
   mounted () {

@@ -41,6 +41,26 @@
                 <div v-else-if="row.messageType === 33">
                   <button class="voice-icon" @click="playVoice(row.message)"></button>
                 </div>
+                <!-- MESSAGE_TYPE_SHARE_SHOP -->
+                <div v-else-if="row.messageType === 44">
+                  [分享店铺]
+                </div>
+                <!-- MESSAGE_TYPE_MEET_UP -->
+                <div v-else-if="row.messageType === 45">
+                  [店铺走起]
+                </div>
+                <!-- MESSAGE_TYPE_GOING -->
+                <div v-else-if="row.messageType === 46">
+                  [现在要去]
+                </div>
+                <!-- MESSAGE_TYPE_MUSIC -->
+                <div v-else-if="row.messageType === 47">
+                  [在听]
+                </div>
+                <!-- MESSAGE_TYPE_WEB -->
+                <div v-else-if="row.messageType === 48">
+                  [在看]
+                </div>
                 <div v-else>[未处理消息]</div>
               </li>
               <!-- 分隔 -->
@@ -181,6 +201,7 @@ export default {
     },
     async fetch (uid, chatId, time) {
       if (this.chatId === chatId) {
+        this.$emit('loaded', 1)
         return
       }
       this.refreshScroll = false
@@ -247,8 +268,8 @@ export default {
   }
 
   .chat-profile {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
@@ -304,11 +325,11 @@ export default {
 
   /* peek相关 */
   .chat-peek {
-    width: 100px;
+    width: 80px;
   }
 
   .chat-peek-photo {
-    width: 100px;
+    width: 80px;
     z-index: 999;
     position: relative;
     border: 2px solid #FF6A00;
@@ -316,7 +337,7 @@ export default {
   }
 
   .chat-peek-doodle {
-    margin-left: -102px;
+    margin-left: -82px;
   }
 
   .sticker {

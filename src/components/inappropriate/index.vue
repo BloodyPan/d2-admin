@@ -143,6 +143,9 @@ export default {
     },
     showPanel () {
       var chatId = this.userData.chatId
+      if (chatId === void 0) {
+        return
+      }
       var chatItems = chatId.split('_')
       if (chatItems.length === 3) {
         this.showChat = false
