@@ -28,6 +28,10 @@
                   <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" controls onclick="this.play();"></video>
                   <img :class="'chat-peek-photo' + (row.extraContext.video != void 0 ? ' chat-peek-doodle' : '')" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`${row.extraContext.video}_${row.extraContext.photo}`)">
                 </div>
+                <!-- MESSAGE_TYPE_FIRE -->
+                <div v-else-if="row.messageType === 16">
+                  [打炮] <img class="fire-icon" :src="row.message">
+                </div>
                 <!-- MESSAGE_TYPE_GUESS -->
                 <div v-else-if="row.messageType === 30">
                   [猜干嘛] {{ row.message }}
@@ -380,6 +384,11 @@ export default {
     background: url("//pic7.getremark.com/mc-back.png") no-repeat;
     background-size: cover;
     color: white;
+  }
+
+  .fire-icon {
+    width: 15px;
+    vertical-align: middle;
   }
 
   .music-icon {
