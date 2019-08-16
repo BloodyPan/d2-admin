@@ -8,7 +8,7 @@
     :visible.sync="dialogVisible"
     :before-close="handleClose"
     width="55rem">
-      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog"></inappropriate>
+      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow"></inappropriate>
     </el-dialog>
     <div style="overflow: scroll; height: 100%;">
       <div class="wrapper" ref="wrapper">
@@ -95,7 +95,7 @@ export default {
         phrase: ''
       },
       freshData: false,
-      last_id: '',
+      last_id: 99999999999,
       now: dayjs(),
       userData: {}
     }
@@ -114,6 +114,12 @@ export default {
       done()
     },
     closeDialog () {
+      this.$refs.inappropriate.reset()
+      this.dialogVisible = false
+    },
+    deleteRow (row) {
+      this.$refs.inappropriate.reset()
+      this.tableData.splice(this.tableData.indexOf(row), 1)
       this.dialogVisible = false
     },
     detail (row) {
@@ -195,7 +201,7 @@ export default {
       return inapporiateName
     },
     dateChanged () {
-      this.last_id = ''
+      this.last_id = 99999999999
       this.tableData = []
       this.fetch()
     },
@@ -203,13 +209,14 @@ export default {
       const res = await Inappropriates({
         day: dayjs(this.value).format('YYYYMMDD'),
         limit: this.currentPageSize,
-        chat_id: this.last_id
+        timestamp: this.last_id
       })
       this.total = res.content.total
+      console.log(res.content)
       if (res.content.total > 0) {
         var datas = res.content.inappropriates
         this.tableData = this.tableData.concat(datas)
-        this.last_id = datas[datas.length - 1].chatId
+        this.last_id = datas[datas.length - 1].createdAt
         this.$nextTick(() => {
           this.BS.refresh()
           this.freshData = false

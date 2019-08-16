@@ -24,9 +24,13 @@
                   <img class="sticker" :src="row.sticker.origin.gif"/>
                 </div>
                 <!-- MESSAGE_TYPE_FACE_MESSAGE -->
-                <div v-else-if="row.messageType === 9">
-                  <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video" controls onclick="this.play();"></video>
-                  <img :class="'chat-peek-photo' + (row.extraContext.video != void 0 ? ' chat-peek-doodle' : '')" v-if="row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(`${row.extraContext.video}_${row.extraContext.photo}`)">
+                <div style="position: relative;" class="pointer" v-else-if="row.messageType === 9">
+                  <div class="video-icon-div" @click="playPeek(row.extraContext)" v-if="row.extraContext.video">
+                      <img class="video-icon" src="http://wpic.getremark.com/icon-video-play.png">
+                  </div>
+                  <video :ref="`${row.extraContext.video}_${row.extraContext.photo}`" class="chat-peek" v-if="row.extraContext.video" :src="row.extraContext.video"  @click="playPeek(row.extraContext)"></video>
+                  <img class="chat-peek-photo chat-peek-doodle" v-if="row.extraContext.video && row.extraContext.photo" :src="row.extraContext.photo" @click="playPeek(row.extraContext)">
+                  <img class="chat-peek-photo" v-else-if="row.extraContext.photo" :src="row.extraContext.photo">
                 </div>
                 <!-- MESSAGE_TYPE_FIRE -->
                 <div v-else-if="row.messageType === 16">
@@ -38,8 +42,8 @@
                 </div>
                 <!-- MESSAGE_TYPE_MUSIC_CHAT -->
                 <div class="music-bubble" @click="playVoice(row.lyric.m4aUrl)" v-else-if="row.messageType === 32">
-                    <img class="music-icon" src="//pic7.getremark.com/mc-playing.png">
-                    <div class="music-lyric">{{ row.lyric.lyric }}</div>
+                  <img class="music-icon" src="//pic7.getremark.com/mc-playing.png">
+                  <div class="music-lyric">{{ row.lyric.lyric }}</div>
                 </div>
                 <!-- MESSAGE_TYPE_VOICE_CHAT -->
                 <div v-else-if="row.messageType === 33">
@@ -221,8 +225,9 @@ export default {
         this.generateData(res.content.messages, true)
       }
     },
-    playPeek (video) {
-      this.$refs[`${video}`][0].play()
+    playPeek (context) {
+      var refName = context.video + '_' + context.photo
+      this.$refs[refName][0].play()
     },
     playVoice (voice) {
       this.$refs.chatAudio.src = voice
@@ -334,12 +339,33 @@ export default {
     width: 80px;
   }
 
+  .pointer{
+    cursor: pointer;
+  }
+
+  .video-icon-div {
+    position: absolute;
+    z-index: 1000;
+    width: 80px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-icon {
+    width: 30px;
+  }
+
   .chat-peek-photo {
     width: 80px;
     z-index: 999;
     position: relative;
-    border: 2px solid #FF6A00;
-    border-radius: 10px;
+    /* border: 2px solid #FF6A00; */
+    /* border-radius: 10px; */
   }
 
   .chat-peek-doodle {
