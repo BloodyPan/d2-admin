@@ -1,10 +1,16 @@
 <template>
   <d2-container>
     <div class="add-div">
+      <el-input v-model="keyword" width="100" placeholder="搜索关键词"></el-input>
       <el-button
-        type="primary"
+        type="primary">
+        搜索
+      </el-button>
+      <el-button
+        type="success"
+        plain
         @click="dialogVisible = true">
-        添加
+        添加关键词
       </el-button>
     </div>
     <el-table
@@ -14,7 +20,11 @@
       :row-class-name="tableRowClassName">
       <el-table-column type="index"></el-table-column>
       <el-table-column prop="word" label="敏感词"></el-table-column>
-      <el-table-column prop="level" label="敏感词等级"></el-table-column>
+      <el-table-column prop="level" label="敏感词等级">
+        <template slot-scope="scope">
+          {{ getLevelName(scope.row.level) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="time" label="创建时间">
         <template slot-scope="scope">
           {{ rowTime(scope.row.time) }}
@@ -96,11 +106,15 @@ export default {
       }, {
         value: 8,
         label: '辱骂'
+      }, {
+        value: 16,
+        label: '其他'
       }],
       total: 0,
       currentPage: 1,
       currentPageSize: 15,
       dialogVisible: false,
+      keyword: '',
       form: {
         phrase: '',
         level: ''
@@ -123,6 +137,19 @@ export default {
       }
       return ''
     },
+    getLevelName (level) {
+      if (level === 1) {
+        return '政治'
+      } else if (level === 2) {
+        return '恐暴'
+      } else if (level === 4) {
+        return '色情'
+      } else if (level === 8) {
+        return '辱骂'
+      } else {
+        return '其他'
+      }
+    },
     async fetch () {
       const res = await GetTaboos({
         limit: this.currentPageSize,
@@ -134,10 +161,10 @@ export default {
     handleSizeChange (val) {
       this.currentPage = 1
       this.currentPageSize = val
-      // this.fetch()
+      this.fetch()
     },
     handleCurrentChange (val) {
-      // this.fetch()
+      this.fetch()
     },
     async handleRemove (index, row) {
       const res = await RemoveTaboo({
@@ -169,6 +196,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.dialogVisible = false
+          console.log(this.form.phrase)
           this.handleAdd(this.form.phrase, this.form.level)
           this.$refs.form.resetFields()
         } else {
@@ -187,6 +215,16 @@ export default {
 <style>
   .add-div {
     margin-bottom: 10px;
+    text-align: right;
+  }
+
+  .add-div .el-input {
+    width: 200px;
+    margin-right: 10px;
+  }
+
+  .search-div {
+    float: right;
   }
 
   .el-table .success-row {

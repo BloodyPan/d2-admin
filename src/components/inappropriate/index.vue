@@ -160,14 +160,14 @@ export default {
     },
     async ignore (row) {
       this.ignoreLoading = true
-      // var res = await IngoreInappropriate({
-      //   day: row.day,
-      //   chat_id: row.chatId
-      // })
-      // this.$notify({
-      //   title: res.msg,
-      //   duration: 3000
-      // })
+      var res = await IngoreInappropriate({
+        day: row.day,
+        chat_id: row.chatId
+      })
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
       this.$emit('delete', row)
     },
     async warnUser (row) {
