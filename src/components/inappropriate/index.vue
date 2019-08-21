@@ -21,6 +21,18 @@
                     <span class="float-right">{{ userData.user.username }}</span>
                 </div> -->
                 <div style="margin-top: 5px;">
+                    <span>敏感词</span>
+                    <span class="float-right">{{ userData.sensitiveWord }}</span>
+                </div>
+                <div style="margin-top: 5px;">
+                    <span>敏感内容</span>
+                    <span class="float-right">{{ userData.sensitiveContent }}</span>
+                </div>
+                <div style="margin-top: 5px;">
+                    <span>观众人数</span>
+                    <span class="float-right">{{ userData.seenTotal }}</span>
+                </div>
+                <div style="margin-top: 5px;">
                     <span>IP所在地</span>
                     <span class="float-right">{{ userData.user.device.ipGeoLocation }}</span>
                 </div>

@@ -8,6 +8,14 @@ export function Inappropriates (params) {
   })
 }
 
+export function InappropriateNames (params) {
+  return request({
+    url: '/spotcms/InappropriateNames',
+    method: 'get',
+    params: params
+  })
+}
+
 export function IngoreInappropriate (data) {
   return request({
     url: '/spotcms/IngoreInappropriate',

@@ -15,7 +15,7 @@
         <el-table
           class="content"
           :data="tableData"
-          style="width: 100%;margin-bottom: 15px"
+          style="width: 100%;margin-bottom: 15px;"
           max-height="800"
           :row-class-name="tableRowClassName">
           <el-table-column label="" width="80px">
@@ -30,19 +30,23 @@
             </template>
           </el-table-column>
           <el-table-column prop="user.username" label="用户名"></el-table-column> -->
-          <el-table-column prop="type" label="举报类型">
+          <el-table-column prop="sensitiveWord" label="敏感词">
+          </el-table-column>
+          <el-table-column prop="sensitiveContent" label="敏感内容">
+          </el-table-column>
+          <el-table-column prop="type" label="举报类型" width="100px">
             <template slot-scope="scope">
               {{ getInapporiateName(scope.row) }}
             </template>
           </el-table-column>
-          <el-table-column prop="chatType" label="场所">
+          <el-table-column prop="chatType" label="场所" width="80px">
             <template slot-scope="scope">
               {{ getScene(scope.row) }}
             </template>
           </el-table-column>
-          <el-table-column prop="counter" label="观众人数">
+          <el-table-column prop="seenTotal" label="观众人数" width="80px">
           </el-table-column>
-          <el-table-column prop="createdAt" sortable label="举报时间">
+          <el-table-column prop="createdAt" sortable label="举报时间" width="160px">
             <template slot-scope="scope">
               {{ rowTime(scope.row.createdAt) }}
             </template>
