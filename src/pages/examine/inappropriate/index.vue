@@ -51,7 +51,7 @@
               {{ rowTime(scope.row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column prop="userType" label="用户类别">
+          <el-table-column prop="userType" label="用户类别" width="120px">
             <template slot-scope="scope" v-if="scope.row.user">
               {{ getUserType(scope.row.user) }}
             </template>
@@ -65,6 +65,7 @@
                 查看详情
               </el-button>
               <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" v-if="scope.row.user" class="amplitude" target="_blank">Amplitude</a>
+              <a :href="`https://admin-cn.datavisor.cn/v3/en/main/user-details?uid=${scope.row.user.dvId}`" v-if="scope.row.user" class="dv" target="_blank">DV</a>
             </template>
           </el-table-column>
         </el-table>
@@ -283,7 +284,14 @@ export default {
   }
 
   .amplitude {
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, .4);
+    color: white;
+    padding: 8px;
+    margin-left: 5px;
+  }
+
+  .dv {
+    background-color: rgba(0, 0, 0, .3);
     color: white;
     padding: 8px;
     margin-left: 5px;
