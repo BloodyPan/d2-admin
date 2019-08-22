@@ -9,6 +9,11 @@ export default {
       icon: 'stethoscope'
     },
     {
+      path: `${pre}nickname`,
+      title: '敏感昵称',
+      icon: 'user-times'
+    },
+    {
       path: `${pre}taboo`,
       title: '敏感词管理',
       icon: 'ban'

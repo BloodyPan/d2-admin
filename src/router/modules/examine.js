@@ -21,6 +21,15 @@ export default {
       component: () => import('@/pages/examine/inappropriate')
     },
     {
+      path: 'nickname',
+      name: `${pre}nickname`,
+      meta: {
+        ...meta,
+        title: '敏感昵称'
+      },
+      component: () => import('@/pages/examine/nickname')
+    },
+    {
       path: 'taboo',
       name: `${pre}taboo`,
       meta: {

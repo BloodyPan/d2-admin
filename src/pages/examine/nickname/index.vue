@@ -7,8 +7,8 @@
     title="详情"
     :visible.sync="dialogVisible"
     :before-close="handleClose"
-    width="55rem">
-      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow"></inappropriate>
+    width="32rem">
+      <ina-nickname ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow"></ina-nickname>
     </el-dialog>
     <div style="overflow: scroll; height: 100%;">
       <div class="wrapper" ref="wrapper">
@@ -24,34 +24,15 @@
             </template>
           </el-table-column>
           <el-table-column type="index"></el-table-column>
-          <!-- <el-table-column label="头像" width="55px">
-            <template slot-scope="scope">
-              <img class="profile" :src="scope.row.user.profilePhoto">
-            </template>
-          </el-table-column>
-          <el-table-column prop="user.username" label="用户名"></el-table-column> -->
           <el-table-column prop="sensitiveWord" label="敏感词">
           </el-table-column>
-          <el-table-column prop="sensitiveContent" label="敏感内容">
+          <el-table-column prop="sensitiveContent" label="昵称">
           </el-table-column>
-          <el-table-column prop="type" label="举报类型" width="150px">
-            <template slot-scope="scope">
-              {{ getInapporiateName(scope.row) }}
-            </template>
+          <el-table-column prop="user.username" label="用户名">
           </el-table-column>
-          <el-table-column prop="chatType" label="场所" width="80px">
-            <template slot-scope="scope">
-              {{ getScene(scope.row) }}
-            </template>
+          <el-table-column prop="seenTotal" label="观众人数">
           </el-table-column>
-          <el-table-column prop="seenTotal" label="观众人数" width="80px">
-          </el-table-column>
-          <el-table-column prop="createdAt" sortable label="举报时间" width="160px">
-            <template slot-scope="scope">
-              {{ rowTime(scope.row.createdAt) }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="userType" label="用户类别" width="120px">
+          <el-table-column prop="userType" label="用户类别">
             <template slot-scope="scope" v-if="scope.row.user">
               {{ getUserType(scope.row.user) }}
             </template>
@@ -78,15 +59,15 @@
 import md5 from 'js-md5'
 import dayjs from 'dayjs'
 import bs from '@/components/common/bs'
-import inappropriate from '../../../components/inappropriate'
-import { Inappropriates } from '@/api/pages/examine/inappropriate'
+import inaNickname from '../../../components/ina-nickname'
+import { InappropriateNames } from '@/api/pages/examine/inappropriate'
 
 export default {
   mixins: [
     bs
   ],
   components: {
-    'inappropriate': inappropriate
+    'ina-nickname': inaNickname
   },
   data () {
     return {
@@ -100,7 +81,7 @@ export default {
         phrase: ''
       },
       freshData: false,
-      last_id: 99999999999,
+      last_id: '99999999999999999999999999',
       now: dayjs(),
       userData: {}
     }
@@ -138,38 +119,6 @@ export default {
         this.userData = row
       })
     },
-    getScene (row) {
-      var scene = ''
-      var chatItems = row.chatId.split(':')
-      var chatIds = row.chatId
-      if (chatItems.length === 2) {
-        chatIds = chatItems[1].split('_')
-      } else {
-        chatIds = row.chatId.split('_')
-      }
-      var chatType = chatIds[0]
-      if (chatType === 'feed') {
-        scene = '日常'
-      } else if (chatType === 'status') {
-        if (row.public) {
-          scene = '二三度状态'
-        } else {
-          scene = '状态'
-        }
-      } else if (chatType === 'url') {
-        scene = '链接'
-      } else if (chatType === 'group') {
-        scene = '群聊'
-      } else if (chatType === 'channel') {
-        scene = '匿名留言板'
-      } else if (chatType === 'bottle') {
-        scene = '私聊 - 笔友'
-      } else {
-        scene = '私聊'
-      }
-      row.scene = scene
-      return scene
-    },
     getUserType (user) {
       var userType = ''
       var birthday = user.birthday + ''
@@ -192,40 +141,23 @@ export default {
       }
       return userType
     },
-    getInapporiateName (row) {
-      var val = row.inappropriateType
-      var inapporiateName = '其他'
-      if (val === 2) {
-        inapporiateName = '色情'
-      } else if (val === 4) {
-        inapporiateName = '语言骚扰、人身攻击'
-      } else if (val === 8) {
-        inapporiateName = '商业活动'
-      } else if (val === 16) {
-        inapporiateName = '煽动、歧视、谩骂'
-      } else if (val === 32) {
-        inapporiateName = '违法活动'
-      }
-      row.inapporiateName = inapporiateName
-      return inapporiateName
-    },
     dateChanged () {
-      this.last_id = 99999999999
+      this.last_id = '99999999999999999999999999'
       this.tableData = []
       this.fetch()
     },
     async fetch () {
-      const res = await Inappropriates({
+      const res = await InappropriateNames({
         day: dayjs(this.value).format('YYYYMMDD'),
         limit: this.currentPageSize,
-        timestamp: this.last_id
+        serialization_id: this.last_id
       })
       this.total = res.content.total
       console.log(res.content)
       if (res.content.total > 0) {
         var datas = res.content.inappropriates
-        this.tableData = this.tableData.concat(datas)
-        this.last_id = datas[datas.length - 1].createdAt
+        this.tableData = datas
+        this.last_id = datas[datas.length - 1].serializationId
         this.$nextTick(() => {
           this.BS.refresh()
           this.freshData = false
@@ -234,9 +166,7 @@ export default {
     }
   },
   mounted () {
-    let height = document.getElementsByClassName('d2-container-full__body')[0].clientHeight - 20
     this.fetch()
-    this.$refs.wrapper.style = 'height: ' + (height - 40) + 'px'
     this.$nextTick(() => {
       this.BS.on('scroll', (pos) => {
         // 滚动条滚到95%的地方开始拉新数据

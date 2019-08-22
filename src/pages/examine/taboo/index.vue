@@ -3,7 +3,8 @@
     <div class="add-div">
       <el-input v-model="keyword" width="100" placeholder="搜索关键词"></el-input>
       <el-button
-        type="primary">
+        type="primary"
+        @click="search">
         搜索
       </el-button>
       <el-button
@@ -115,6 +116,7 @@ export default {
       currentPageSize: 15,
       dialogVisible: false,
       keyword: '',
+      q: '',
       form: {
         phrase: '',
         level: ''
@@ -150,10 +152,15 @@ export default {
         return '其他'
       }
     },
+    search () {
+      this.q = this.keyword
+      this.fetch()
+    },
     async fetch () {
       const res = await GetTaboos({
         limit: this.currentPageSize,
-        offset: (this.currentPage - 1) * this.currentPageSize
+        offset: (this.currentPage - 1) * this.currentPageSize,
+        q: this.q
       })
       this.total = res.content.total
       this.tableData = res.content.taboos
