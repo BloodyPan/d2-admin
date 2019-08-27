@@ -39,7 +39,7 @@
               {{ getInapporiateName(scope.row) }}
             </template>
           </el-table-column>
-          <el-table-column prop="chatType" label="场所" width="80px">
+          <el-table-column prop="chatType" label="场所" width="100px">
             <template slot-scope="scope">
               {{ getScene(scope.row) }}
             </template>

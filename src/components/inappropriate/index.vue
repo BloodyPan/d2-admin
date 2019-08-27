@@ -65,8 +65,14 @@
             <li>
             <div v-if="showBtns" class="btn-div">
                 <el-button type="info" :disabled="disIgnore" :loading="ignoreLoading" @click="ignore(userData)">{{ ignoreWording }}</el-button>
-                <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
-                <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
+                <div class="btn-panel" v-if="!showPublic">
+                  <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
+                  <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
+                </div>
+                <div class="btn-panel" v-if="showPublic">
+                  <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningPSWording }}</el-button>
+                  <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockPSWording }}</el-button>
+                </div>
             </div>
             </li>
         </ul>
@@ -105,6 +111,8 @@ export default {
       ignoreWording: '正常并忽略',
       warningWording: '警告并标记',
       blockWording: '全网屏蔽',
+      warningPSWording: '警告并屏蔽24小时',
+      blockPSWording: '永久屏蔽二三度',
       ignoreLoading: false,
       warnLoading: false,
       blockLoading: false,
@@ -114,6 +122,7 @@ export default {
       showLoading: true,
       showPeek: false,
       showChat: true,
+      showPublic: false,
       /* ------------ peek 组件 -------- */
       content: {}
     }
@@ -141,6 +150,7 @@ export default {
       this.blockLoading = false
       this.showPeek = false
       this.showChat = true
+      this.showPublic = true
     },
     msgLoaded (flag) {
       this.showPeek = false
@@ -162,6 +172,7 @@ export default {
       if (chatItems.length === 3) {
         this.showChat = false
         this.showOverlay = false
+        this.showPublic = this.userData.public
 
         var chatPrefixs = chatItems[0].split(':')
         var status = (chatPrefixs.length === 2 && chatPrefixs[1] === 'status') ? 1 : 0
@@ -269,7 +280,7 @@ export default {
     margin-left: 20px;
     border-radius: 5px;
     padding: 20px;
-    min-width: 25rem;
+    min-width: 28rem;
     font-size: 16px;
     font-weight: bold;
   }
@@ -325,24 +336,29 @@ export default {
     display: inline-block;
     margin-left: 20px;
     border-radius: 5px;
-    min-width: 25rem;
+    min-width: 28rem;
     font-size: 16px;
     font-weight: bold;
     padding: 20px 0 20px 40px
   }
 
   .blank {
-      width: 500px;
-      height: 500px;
-      background-color: rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bolder;
+    width: 500px;
+    height: 500px;
+    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
   }
 
   .chat-message {
-      width: 500px;
-      height: 500px;
+    width: 500px;
+    height: 500px;
+  }
+
+  .btn-panel {
+    display: inline-block;
+    margin-left: 10px;
   }
 </style>
