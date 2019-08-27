@@ -187,7 +187,9 @@ export default {
       var res = await FlagUser({
         username: row.user.username,
         flag: 1,
-        flag_type: row.inappropriateType
+        flag_type: row.inappropriateType,
+        day: row.day,
+        chat_id: row.chatId
       })
       this.warnLoading = false
       this.showWarning = false
@@ -200,7 +202,9 @@ export default {
       this.blockLoading = true
       var res = await FlagUser({
         username: row.user.username,
-        flag: 2
+        flag: 2,
+        day: row.day,
+        chat_id: row.chatId
       })
       this.blockLoading = false
       this.$notify({
