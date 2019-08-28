@@ -176,15 +176,18 @@ export default {
       if (chatId === void 0) {
         return
       }
-      var chatItems = chatId.split('_')
-      if (chatItems.length === 3) {
+      console.log(chatId)
+      var chatItems = chatId.split(':')
+      var realChatId = chatItems[1]
+      var chatIdItems = realChatId.split('_')
+      var firstItem = chatIdItems[0]
+      if (firstItem === 'status' || firstItem === 'feed') {
         this.showChat = false
         this.showOverlay = false
         this.showPublic = this.userData.public
 
-        var chatPrefixs = chatItems[0].split(':')
-        var status = (chatPrefixs.length === 2 && chatPrefixs[1] === 'status') ? 1 : 0
-        this.getPeek(chatItems[1], chatItems[2], status)
+        var status = firstItem === 'status' ? 1 : 0
+        this.getPeek(chatIdItems[1], chatIdItems[2], status)
       } else {
         this.$refs.chatMessage.fetch(this.userData.whistleblower.id, this.userData.chatId, this.userData.createdAt)
       }
