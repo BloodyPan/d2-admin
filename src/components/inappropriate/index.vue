@@ -7,8 +7,14 @@
             <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
         </div>
         <ul class="inline-block">
+            <li v-if="userData.user.banLevel === 1 || userData.user.blocked === 1">
+              <div class="tag-div">
+                  <div v-if="userData.user.banLevel === 1" class="warning-tag">警告</div>
+                  <div v-if="userData.user.blocked === 1" class="block-tag">屏蔽</div>
+              </div>
+            </li>
             <li v-if="userData.user">
-            <div class="info-common user-info">
+              <div class="info-common user-info">
                 <!-- <div class="profile-div">
                     <img class="profile" :src="userData.user.profilePhoto">
                 </div> -->
@@ -44,36 +50,36 @@
                     <span>手机型号</span>
                     <span class="float-right">{{ getUA(userData.user.device.userAgent) }}</span>
                 </div>
-            </div>
+              </div>
             </li>
             <li v-if="userData.inapporiateName">
-                <div class="info-common story-info">
-                    <div>
-                        <span>举报类型</span>
-                        <span class="float-right">{{ userData.inapporiateName }}</span>
-                    </div>
-                    <div>
-                        <span>举报时间</span>
-                        <span class="float-right">{{ timeFormat(userData.createdAt) }}</span>
-                    </div>
-                    <div>
-                        <span>场所</span>
-                        <span class="float-right">{{ userData.scene }}</span>
-                    </div>
-                </div>
+              <div class="info-common story-info">
+                  <div>
+                      <span>举报类型</span>
+                      <span class="float-right">{{ userData.inapporiateName }}</span>
+                  </div>
+                  <div>
+                      <span>举报时间</span>
+                      <span class="float-right">{{ timeFormat(userData.createdAt) }}</span>
+                  </div>
+                  <div>
+                      <span>场所</span>
+                      <span class="float-right">{{ userData.scene }}</span>
+                  </div>
+              </div>
             </li>
             <li>
-            <div v-if="showBtns" class="btn-div">
-                <el-button type="info" :disabled="disIgnore" :loading="ignoreLoading" @click="ignore(userData)">{{ ignoreWording }}</el-button>
-                <div class="btn-panel" v-if="!showPublic">
-                  <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
-                  <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
-                </div>
-                <div class="btn-panel" v-if="showPublic">
-                  <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnPubStatus(userData)">{{ warningPSWording }}</el-button>
-                  <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockPubStatus(userData)">{{ blockPSWording }}</el-button>
-                </div>
-            </div>
+              <div v-if="showBtns" class="btn-div">
+                  <el-button type="info" :disabled="disIgnore" :loading="ignoreLoading" @click="ignore(userData)">{{ ignoreWording }}</el-button>
+                  <div class="btn-panel" v-if="!showPublic">
+                    <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
+                    <el-button type="danger" v-if="showBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
+                  </div>
+                  <div class="btn-panel" v-if="showPublic">
+                    <el-button type="warning" :loading="warnLoading" @click="warnPubStatus(userData)">{{ warningPSWording }}</el-button>
+                    <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockPubStatus(userData)">{{ blockPSWording }}</el-button>
+                  </div>
+              </div>
             </li>
         </ul>
     </div>
@@ -117,6 +123,7 @@ export default {
       warnLoading: false,
       blockLoading: false,
       showWarning: true,
+      showBlock: true,
       /* ------------ 展示控件 ----------- */
       showOverlay: true,
       showLoading: true,
@@ -132,6 +139,7 @@ export default {
       this.userData = val
       if (val.user) {
         this.showWarning = val.user.banLevel === 0
+        this.showBlock = val.user.blocked === 0
       }
       this.showPanel()
     }
@@ -150,7 +158,7 @@ export default {
       this.blockLoading = false
       this.showPeek = false
       this.showChat = true
-      this.showPublic = true
+      this.showPublic = false
     },
     msgLoaded (flag) {
       this.showPeek = false
@@ -208,6 +216,8 @@ export default {
         title: res.msg,
         duration: 3000
       })
+      row.user.banLevel = 1
+      this.$emit('warn', row)
     },
     async blockUser (row) {
       this.blockLoading = true
@@ -218,11 +228,13 @@ export default {
         chat_id: row.chatId
       })
       this.blockLoading = false
+      this.showBlock = false
       this.$notify({
         title: res.msg,
         duration: 3000
       })
-      this.$emit('close')
+      row.user.blocked = 1
+      this.$emit('block', row)
     },
     async warnPubStatus (row) {
       this.warnLoading = true
@@ -358,7 +370,7 @@ export default {
     vertical-align: middle;
   }
 
-  .btn-div {
+  .btn-div, .tag-div {
     text-align: right;
     display: inline-block;
     margin-left: 20px;

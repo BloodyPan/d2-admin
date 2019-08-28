@@ -8,7 +8,7 @@
     :visible.sync="dialogVisible"
     :before-close="handleClose"
     width="55rem">
-      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow"></inappropriate>
+      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow" @warn="warnRow" @block="blockRow"></inappropriate>
     </el-dialog>
     <div style="overflow: scroll; height: 100%;">
       <div class="wrapper" ref="wrapper">
@@ -16,11 +16,11 @@
           class="content"
           :data="tableData"
           style="width: 100%;margin-bottom: 15px;"
-          max-height="800"
           :row-class-name="tableRowClassName">
-          <el-table-column label="" width="80px">
+          <el-table-column label="" width="60px">
             <template slot-scope="scope" v-if="scope.row.user">
-              <div v-if="scope.row.user.banLevel === 1" class="warning-tag">警告</div>
+              <div v-if="scope.row.user.blocked === 1" class="block-tag">屏蔽</div>
+              <div v-else-if="scope.row.user.banLevel === 1" class="warning-tag">警告</div>
             </template>
           </el-table-column>
           <el-table-column type="index"></el-table-column>
@@ -96,7 +96,7 @@ export default {
       tableData: [],
       total: 0,
       currentPage: 1,
-      currentPageSize: 15,
+      currentPageSize: 20,
       dialogVisible: false,
       value: new Date(),
       form: {
@@ -128,6 +128,14 @@ export default {
     deleteRow (row) {
       this.$refs.inappropriate.reset()
       this.tableData.splice(this.tableData.indexOf(row), 1)
+      this.dialogVisible = false
+    },
+    warnRow (row) {
+      row.user.banLevel = 1
+    },
+    blockRow (row) {
+      this.$refs.inappropriate.reset()
+      row.user.blocked = 1
       this.dialogVisible = false
     },
     detail (row) {
@@ -215,6 +223,7 @@ export default {
     dateChanged () {
       this.last_id = 99999999999
       this.tableData = []
+      this.freshData = false
       this.fetch()
     },
     async fetch () {
@@ -232,6 +241,12 @@ export default {
         this.$nextTick(() => {
           this.BS.refresh()
           this.freshData = false
+        })
+      } else if (this.freshData === true) {
+        this.$notify.info({
+          title: '',
+          message: '已加载完所有举报信息',
+          position: 'bottom-right'
         })
       }
     }
@@ -257,16 +272,23 @@ export default {
 </script>
 
 <style>
-  .warning-tag {
+  .warning-tag, .block-tag {
     display: inline-block;
-    background-color: #F5A623;
     border-radius: 12.5px;
     color: white;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bolder;
-    width: 54px;
+    width: 40px;
     text-align: center;
-    padding: 3px 10px;
+    padding: 2px;
+  }
+
+  .warning-tag {
+    background-color: #F5A623;
+  }
+
+  .block-tag {
+    background-color: #f56c6c;
   }
 
   .add-div {
@@ -288,6 +310,7 @@ export default {
   .wrapper{
     height: 500px;
     overflow: scroll;
+    padding-bottom: 20px;
   }
 
   .amplitude {
