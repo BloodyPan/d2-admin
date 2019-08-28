@@ -45,6 +45,9 @@
             </template>
           </el-table-column>
           <el-table-column prop="seenTotal" label="观众人数" width="80px">
+            <template slot-scope="scope">
+              {{ scope.row.public ? "-" : scope.row.seenTotal }}
+            </template>
           </el-table-column>
           <el-table-column prop="createdAt" sortable label="举报时间" width="160px">
             <template slot-scope="scope">

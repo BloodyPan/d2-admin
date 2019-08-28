@@ -30,7 +30,7 @@
                 </div>
                 <div style="margin-top: 5px;">
                     <span>观众人数</span>
-                    <span class="float-right">{{ userData.seenTotal }}</span>
+                    <span class="float-right">{{ userData.public ? "-" : userData.seenTotal }}</span>
                 </div>
                 <div style="margin-top: 5px;">
                     <span>IP所在地</span>
@@ -70,8 +70,8 @@
                   <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
                 </div>
                 <div class="btn-panel" v-if="showPublic">
-                  <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningPSWording }}</el-button>
-                  <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockPSWording }}</el-button>
+                  <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnPubStatus(userData)">{{ warningPSWording }}</el-button>
+                  <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockPubStatus(userData)">{{ blockPSWording }}</el-button>
                 </div>
             </div>
             </li>
@@ -84,7 +84,7 @@ import util from '@/libs/util.js'
 import peek from '../peek'
 import chatMessage from '../user-chat/components/chat-message'
 import { FeedDetail } from '@/api/pages/feed'
-import { IngoreInappropriate, FlagUser } from '@/api/pages/examine/inappropriate'
+import { IngoreInappropriate, FlagUser, BlockPublicStatus } from '@/api/pages/examine/inappropriate'
 
 export default {
   name: 'inappropriate',
@@ -216,6 +216,33 @@ export default {
         flag: 2,
         day: row.day,
         chat_id: row.chatId
+      })
+      this.blockLoading = false
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      this.$emit('close')
+    },
+    async warnPubStatus (row) {
+      this.warnLoading = true
+      var res = await BlockPublicStatus({
+        day: row.day,
+        chat_id: row.chatId,
+        block_time: 86400
+      })
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      this.$emit('close')
+    },
+    async blockPubStatus (row) {
+      this.blockLoading = true
+      var res = await BlockPublicStatus({
+        day: row.day,
+        chat_id: row.chatId,
+        block_time: 86400 * 365
       })
       this.blockLoading = false
       this.$notify({

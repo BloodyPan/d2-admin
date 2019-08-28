@@ -47,3 +47,11 @@ export function NicknameNotify (data) {
     data: data
   })
 }
+
+export function BlockPublicStatus (data) {
+  return request({
+    url: '/spotcms/BlockPublicStatus',
+    method: 'post',
+    data: data
+  })
+}
