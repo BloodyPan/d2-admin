@@ -176,7 +176,7 @@ export default {
       if (chatId === void 0) {
         return
       }
-      console.log(chatId)
+
       var chatItems = chatId.split(':')
       var realChatId = chatItems[1]
       var chatIdItems = realChatId.split('_')
