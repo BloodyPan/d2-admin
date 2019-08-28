@@ -74,6 +74,7 @@
                   <div class="btn-panel" v-if="!showPublic">
                     <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
                     <el-button type="danger" v-if="showBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
+                    <el-button type="primary" v-if="!showBlock" :loading="blockLoading" @click="unblockUser(userData)">{{ unblockWording }}</el-button>
                   </div>
                   <div class="btn-panel" v-if="showPublic">
                     <el-button type="warning" :loading="warnLoading" @click="warnPubStatus(userData)">{{ warningPSWording }}</el-button>
@@ -90,7 +91,7 @@ import util from '@/libs/util.js'
 import peek from '../peek'
 import chatMessage from '../user-chat/components/chat-message'
 import { FeedDetail } from '@/api/pages/feed'
-import { IngoreInappropriate, FlagUser, BlockPublicStatus } from '@/api/pages/examine/inappropriate'
+import { IngoreInappropriate, FlagUser, UnblockUser, BlockPublicStatus } from '@/api/pages/examine/inappropriate'
 
 export default {
   name: 'inappropriate',
@@ -117,6 +118,7 @@ export default {
       ignoreWording: '正常并忽略',
       warningWording: '警告并标记',
       blockWording: '全网屏蔽',
+      unblockWording: '解除屏蔽',
       warningPSWording: '警告并屏蔽24小时',
       blockPSWording: '永久屏蔽二三度',
       ignoreLoading: false,
@@ -237,7 +239,23 @@ export default {
         duration: 3000
       })
       row.user.blocked = 1
-      this.$emit('block', row)
+      this.$emit('block', row, 1)
+    },
+    async unblockUser (row) {
+      this.blockLoading = true
+      var res = await UnblockUser({
+        username: row.user.username,
+        day: row.day,
+        chat_id: row.chatId
+      })
+      this.blockLoading = false
+      this.showBlock = true
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      row.user.blocked = 0
+      this.$emit('block', row, 0)
     },
     async warnPubStatus (row) {
       this.warnLoading = true

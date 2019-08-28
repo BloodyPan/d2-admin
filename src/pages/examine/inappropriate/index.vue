@@ -133,9 +133,9 @@ export default {
     warnRow (row) {
       row.user.banLevel = 1
     },
-    blockRow (row) {
+    blockRow (row, blocked) {
       this.$refs.inappropriate.reset()
-      row.user.blocked = 1
+      row.user.blocked = blocked
       this.dialogVisible = false
     },
     detail (row) {

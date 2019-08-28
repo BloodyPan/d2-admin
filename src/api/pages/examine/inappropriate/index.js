@@ -40,6 +40,14 @@ export function FlagUser (data) {
   })
 }
 
+export function UnblockUser (data) {
+  return request({
+    url: '/spotcms/UnblockUser',
+    method: 'post',
+    data: data
+  })
+}
+
 export function NicknameNotify (data) {
   return request({
     url: '/spotcms/NicknameNotify',
