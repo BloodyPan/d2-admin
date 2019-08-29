@@ -38,6 +38,15 @@ export default {
       component: () => import('@/pages/user/data-visor')
     },
     {
+      path: 'white-list',
+      name: `${pre}white-list`,
+      meta: {
+        ...meta,
+        title: '白名单'
+      },
+      component: () => import('@/pages/user/white-list')
+    },
+    {
       path: 'renew-user',
       name: `${pre}renew-user`,
       meta: { ...meta,

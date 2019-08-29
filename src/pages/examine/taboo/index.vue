@@ -203,7 +203,6 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.dialogVisible = false
-          console.log(this.form.phrase)
           this.handleAdd(this.form.phrase, this.form.level)
           this.$refs.form.resetFields()
         } else {
