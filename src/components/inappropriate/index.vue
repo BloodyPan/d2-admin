@@ -7,7 +7,7 @@
             <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
         </div>
         <ul class="inline-block">
-            <li v-if="userData.user.banLevel === 1 || userData.user.blocked === 1">
+            <li v-if="userData.user && (userData.user.banLevel === 1 || userData.user.blocked === 1)">
               <div class="tag-div">
                   <div v-if="userData.user.banLevel === 1" class="warning-tag">警告</div>
                   <div v-if="userData.user.blocked === 1" class="block-tag">屏蔽</div>
@@ -78,7 +78,8 @@
                   </div>
                   <div class="btn-panel" v-if="showPublic">
                     <el-button type="warning" :loading="warnLoading" @click="warnPubStatus(userData)">{{ warningPSWording }}</el-button>
-                    <el-button type="danger" :disabled="disBlock" :loading="blockLoading" @click="blockPubStatus(userData)">{{ blockPSWording }}</el-button>
+                    <el-button type="danger" :disabled="disBlock" v-if="showPublicBlock" :loading="blockLoading" @click="blockPubStatus(userData)">{{ blockPSWording }}</el-button>
+                    <el-button type="primary" :disabled="disBlock" v-if="!showPublicBlock" :loading="blockLoading" @click="unblockPubStatus(userData)">{{ unblockPSWording }}</el-button>
                   </div>
               </div>
             </li>
@@ -121,6 +122,7 @@ export default {
       unblockWording: '解除屏蔽',
       warningPSWording: '警告并屏蔽24小时',
       blockPSWording: '永久屏蔽二三度',
+      unblockPSWording: '解除屏蔽',
       ignoreLoading: false,
       warnLoading: false,
       blockLoading: false,
@@ -132,6 +134,7 @@ export default {
       showPeek: false,
       showChat: true,
       showPublic: false,
+      showPublicBlock: true,
       /* ------------ peek 组件 -------- */
       content: {}
     }
@@ -143,6 +146,7 @@ export default {
         this.showWarning = val.user.banLevel === 0
         this.showBlock = val.user.blocked === 0
       }
+      this.showPublicBlock = val.blockTime < 31536000
       this.showPanel()
     }
   },
@@ -271,18 +275,37 @@ export default {
       this.$emit('close')
     },
     async blockPubStatus (row) {
+      var blockTime = 86400 * 365
       this.blockLoading = true
       var res = await BlockPublicStatus({
         day: row.day,
         chat_id: row.chatId,
-        block_time: 86400 * 365
+        block_time: blockTime
       })
       this.blockLoading = false
       this.$notify({
         title: res.msg,
         duration: 3000
       })
-      this.$emit('close')
+      this.showPublicBlock = false
+      row.blockTime = blockTime
+      this.$emit('block-time', row, blockTime)
+    },
+    async unblockPubStatus (row) {
+      this.blockLoading = true
+      var res = await BlockPublicStatus({
+        day: row.day,
+        chat_id: row.chatId,
+        block_time: 0
+      })
+      this.blockLoading = false
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      this.showPublicBlock = true
+      row.blockTime = 0
+      this.$emit('block-time', row, 0)
     },
     async getPeek (userId, feedId, status) {
       var res = await FeedDetail({

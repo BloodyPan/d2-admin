@@ -8,7 +8,7 @@
     :visible.sync="dialogVisible"
     :before-close="handleClose"
     width="55rem">
-      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow" @warn="warnRow" @block="blockRow"></inappropriate>
+      <inappropriate ref="inappropriate" :message="userData" @close="closeDialog" @delete="deleteRow" @warn="warnRow" @block="blockRow" @block-time="blockTimeRow"></inappropriate>
     </el-dialog>
     <div style="overflow: scroll; height: 100%;">
       <div class="wrapper" ref="wrapper">
@@ -136,6 +136,11 @@ export default {
     blockRow (row, blocked) {
       this.$refs.inappropriate.reset()
       row.user.blocked = blocked
+      this.dialogVisible = false
+    },
+    blockTimeRow (row, blockTime) {
+      this.$refs.inappropriate.reset()
+      row.blockTime = blockTime
       this.dialogVisible = false
     },
     detail (row) {
