@@ -30,6 +30,15 @@ export default {
       component: () => import('@/pages/examine/nickname')
     },
     {
+      path: 'music',
+      name: `${pre}music`,
+      meta: {
+        ...meta,
+        title: '音乐表情包'
+      },
+      component: () => import('@/pages/examine/music')
+    },
+    {
       path: 'taboo',
       name: `${pre}taboo`,
       meta: {

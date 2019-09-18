@@ -63,3 +63,11 @@ export function BlockPublicStatus (data) {
     data: data
   })
 }
+
+export function InappropriateLyrics (params) {
+  return request({
+    url: '/spotcms/InappropriateLyrics',
+    method: 'get',
+    params: params
+  })
+}

@@ -14,6 +14,11 @@ export default {
       icon: 'user-times'
     },
     {
+      path: `${pre}music`,
+      title: '音乐表情包',
+      icon: 'music'
+    },
+    {
       path: `${pre}taboo`,
       title: '敏感词管理',
       icon: 'ban'

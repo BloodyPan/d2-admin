@@ -154,6 +154,7 @@ export default {
     },
     search () {
       this.q = this.keyword
+      this.currentPage = 1
       this.fetch()
     },
     async fetch () {
