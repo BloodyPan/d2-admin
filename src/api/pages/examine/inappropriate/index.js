@@ -64,6 +64,30 @@ export function BlockPublicStatus (data) {
   })
 }
 
+export function Nuke (data) {
+  return request({
+    url: '/spotcms/Nuke',
+    method: 'post',
+    data: data
+  })
+}
+
+export function ExaminationOk (data) {
+  return request({
+    url: '/spotcms/ExaminationOk',
+    method: 'post',
+    data: data
+  })
+}
+
+export function Examination (params) {
+  return request({
+    url: '/spotcms/Examination',
+    method: 'get',
+    params: params
+  })
+}
+
 export function InappropriateLyrics (params) {
   return request({
     url: '/spotcms/InappropriateLyrics',

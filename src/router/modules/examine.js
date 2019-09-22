@@ -21,13 +21,31 @@ export default {
       component: () => import('@/pages/examine/inappropriate')
     },
     {
-      path: 'nickname',
-      name: `${pre}nickname`,
+      path: 'nicknames',
+      name: `${pre}nicknames`,
       meta: {
         ...meta,
         title: '敏感昵称'
       },
-      component: () => import('@/pages/examine/nickname')
+      component: () => import('@/pages/examine/nicknames')
+    },
+    {
+      path: 'profiles',
+      name: `${pre}profiles`,
+      meta: {
+        ...meta,
+        title: '用户增量信息'
+      },
+      component: () => import('@/pages/examine/profiles')
+    },
+    {
+      path: 'chat',
+      name: `${pre}chat`,
+      meta: {
+        ...meta,
+        title: '敏感聊天'
+      },
+      component: () => import('@/pages/examine/chats')
     },
     {
       path: 'music',

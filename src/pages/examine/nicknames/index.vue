@@ -1,8 +1,5 @@
 <template>
   <d2-container>
-    <div slot="header" flex="main:justify">
-      <el-date-picker size="mini" type="date" v-model="value" format="yyyy-MM-dd" placeholder="选择一个日期" @change="dateChanged"/>
-    </div>
     <el-dialog
     title="详情"
     :visible.sync="dialogVisible"
@@ -40,15 +37,34 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
+                type="danger"
+                class="padding-tiny"
+                @click="nuke(scope.row)">
+                核弹
+              </el-button>
+              <el-button
+                size="mini"
                 type="primary"
+                class="padding-tiny"
                 @click="detail(scope.row)">
-                查看详情
+                查看
               </el-button>
               <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" v-if="scope.row.user" class="amplitude" target="_blank">Amplitude</a>
               <a :href="`https://admin-cn.datavisor.cn/v3/en/main/user-details?uid=${scope.row.user.dvId}`" v-if="scope.row.user" class="dv" target="_blank">DV</a>
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+            ref="userPagination"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="[20]"
+            :page-size="currentPageSize"
+            background
+            layout="total, prev, pager, next, jumper"
+            :total="total">
+        </el-pagination>
       </div>
     </div>
 </d2-container>
@@ -59,7 +75,7 @@ import md5 from 'js-md5'
 import dayjs from 'dayjs'
 import bs from '@/components/common/bs'
 import inaNickname from '../../../components/ina-nickname'
-import { InappropriateNames } from '@/api/pages/examine/inappropriate'
+import { InappropriateNames, Nuke } from '@/api/pages/examine/inappropriate'
 
 export default {
   mixins: [
@@ -75,12 +91,6 @@ export default {
       currentPage: 1,
       currentPageSize: 20,
       dialogVisible: false,
-      value: new Date(),
-      form: {
-        phrase: ''
-      },
-      freshData: false,
-      last_id: '99999999999999999999999999',
       now: dayjs(),
       userData: {}
     }
@@ -94,6 +104,14 @@ export default {
     },
     md5Encode: str => md5.hex(String(str)),
     rowTime: ts => dayjs(ts * 1000).format('YYYY-MM-DD HH:mm:ss'),
+    handleSizeChange (val) {
+      this.currentPage = 1
+      this.currentPageSize = val
+      this.fetch()
+    },
+    handleCurrentChange (val) {
+      this.fetch()
+    },
     handleClose (done) {
       this.$refs.inappropriate.reset()
       done()
@@ -106,6 +124,15 @@ export default {
       this.$refs.inappropriate.reset()
       this.tableData.splice(this.tableData.indexOf(row), 1)
       this.dialogVisible = false
+    },
+    async nuke (row) {
+      const res = await Nuke({
+        user_ids: row.user.id
+      })
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
     },
     detail (row) {
       this.dialogVisible = true
@@ -140,27 +167,16 @@ export default {
       }
       return userType
     },
-    dateChanged () {
-      this.last_id = '99999999999999999999999999'
-      this.tableData = []
-      this.fetch()
-    },
     async fetch () {
       const res = await InappropriateNames({
-        day: dayjs(this.value).format('YYYYMMDD'),
-        limit: this.currentPageSize,
-        serialization_id: this.last_id
+        offset: this.currentPageSize * (this.currentPage - 1),
+        limit: this.currentPageSize
       })
       this.total = res.content.total
       console.log(res.content)
       if (res.content.total > 0) {
         var datas = res.content.inappropriates
-        this.tableData = this.tableData.concat(datas)
-        this.last_id = datas[datas.length - 1].serializationId
-        this.$nextTick(() => {
-          this.BS.refresh()
-          this.freshData = false
-        })
+        this.tableData = datas
       }
     }
   },
@@ -168,18 +184,6 @@ export default {
     let height = document.getElementsByClassName('d2-container-full__body')[0].clientHeight - 20
     this.fetch()
     this.$refs.wrapper.style = 'height: ' + (height - 60) + 'px'
-    this.$nextTick(() => {
-      this.BS.on('scroll', (pos) => {
-        // 滚动条滚到95%的地方开始拉新数据
-        if (this.BS.maxScrollY * 0.9 > pos.y) {
-          if (this.freshData === false) {
-            this.freshData = true
-            this.currentPage += 1
-            this.fetch()
-          }
-        }
-      })
-    })
   }
 }
 </script>
@@ -231,5 +235,10 @@ export default {
     color: white;
     padding: 8px;
     margin-left: 5px;
+  }
+
+  .padding-tiny {
+    padding: 6px 5px;
+    margin-left: 5px !important;
   }
 </style>

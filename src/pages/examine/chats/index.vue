@@ -24,36 +24,20 @@
             </template>
           </el-table-column>
           <el-table-column type="index"></el-table-column>
-          <!-- <el-table-column label="头像" width="55px">
-            <template slot-scope="scope">
-              <img class="profile" :src="scope.row.user.profilePhoto">
-            </template>
-          </el-table-column>
-          <el-table-column prop="user.username" label="用户名"></el-table-column> -->
           <el-table-column prop="sensitiveWord" label="敏感词">
           </el-table-column>
           <el-table-column prop="sensitiveContent" label="敏感内容">
-          </el-table-column>
-          <el-table-column prop="type" label="举报类型" width="150px">
-            <template slot-scope="scope">
-              {{ getInapporiateName(scope.row) }}
-            </template>
           </el-table-column>
           <el-table-column prop="chatType" label="场所" width="100px">
             <template slot-scope="scope">
               {{ getScene(scope.row) }}
             </template>
           </el-table-column>
-          <el-table-column prop="seenTotal" label="观众人数" width="80px">
+          <!-- <el-table-column prop="seenTotal" label="观众人数" width="80px">
             <template slot-scope="scope">
               {{ scope.row.public ? "-" : scope.row.seenTotal }}
             </template>
-          </el-table-column>
-          <el-table-column prop="createdAt" sortable label="举报时间" width="160px">
-            <template slot-scope="scope">
-              {{ rowTime(scope.row.createdAt) }}
-            </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="userType" label="用户类别" width="120px">
             <template slot-scope="scope" v-if="scope.row.user">
               {{ getUserType(scope.row.user) }}
@@ -63,17 +47,9 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                type="danger"
-                class="padding-tiny"
-                @click="nuke(scope.row)">
-                核弹
-              </el-button>
-              <el-button
-                size="mini"
                 type="primary"
-                class="padding-tiny"
                 @click="detail(scope.row)">
-                查看
+                查看详情
               </el-button>
               <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" v-if="scope.row.user" class="amplitude" target="_blank">Amplitude</a>
               <a :href="`https://admin-cn.datavisor.cn/v3/en/main/user-details?uid=${scope.row.user.dvId}`" v-if="scope.row.user" class="dv" target="_blank">DV</a>
@@ -151,23 +127,6 @@ export default {
       row.blockTime = blockTime
       this.dialogVisible = false
     },
-    nuke (row) {
-      this.$confirm('即将发射核弹, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '发射成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消发射'
-        })
-      })
-    },
     detail (row) {
       this.dialogVisible = true
 
@@ -233,23 +192,6 @@ export default {
       }
       return userType
     },
-    getInapporiateName (row) {
-      var val = row.inappropriateType
-      var inapporiateName = '其他'
-      if (val === 2) {
-        inapporiateName = '色情'
-      } else if (val === 4) {
-        inapporiateName = '语言骚扰、人身攻击'
-      } else if (val === 8) {
-        inapporiateName = '商业活动'
-      } else if (val === 16) {
-        inapporiateName = '煽动、歧视、谩骂'
-      } else if (val === 32) {
-        inapporiateName = '违法活动'
-      }
-      row.inapporiateName = inapporiateName
-      return inapporiateName
-    },
     dateChanged () {
       this.last_id = 99999999999
       this.tableData = []
@@ -275,7 +217,7 @@ export default {
       } else if (this.freshData === true) {
         this.$notify.info({
           title: '',
-          message: '已加载完所有举报信息',
+          message: '已加载完所有敏感词聊天',
           position: 'bottom-right'
         })
       }
@@ -355,10 +297,5 @@ export default {
     color: white;
     padding: 8px;
     margin-left: 5px;
-  }
-
-  .padding-tiny {
-    padding: 6px 5px;
-    margin-left: 5px !important;
   }
 </style>

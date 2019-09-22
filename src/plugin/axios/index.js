@@ -69,7 +69,7 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_API,
   crossDomain: true,
   withCredentials: true,
-  timeout: 5000
+  timeout: 10000
 })
 
 // 请求拦截器
