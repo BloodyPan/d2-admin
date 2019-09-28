@@ -2,12 +2,14 @@ import cookies from './util.cookies'
 import db from './util.db'
 import log from './util.log'
 import spot from './util.spot'
+import data from './util.data'
 
 const util = {
   cookies,
   db,
   log,
-  spot
+  spot,
+  data
 }
 
 /**

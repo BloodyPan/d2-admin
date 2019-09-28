@@ -39,6 +39,15 @@ export default {
       component: () => import('@/pages/examine/profiles')
     },
     {
+      path: 'nukes',
+      name: `${pre}nukes`,
+      meta: {
+        ...meta,
+        title: '核弹列表'
+      },
+      component: () => import('@/pages/examine/nukes')
+    },
+    {
       path: 'chat',
       name: `${pre}chat`,
       meta: {

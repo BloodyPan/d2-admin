@@ -59,7 +59,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
-            :page-sizes="[20]"
+            :page-sizes="[5, 15, 25]"
             :page-size="currentPageSize"
             background
             layout="total, prev, pager, next, jumper"
@@ -73,14 +73,10 @@
 <script>
 import md5 from 'js-md5'
 import dayjs from 'dayjs'
-import bs from '@/components/common/bs'
 import inaNickname from '../../../components/ina-nickname'
 import { InappropriateNames, Nuke } from '@/api/pages/examine/inappropriate'
 
 export default {
-  mixins: [
-    bs
-  ],
   components: {
     'ina-nickname': inaNickname
   },
@@ -89,7 +85,7 @@ export default {
       tableData: [],
       total: 0,
       currentPage: 1,
-      currentPageSize: 20,
+      currentPageSize: 15,
       dialogVisible: false,
       now: dayjs(),
       userData: {}
@@ -136,6 +132,7 @@ export default {
     },
     detail (row) {
       this.dialogVisible = true
+      console.log(row)
 
       row.day = dayjs(this.value).format('YYYYMMDD')
       this.$nextTick(() => {
@@ -183,7 +180,7 @@ export default {
   mounted () {
     let height = document.getElementsByClassName('d2-container-full__body')[0].clientHeight - 20
     this.fetch()
-    this.$refs.wrapper.style = 'height: ' + (height - 60) + 'px'
+    this.$refs.wrapper.style = 'height: ' + (height - 100) + 'px'
   }
 }
 </script>

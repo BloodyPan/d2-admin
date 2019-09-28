@@ -9,40 +9,35 @@
                     <br>
                     {{ row.user.nickname }}
                 </div>
-                <div class="profile-media" v-if="row.status">
-                    <img class="profile-status" v-if="!row.status.video" :src="row.status.picture" />
-                    <video class="profile-status" :src="row.status.video" v-if="row.status.video" controls/>
+                <div class="source">{{ getSource(row) }}</div>
+                <!-- <img class="profile-status" v-if="row.status" :src="row.status.picture" /> -->
+                <!-- <div class="empty-status" v-else>无状态</div> -->
+                <div class="sensitive-content" v-if="row.word">{{ `敏感词: ${row.word}` }}</div>
+                <div class="sensitive-content" v-html="highlight(row)" v-if="row.word">
                 </div>
-                <div class="empty-status" v-else>无状态</div>
                 <div class="profile-btns">
                     <el-button
                         size="mini"
                         type="danger"
-                        :disabled="row.handle==2"
-                        class="padding-tiny"
+                        :disabled="row.handle==0"
+                        class="save-user-btn"
                         @click="confirmNuke(row)">
                         Nuke
                     </el-button>
+                </div>
+                <div class="profile-btns" style="float: right;">
                     <el-button
                         size="mini"
                         type="success"
-                        :disabled="row.handle==1"
-                        class="padding-tiny"
-                        style="float: right;"
-                        @click="ok(row)">
-                        OK
+                        :disabled="row.handle==1 || row.handle==2"
+                        class="save-user-btn"
+                        @click="confirmOk(row)">
+                        {{ row.handle == 1 ? "已救回" : "救回" }}
                     </el-button>
                 </div>
             </div>
         </template>
     </div>
-    <el-button
-        size="medium"
-        type="success"
-        class="padding-tiny"
-        @click="okAll()">
-        OK 整页面
-    </el-button>
     <el-pagination
       ref="userPagination"
       @size-change="handleSizeChange"
@@ -58,69 +53,118 @@
 </template>
 
 <script>
-import { Examination, Nuke, ExaminationOk } from '@/api/pages/examine/inappropriate'
-import util from '@/libs/util.js'
+import { AutoNuke, DeleteNuke, Nuke } from '@/api/pages/examine/inappropriate'
+import dayjs from 'dayjs'
 
 export default {
   data () {
     return {
       tableData: [],
-      total: 100000000000,
+      total: 0,
       currentPage: 1,
       currentPageSize: 10,
-      dialogVisible: false,
-      pageCookiePrefix: 'page_'
+      dialogVisible: false
     }
   },
   methods: {
+    rowTime: ts => dayjs(ts * 1000).format('YYYY-MM-DD HH:mm:ss'),
     tableRowClassName ({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return 'success-row'
       }
       return ''
     },
-    getCurrentPage (pageSize) {
-      const cookieKey = this.pageCookiePrefix + pageSize
-      const value = util.cookies.get(cookieKey)
-      if (value === void 0) {
-        this.currentPage = 1
-      } else {
-        this.currentPage = parseInt(value)
+    highlight (row) {
+      console.log(row)
+      return row.content.replace(new RegExp(row.word, 'g'), "<span class='highlight'>" + row.word + '</span>')
+    },
+    getSource (row) {
+      const nukeFrom = row.nukeFrom
+      var nukeText = ''
+      switch (nukeFrom) {
+        case 1:
+          nukeText = '昵称'
+          break
+        case 2:
+          nukeText = 'Spot Handle'
+          break
+        case 3:
+          nukeText = '私聊'
+          break
+        case 4:
+          nukeText = '匿名群聊'
+          break
+        case 5:
+          nukeText = '群聊'
+          break
+        case 6:
+          nukeText = '状态'
+          break
+        case 7:
+          nukeText = '猜干嘛'
+          break
+        case 8:
+          nukeText = '分享足迹'
+          break
+        case 9:
+          nukeText = '加好友备注信息'
+          break
+        case 10:
+          nukeText = '一天评论'
+          break
+        case 11:
+          nukeText = '修改群名'
+          break
+        case 12:
+          nukeText = 'CMS人工操作'
+          break
+        default:
+          nukeText = ''
       }
+      return '来自: ' + nukeText
     },
     async fetch () {
-      const res = await Examination({
+      const res = await AutoNuke({
         limit: this.currentPageSize,
         offset: (this.currentPage - 1) * this.currentPageSize
       })
       this.total = res.content.total
-      this.tableData = res.content.examinations
-      console.log(this.tableData)
+      this.tableData = res.content.nukes
     },
     handleSizeChange (val) {
-      this.getCurrentPage(val)
+      this.currentPage = 1
       this.currentPageSize = val
       this.fetch()
     },
     handleCurrentChange (val) {
-      const cookieKey = this.pageCookiePrefix + this.currentPageSize
-      util.cookies.set(cookieKey, this.currentPage)
       this.fetch()
     },
     handleClose (done) {
       this.$refs.form.resetFields()
     },
-    async nuke (row) {
-      const res = await Nuke({
-        user_ids: row.user.id,
-        examination_id: row.eid,
-        record: true
+    confirmOk (row) {
+      this.$confirm('救回该用户?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ok(row)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    async ok (row) {
+      const res = await DeleteNuke({
+        pk: row.id
       })
       this.$notify({
         title: res.msg,
         duration: 3000
       })
-      row.handle = 2
+      row.handle = 1
     },
     confirmNuke (row) {
       this.$confirm('向该用户发射核弹?', '提示', {
@@ -136,49 +180,20 @@ export default {
         })
       })
     },
-    async ok (row) {
-      const res = await ExaminationOk({
-        user_ids: row.eid
+    async nuke (row) {
+      const res = await Nuke({
+        user_ids: row.user.id,
+        auto_nuke_id: row.id,
+        record: false
       })
       this.$notify({
         title: res.msg,
         duration: 3000
       })
-      row.handle = 1
-    },
-    okAll () {
-      this.$confirm('整页面ok, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        var eids = []
-        for (var i in this.tableData) {
-          if (this.tableData[i].handle === 0) {
-            this.tableData[i].handle = 1
-            eids.push(this.tableData[i].eid)
-          }
-        }
-        if (eids.length === 0) {
-          return
-        }
-        ExaminationOk({
-          user_ids: eids.join()
-        })
-        this.$message({
-          type: 'success',
-          message: '成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      })
+      row.handle = 0
     }
   },
   mounted () {
-    this.getCurrentPage(this.currentPageSize)
     this.fetch()
   }
 }
@@ -205,22 +220,6 @@ export default {
 
   .el-table td, .el-table th {
     padding: 6px 0;
-  }
-
-  .block-slider {
-    display: inline-block;
-    width: 50%;
-  }
-
-  .demonstration {
-    font-size: 14px;
-    color: #8492a6;
-    line-height: 44px;
-  }
-
-  .slider {
-    width: 80%;
-    float: right;
   }
 
   .profile-tpl {
@@ -251,12 +250,8 @@ export default {
     text-align: center;
   }
 
-  .profile-media {
-    display: inline-block;
-  }
-
   .profile-status {
-    height: 120px;
+    height: 100px;
     vertical-align: middle;
   }
 
@@ -265,13 +260,35 @@ export default {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 120px;
-    width: 67.5px;
+    height: 100px;
+    width: 56px;
     font-size: 14px;
     color: rgba(0, 0, 0, 0.5);
   }
 
+  .source {
+    margin: 10px 0;
+  }
+
   .profile-btns {
-      margin-top: 5px;
+    margin-top: 5px;
+    display: inline-block;
+    width: 40%;
+  }
+
+  .save-user-btn {
+      width: 100%;
+  }
+
+  .sensitive-content {
+    border: 2px dashed rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #b3d8ff;
+  }
+
+  .highlight {
+    color: red;
+    font-weight: bolder;
   }
 </style>

@@ -88,6 +88,22 @@ export function Examination (params) {
   })
 }
 
+export function AutoNuke (params) {
+  return request({
+    url: '/spotcms/AutoNuke',
+    method: 'get',
+    params: params
+  })
+}
+
+export function DeleteNuke (data) {
+  return request({
+    url: '/spotcms/AutoNuke',
+    method: 'post',
+    data: data
+  })
+}
+
 export function InappropriateLyrics (params) {
   return request({
     url: '/spotcms/InappropriateLyrics',

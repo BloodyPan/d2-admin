@@ -65,7 +65,7 @@
                 size="mini"
                 type="danger"
                 class="padding-tiny"
-                @click="nuke(scope.row)">
+                @click="confirmNuke(scope.row)">
                 核弹
               </el-button>
               <el-button
@@ -90,7 +90,7 @@ import md5 from 'js-md5'
 import dayjs from 'dayjs'
 import bs from '@/components/common/bs'
 import inappropriate from '../../../components/inappropriate'
-import { Inappropriates } from '@/api/pages/examine/inappropriate'
+import { Inappropriates, Nuke } from '@/api/pages/examine/inappropriate'
 
 export default {
   mixins: [
@@ -151,20 +151,28 @@ export default {
       row.blockTime = blockTime
       this.dialogVisible = false
     },
-    nuke (row) {
-      this.$confirm('即将发射核弹, 是否继续?', '提示', {
+    async nuke (row) {
+      const res = await Nuke({
+        user_ids: row.user.id,
+        record: true
+      })
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      row.nuke = 1
+    },
+    confirmNuke (row) {
+      this.$confirm('向该用户发射核弹?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '发射成功!'
-        })
+        this.nuke(row)
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '已取消发射'
+          message: '已取消'
         })
       })
     },

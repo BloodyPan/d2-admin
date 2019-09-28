@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; overflow: scroll;">
+  <div style="height: 100%; overflow: scroll; background: #ECECEC; padding-top: 10px;">
     <div class="wrapper" ref="wrapper">
       <div class="content">
         <template v-for="(chat, index) in chats">
@@ -48,6 +48,9 @@
                 <!-- MESSAGE_TYPE_VOICE_CHAT -->
                 <div v-else-if="row.messageType === 33">
                   <button class="voice-icon" @click="playVoice(row.message)"></button>
+                </div>
+                <!-- MESSAGE_TYPE_GROUP_USER_JOINT -->
+                <div v-else-if="row.messageType === 40">
                 </div>
                 <!-- MESSAGE_TYPE_SHARE_SHOP -->
                 <div v-else-if="row.messageType === 44">
@@ -104,56 +107,7 @@ export default {
       chats_tmp: [],
       refreshScroll: false,
       userIndex: {},
-      fakeUser: {
-        1: {
-          profilePhoto: 'Nico.Robin.jpeg',
-          nickname: '妮可·罗宾'
-        },
-        2: {
-          profilePhoto: 'Roronoa.Zoro.jpeg',
-          nickname: '罗罗诺亚·索隆'
-        },
-        3: {
-          profilePhoto: 'Boa.Hancock.jpeg',
-          nickname: '波雅·汉库克'
-        },
-        4: {
-          profilePhoto: 'BROOK.jpeg',
-          nickname: '布鲁克'
-        },
-        5: {
-          profilePhoto: 'Hinata.jpeg',
-          nickname: '日向雏田'
-        },
-        6: {
-          profilePhoto: 'Usopp.jpeg',
-          nickname: '乌索普'
-        },
-        7: {
-          profilePhoto: 'Nami.jpeg',
-          nickname: '娜美'
-        },
-        8: {
-          profilePhoto: 'Hatake.Kakashi.jpeg',
-          nickname: '旗木卡卡西'
-        },
-        9: {
-          profilePhoto: 'Tony.Tony.Chopper.jpeg',
-          nickname: '托尼托尼·乔巴'
-        },
-        10: {
-          profilePhoto: 'Monkey.D.Luffy.jpeg',
-          nickname: '蒙奇·D·路飞'
-        },
-        11: {
-          profilePhoto: 'Trafalgar.Law.jpeg',
-          nickname: '特拉法尔加·罗'
-        },
-        12: {
-          profilePhoto: 'Vinsmoke.Sanji.jpeg',
-          nickname: '山治'
-        }
-      }
+      fakeUser: util.data.fakeUser
     }
   },
   methods: {
@@ -174,6 +128,7 @@ export default {
 
           if (this.userIndex[this.cuid] === void 0) {
             this.userIndex[this.cuid] = fakeId
+            fakeId++
           }
           var userFakeId = this.userIndex[this.cuid]
           var inappropriatesFlag = msgs[index].user.id !== this.uid
@@ -185,7 +140,6 @@ export default {
             rows: [msgs[index]]
           })
           currentIndex++
-          fakeId++
         } else {
           this.chats_tmp[currentIndex].rows.push(msgs[index])
         }
@@ -247,7 +201,7 @@ export default {
   }
 
   .wrapper {
-    height: 85%;
+    height: 100%;
     overflow: scroll;
     padding: 0 25px;
   }

@@ -18,6 +18,11 @@ export default {
       title: '用户增量信息',
       icon: 'slideshare'
     },
+    {
+      path: `${pre}nukes`,
+      title: '自动核弹',
+      icon: 'rocket'
+    },
     // {
     //   path: `${pre}chat`,
     //   title: '敏感聊天',

@@ -76,7 +76,10 @@ spot.checkUA = ua => {
     iPhoneX: u.indexOf('iPhone10,3') > -1 || u.indexOf('iPhone10,6') > -1,
     iPhoneXR: u.indexOf('iPhone11,8') > -1,
     iPhoneXS: u.indexOf('iPhone11,2') > -1,
-    iPhoneXSMax: u.indexOf('iPhone11,4') > -1 || u.indexOf('iPhone11,6') > -1
+    iPhoneXSMax: u.indexOf('iPhone11,4') > -1 || u.indexOf('iPhone11,6') > -1,
+    iPhone11: u.indexOf('iPhone12,1') > -1,
+    iPhone11Pro: u.indexOf('iPhone12,3') > -1,
+    iPhone11ProMax: u.indexOf('iPhone12,5') > -1
   }
 }
 

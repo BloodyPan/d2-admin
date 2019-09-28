@@ -128,8 +128,7 @@ export default {
     async ignore (row) {
       this.ignoreLoading = true
       var res = await InagoreInappropriateNames({
-        day: row.day,
-        serialization_id: row.serializationId
+        pk: row.id
       })
       this.$notify({
         title: res.msg,

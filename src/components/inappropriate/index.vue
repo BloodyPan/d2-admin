@@ -4,7 +4,7 @@
         <div v-if="showLoading" class="blank" v-html="loadingText"></div>
         <peek class="peek" ref="peek" v-else-if="showPeek" :content="content"></peek>
         <div class="chat-message" v-if="showChat">
-            <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
+          <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
         </div>
         <ul class="inline-block">
             <li v-if="userData.user && (userData.user.banLevel === 1 || userData.user.blocked === 1)">
