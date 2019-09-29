@@ -147,13 +147,13 @@ export default {
       this.chats = this.chats_tmp
       this.$nextTick(_ => {
         this.BS.refresh()
-        this.BS.scrollTo(0, this.BS.maxScrollY)
+        // this.BS.scrollTo(0, this.BS.maxScrollY)
 
         // 二次刷新
         let that = this
         setTimeout(() => {
           that.BS.refresh()
-          that.BS.scrollTo(0, that.BS.maxScrollY)
+          // that.BS.scrollTo(0, that.BS.maxScrollY)
         }, 100)
       })
     },

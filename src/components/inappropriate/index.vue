@@ -7,8 +7,9 @@
           <chat-message ref="chatMessage" @loaded="msgLoaded"></chat-message>
         </div>
         <ul class="inline-block">
-            <li v-if="userData.user && (userData.user.banLevel === 1 || userData.user.blocked === 1)">
+            <li v-if="userData.user && (userData.user.nuked || userData.user.banLevel === 1 || userData.user.blocked === 1)">
               <div class="tag-div">
+                  <div v-if="userData.user.nuked" class="nuke-tag">核弹</div>
                   <div v-if="userData.user.banLevel === 1" class="warning-tag">警告</div>
                   <div v-if="userData.user.blocked === 1" class="block-tag">屏蔽</div>
               </div>
@@ -71,12 +72,12 @@
             <li>
               <div v-if="showBtns" class="btn-div">
                   <el-button type="info" :disabled="disIgnore" :loading="ignoreLoading" @click="ignore(userData)">{{ ignoreWording }}</el-button>
-                  <div class="btn-panel" v-if="!showPublic">
+                  <div class="btn-panel" v-if="!showPublic && userData.scene !== '群聊'">
                     <el-button type="warning" v-if="showWarning" :loading="warnLoading" @click="warnUser(userData)">{{ warningWording }}</el-button>
                     <el-button type="danger" v-if="showBlock" :loading="blockLoading" @click="blockUser(userData)">{{ blockWording }}</el-button>
                     <el-button type="primary" v-if="!showBlock" :loading="blockLoading" @click="unblockUser(userData)">{{ unblockWording }}</el-button>
                   </div>
-                  <div class="btn-panel" v-if="showPublic">
+                  <div class="btn-panel" v-if="showPublic && userData.scene !== '群聊'">
                     <el-button type="warning" :loading="warnLoading" @click="warnPubStatus(userData)">{{ warningPSWording }}</el-button>
                     <el-button type="danger" :disabled="disBlock" v-if="showPublicBlock" :loading="blockLoading" @click="blockPubStatus(userData)">{{ blockPSWording }}</el-button>
                     <el-button type="primary" :disabled="disBlock" v-if="!showPublicBlock" :loading="blockLoading" @click="unblockPubStatus(userData)">{{ unblockPSWording }}</el-button>

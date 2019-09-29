@@ -16,9 +16,11 @@
           class="content"
           :data="tableData"
           style="width: 100%;margin-bottom: 15px;"
-          :row-class-name="tableRowClassName">
+          :row-class-name="tableRowClassName"
+          @row-click="rowClick">
           <el-table-column label="" width="60px">
             <template slot-scope="scope" v-if="scope.row.user">
+              <div v-if="scope.row.user.nuked" class="nuke-tag">核弹</div>
               <div v-if="scope.row.user.blocked === 1" class="block-tag">屏蔽</div>
               <div v-else-if="scope.row.user.banLevel === 1" class="warning-tag">警告</div>
             </template>
@@ -65,18 +67,13 @@
                 size="mini"
                 type="danger"
                 class="padding-tiny"
-                @click="confirmNuke(scope.row)">
+                v-if="scope.row.user"
+                :disabled="scope.row.user.nuked"
+                @click.stop="confirmNuke(scope.row)">
                 核弹
               </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                class="padding-tiny"
-                @click="detail(scope.row)">
-                查看
-              </el-button>
-              <a :href="`https://analytics.amplitude.com/spot/project/188397/search/${md5Encode(scope.row.user.id)}`" v-if="scope.row.user" class="amplitude" target="_blank">Amplitude</a>
-              <a :href="`https://admin-cn.datavisor.cn/v3/en/main/user-details?uid=${scope.row.user.dvId}`" v-if="scope.row.user" class="dv" target="_blank">DV</a>
+              <a @click.stop="amplitude(scope.row)" v-if="scope.row.user" class="amplitude pointer">Amplitude</a>
+              <a @click.stop="dataVisor(scope.row)" v-if="scope.row.user" class="data-visor pointer">DV</a>
             </template>
           </el-table-column>
         </el-table>
@@ -118,10 +115,13 @@ export default {
   },
   methods: {
     tableRowClassName ({ row, rowIndex }) {
-      if (rowIndex % 2 === 1) {
-        return 'success-row'
+      const commonRowClassName = 'pointer'
+      if (row.user && row.user.nuked) {
+        return commonRowClassName + ' nuke-row'
+      } else if (rowIndex % 2 === 1) {
+        return commonRowClassName + ' success-row'
       }
-      return ''
+      return commonRowClassName
     },
     md5Encode: str => md5.hex(String(str)),
     rowTime: ts => dayjs(ts * 1000).format('YYYY-MM-DD HH:mm:ss'),
@@ -160,7 +160,7 @@ export default {
         title: res.msg,
         duration: 3000
       })
-      row.nuke = 1
+      row.user.nuked = true
     },
     confirmNuke (row) {
       this.$confirm('向该用户发射核弹?', '提示', {
@@ -186,6 +186,21 @@ export default {
         }
         this.userData = row
       })
+    },
+    rowClick (row, column, event) {
+      this.detail(row)
+    },
+    amplitude (row) {
+      window.open(
+        'https://analytics.amplitude.com/spot/project/188397/search/' + this.md5Encode(row.user.id),
+        '_blank'
+      )
+    },
+    dataVisor (row) {
+      window.open(
+        'https://admin-cn.datavisor.cn/v3/en/main/user-details?uid=' + row.user.dvId,
+        '_blank'
+      )
     },
     getScene (row) {
       var scene = ''
@@ -310,7 +325,11 @@ export default {
 </script>
 
 <style>
-  .warning-tag, .block-tag {
+  .pointer {
+    cursor: pointer;
+  }
+
+  .warning-tag, .block-tag, .nuke-tag {
     display: inline-block;
     border-radius: 12.5px;
     color: white;
@@ -329,12 +348,21 @@ export default {
     background-color: #f56c6c;
   }
 
+  .nuke-tag {
+    background-color:#F56C6C;
+  }
+
   .add-div {
     margin-bottom: 10px;
   }
 
   .el-table .success-row {
     background: #f0f9eb;
+  }
+
+  .el-table .nuke-row, .nuke-row:hover>td {
+    background: rgb(140, 197, 255) !important;
+    color: white;
   }
 
   .el-table td, .el-table th {
@@ -358,7 +386,7 @@ export default {
     margin-left: 5px;
   }
 
-  .dv {
+  .data-visor {
     background-color: rgba(0, 0, 0, .3);
     color: white;
     padding: 8px;
