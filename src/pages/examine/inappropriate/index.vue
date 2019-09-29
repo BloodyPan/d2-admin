@@ -101,7 +101,7 @@ export default {
       tableData: [],
       total: 0,
       currentPage: 1,
-      currentPageSize: 20,
+      currentPageSize: 50,
       dialogVisible: false,
       value: new Date(),
       form: {
@@ -286,7 +286,6 @@ export default {
         timestamp: this.last_id
       })
       this.total = res.content.total
-      console.log(res.content)
       if (res.content.total > 0) {
         var datas = res.content.inappropriates
         this.tableData = this.tableData.concat(datas)
@@ -307,7 +306,7 @@ export default {
   mounted () {
     let height = document.getElementsByClassName('d2-container-full__body')[0].clientHeight - 20
     this.fetch()
-    this.$refs.wrapper.style = 'height: ' + (height - 40) + 'px'
+    this.$refs.wrapper.style = 'height: ' + (height - 60) + 'px'
     this.$nextTick(() => {
       this.BS.on('scroll', (pos) => {
         // 滚动条滚到95%的地方开始拉新数据
@@ -331,13 +330,13 @@ export default {
 
   .warning-tag, .block-tag, .nuke-tag {
     display: inline-block;
-    border-radius: 12.5px;
+    border-radius: 10px;
     color: white;
     font-size: 12px;
-    font-weight: bolder;
-    width: 40px;
+    font-weight: bold;
+    width: 36px;
     text-align: center;
-    padding: 2px;
+    padding: 1px;
   }
 
   .warning-tag {
