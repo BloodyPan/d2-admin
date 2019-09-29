@@ -196,7 +196,7 @@ export default {
         var status = firstItem === 'status' ? 1 : 0
         this.getPeek(chatIdItems[1], chatIdItems[2], status)
       } else {
-        this.$refs.chatMessage.fetch(this.userData.whistleblower.id, this.userData.chatId, this.userData.createdAt)
+        this.$refs.chatMessage.fetch(this.userData)
       }
     },
     async ignore (row) {

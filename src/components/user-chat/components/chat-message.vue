@@ -98,10 +98,10 @@ export default {
   ],
   data () {
     return {
+      userData: {},
       uid: 0,
       chatId: '',
       cuid: 0,
-      user: {},
       device: {},
       chats: [],
       chats_tmp: [],
@@ -132,6 +132,9 @@ export default {
           }
           var userFakeId = this.userIndex[this.cuid]
           var inappropriatesFlag = msgs[index].user.id !== this.uid
+          if (this.userData.scene === '群聊') {
+            inappropriatesFlag = false
+          }
           this.chats_tmp.push({
             right: false,
             profilePhoto: 'http://wpic.getremark.com/' + this.fakeUser[userFakeId].profilePhoto,
@@ -157,7 +160,12 @@ export default {
         }, 100)
       })
     },
-    async fetch (uid, chatId, time) {
+    async fetch (userData) {
+      const uid = userData.whistleblower.id
+      const chatId = userData.chatId
+      const time = userData.createdAt
+
+      this.userData = userData
       if (this.chatId === chatId) {
         this.$emit('loaded', 1)
         return
