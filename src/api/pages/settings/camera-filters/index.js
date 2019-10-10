@@ -15,3 +15,19 @@ export function AddCameraFilter (data) {
     data: data
   })
 }
+
+export function RemoveCameraFilter (params) {
+  return request({
+    url: '/spotcms/CameraFilterEdit',
+    method: 'get',
+    params: params
+  })
+}
+
+export function ModifyCameraFilter (data) {
+  return request({
+    url: '/spotcms/CameraFilterEdit',
+    method: 'post',
+    data: data
+  })
+}

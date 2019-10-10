@@ -43,7 +43,7 @@
           <el-button
             size="mini"
             plain
-            @click="handleRemove(scope.$index, scope.row)">
+            @click="editRow(scope.row)">
             编辑
           </el-button>
           <el-button
@@ -67,6 +67,9 @@
     </el-table>
     <el-dialog
     title="添加滤镜"
+    :show-close="noSaving"
+    :close-on-click-modal="noSaving"
+    :close-on-press-escape="noSaving"
     :visible.sync="addDialogVisible"
     width="550px">
       <el-form ref="addForm" :model="addForm" :rules="addRules" label-width="80px">
@@ -103,21 +106,53 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitSaveFilter">确 定</el-button>
+        <el-button :loading="saveBtnLoading" @click="addDialogVisible = false">取 消</el-button>
+        <el-button :loading="saveBtnLoading" type="primary" @click="submitSaveFilter">添 加</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+    title="编辑滤镜"
+    :visible.sync="editDialogVisible"
+    width="550px">
+      <el-form ref="editForm" :model="editForm" :rules="editRules" label-width="80px">
+        <el-form-item label="名称" prop="name">
+          <el-input
+            v-model="editForm.name"
+            auto-complete="off"
+            placeholder="请输入名称">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="类别" prop="filter_type">
+          <el-select v-model="editForm.filter_type" placeholder="请选择">
+            <el-option
+              v-for="item in filterTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button :loading="editBtnLoading" @click="deleteFilter">删 除</el-button>
+        <el-button :loading="editBtnLoading" type="primary" @click="submitEditFilter">保 存</el-button>
       </div>
     </el-dialog>
   </d2-container>
 </template>
 
 <script>
-import { CameraFilterList, AddCameraFilter } from '@/api/pages/settings/face-filters'
+import { CameraFilterList, AddCameraFilter, RemoveCameraFilter, ModifyCameraFilter } from '@/api/pages/settings/camera-filters'
 export default {
   name: 'android',
   data () {
     return {
       tableData: [],
       noChanged: true,
+      noSaving: true,
+      saveBtnLoading: false,
+      editBtnLoading: false,
+      currentId: 0,
       filterTypes: [{
         value: 0,
         label: '搞怪自拍（非耳朵）'
@@ -132,16 +167,21 @@ export default {
         label: '遮脸'
       }],
       addDialogVisible: false,
+      editDialogVisible: false,
       addForm: {
         name: '',
         photo_url: '',
         effect_url: '',
         filter_type: ''
       },
+      editForm: {
+        name: '',
+        filter_type: ''
+      },
       addRules: {
         name: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] },
-          { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: ['blur', 'change'] }
+          { min: 1, max: 16, message: '长度在 1 到 64 个字符', trigger: ['blur', 'change'] }
         ],
         photo_url: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] }
@@ -151,6 +191,12 @@ export default {
         ],
         filter_type: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] }
+        ]
+      },
+      editRules: {
+        name: [
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] },
+          { min: 1, max: 16, message: '长度在 1 到 64 个字符', trigger: ['blur', 'change'] }
         ]
       }
     }
@@ -187,13 +233,88 @@ export default {
     async saveFilter () {
       const res = await AddCameraFilter(this.addForm)
       console.log(res.pk)
-      this.addDialogVisible = false
       this.$refs.addForm.resetFields()
+      this.addDialogVisible = false
+      this.noSaving = true
+      this.saveBtnLoading = false
+      this.fetch()
     },
     submitSaveFilter () {
       this.$refs.addForm.validate((valid) => {
         if (valid) {
+          this.noSaving = false
+          this.saveBtnLoading = true
           this.saveFilter()
+        } else {
+          return false
+        }
+      })
+    },
+    editRow (row) {
+      this.currentId = row.fid
+      this.editForm.name = row.name
+      this.editForm.filter_type = row.filterType
+      this.editDialogVisible = true
+    },
+    async remoceFilter () {
+      const res = await RemoveCameraFilter({
+        pk: this.currentId
+      })
+      this.currentId = 0
+      this.editBtnLoading = false
+      this.editDialogVisible = false
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      this.fetch()
+    },
+    deleteFilter () {
+      this.$confirm('确定删除该滤镜?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.editBtnLoading = true
+        this.remoceFilter()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    async modifyFilter () {
+      const res = await ModifyCameraFilter({
+        pk: this.currentId,
+        name: this.editForm.name,
+        filter_type: this.editForm.filter_type
+      })
+      this.currentId = 0
+      this.editBtnLoading = false
+      this.editDialogVisible = false
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      this.fetch()
+    },
+    submitEditFilter () {
+      this.$refs.editForm.validate((valid) => {
+        if (valid) {
+          this.$confirm('确定修改该滤镜?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.editBtnLoading = true
+            this.modifyFilter()
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
         } else {
           return false
         }
