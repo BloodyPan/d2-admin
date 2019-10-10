@@ -68,16 +68,16 @@
     <el-dialog
     title="添加滤镜"
     :visible.sync="addDialogVisible"
-    width="450px">
-      <el-form ref="form" :model="addForm" :rules="addRules" label-width="80px">
-        <el-form-item label="名称" prop="phrase">
+    width="550px">
+      <el-form ref="addForm" :model="addForm" :rules="addRules" label-width="80px">
+        <el-form-item label="名称" prop="name">
           <el-input
             v-model="addForm.name"
             auto-complete="off"
             placeholder="请输入名称">
           </el-input>
         </el-form-item>
-        <el-form-item label="类别" prop="phrase">
+        <el-form-item label="类别" prop="filter_type">
           <el-select v-model="addForm.filter_type" placeholder="请选择">
             <el-option
               v-for="item in filterTypes"
@@ -87,14 +87,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="缩略图" prop="phrase">
+        <el-form-item label="缩略图" prop="photo_url">
           <el-input
             v-model="addForm.photo_url"
             auto-complete="off"
             placeholder="请输入缩略图文件名">
           </el-input>
         </el-form-item>
-        <el-form-item label="数据包" prop="phrase">
+        <el-form-item label="数据包" prop="effect_url">
           <el-input
             v-model="addForm.effect_url"
             auto-complete="off"
@@ -104,7 +104,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="submitSaveFilter">确 定</el-button>
       </div>
     </el-dialog>
   </d2-container>
@@ -142,6 +142,15 @@ export default {
         name: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] },
           { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: ['blur', 'change'] }
+        ],
+        photo_url: [
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] }
+        ],
+        effect_url: [
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] }
+        ],
+        filter_type: [
+          { required: true, message: '不能为空', trigger: ['blur', 'change'] }
         ]
       }
     }
@@ -178,6 +187,17 @@ export default {
     async saveFilter () {
       const res = await AddCameraFilter(this.addForm)
       console.log(res.pk)
+      this.addDialogVisible = false
+      this.$refs.addForm.resetFields()
+    },
+    submitSaveFilter () {
+      this.$refs.addForm.validate((valid) => {
+        if (valid) {
+          this.saveFilter()
+        } else {
+          return false
+        }
+      })
     }
   }
 }
