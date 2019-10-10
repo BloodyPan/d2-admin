@@ -25,12 +25,14 @@
               <el-button
                 size="mini"
                 type="success"
+                :disabled="scope.row.handleType===2"
                 @click="online(scope.row)">
                 上架
               </el-button>
               <el-button
                 size="mini"
                 type="danger"
+                :disabled="scope.row.handleType===1"
                 @click="offline(scope.row)">
                 下架
               </el-button>
@@ -103,6 +105,14 @@ export default {
           position: 'bottom-right'
         })
       }
+    },
+    online (row) {
+      console.log(row)
+      row.handleType = 2
+    },
+    offline (row) {
+      console.log(row)
+      row.handleType = 1
     }
   },
   mounted () {

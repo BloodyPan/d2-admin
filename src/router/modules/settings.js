@@ -17,5 +17,13 @@ export default {
       title: '安卓更新'
     },
     component: () => import('@/pages/settings/android')
+  }, {
+    path: 'camera-filters',
+    name: `${pre}camera-filters`,
+    meta: {
+      ...meta,
+      title: '滤镜配置'
+    },
+    component: () => import('@/pages/settings/camera-filters')
   }])('')
 }
