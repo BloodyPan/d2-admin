@@ -39,6 +39,7 @@ export default {
   },
   methods: {
     beforeUpload (file) {
+      this.getQiniuToken()
       this.QiniuData.key = file.name
     },
     beforeRemove (file) {
