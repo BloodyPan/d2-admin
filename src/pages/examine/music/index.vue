@@ -47,7 +47,7 @@
 <script>
 import dayjs from 'dayjs'
 import bs from '@/components/common/bs'
-import { InappropriateLyrics } from '@/api/pages/examine/inappropriate'
+import { InappropriateSongs } from '@/api/pages/examine/inappropriate'
 
 export default {
   mixins: [
@@ -81,7 +81,7 @@ export default {
       return row.songLyric.replace(new RegExp(row.sensitiveWord, 'g'), "<span class='highlight'>" + row.sensitiveWord + '</span>')
     },
     async fetch () {
-      const res = await InappropriateLyrics({
+      const res = await InappropriateSongs({
         day: dayjs(this.value).format('YYYYMMDD'),
         limit: this.currentPageSize,
         serialization_id: this.last_id

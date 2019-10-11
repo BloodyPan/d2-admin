@@ -1,6 +1,6 @@
 export default {
   path: '/examine',
-  title: '举报相关',
+  title: '敏感内容',
   icon: 'gavel',
   children: (pre => [
     {
@@ -28,11 +28,11 @@ export default {
     //   title: '敏感聊天',
     //   icon: 'commenting'
     // },
-    // {
-    //   path: `${pre}music`,
-    //   title: '音乐表情包',
-    //   icon: 'music'
-    // },
+    {
+      path: `${pre}music`,
+      title: '音乐表情包',
+      icon: 'music'
+    },
     {
       path: `${pre}taboo`,
       title: '敏感词管理',

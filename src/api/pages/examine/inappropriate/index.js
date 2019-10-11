@@ -104,9 +104,9 @@ export function DeleteNuke (data) {
   })
 }
 
-export function InappropriateLyrics (params) {
+export function InappropriateSongs (params) {
   return request({
-    url: '/spotcms/InappropriateLyrics',
+    url: '/spotcms/InappropriateSongs',
     method: 'get',
     params: params
   })

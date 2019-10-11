@@ -1,5 +1,18 @@
 <template>
   <d2-container>
+    <el-button
+      size="medium"
+      type="primary"
+      plain
+      @click="addDialogVisible = true">
+      添加哈哈镜
+    </el-button>
+    <el-button
+      :disabled="pubDisabled"
+      size="medium"
+      type="success">
+      保存并发布
+    </el-button>
     <el-table
       :data="tableData"
       style="width: 100%;margin-bottom: 15px"
@@ -12,19 +25,19 @@
           <img class="photo" :src="scope.row.photoUrl">
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="类别">
+      <el-table-column prop="name" label="类别" width="150px">
         <template slot-scope="scope">
           <span style="text-align: center;" v-html="getFilterTypeName(scope.row)"></span>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="状态">
+      <el-table-column prop="name" label="状态" width="80px">
         <template slot-scope="scope">
           <span v-if="scope.row.online" class="online-text">上架</span>
           <span v-else>下架</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template slot="header">
+        <!-- <template slot="header">
           <el-button
             size="medium"
             type="primary"
@@ -33,13 +46,21 @@
             添加哈哈镜
           </el-button>
           <el-button
-            :disabled="noChanged"
+            :disabled="pubDisabled"
             size="medium"
             type="success">
             保存并发布
           </el-button>
-        </template>
+        </template> -->
         <template slot-scope="scope">
+          <span class="icon-div">
+            <span class="icon-rank" v-if="scope.$index !== 0" @click="order(-1, scope)">
+              <i class="fa fa-chevron-up" aria-hidden="true"></i>
+            </span>
+            <span class="icon-rank" v-if="scope.$index !== tableData.length - 1" @click="order(1, scope)">
+              <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </span>
+          </span>
           <el-button
             size="mini"
             plain
@@ -51,7 +72,7 @@
             type="danger"
             plain
             v-if="scope.row.online"
-            @click="handleRemove(scope.$index, scope.row)">
+            @click="online(scope, false)">
             下架
           </el-button>
           <el-button
@@ -59,7 +80,7 @@
             type="success"
             plain
             v-else
-            @click="handleRemove(scope.$index, scope.row)">
+            @click="online(scope, true)">
             上架
           </el-button>
         </template>
@@ -148,10 +169,11 @@ export default {
   data () {
     return {
       tableData: [],
-      noChanged: true,
+      pubDisabled: true,
       noSaving: true,
       saveBtnLoading: false,
       editBtnLoading: false,
+      changedFields: {},
       currentId: 0,
       filterTypes: [{
         value: 0,
@@ -319,6 +341,67 @@ export default {
           return false
         }
       })
+    },
+    online (scope, flag) {
+      const rowIndex = scope.$index
+      const filterId = scope.row.fid
+      const currentOnline = scope.row.online
+
+      scope.row.online = flag
+      if (this.changedFields[filterId] === void 0) {
+        scope.row.oriOnline = currentOnline
+        this.pubDisabled = false
+        this.changedFields[filterId] = {
+          online: flag,
+          rank: rowIndex + 1
+        }
+      } else {
+        const currentRank = this.changedFields[filterId].rank
+
+        if (currentRank === scope.row.rank && scope.row.oriOnline === scope.row.online) {
+          delete this.changedFields[filterId]
+        } else {
+          this.changedFields[filterId] = {
+            online: flag,
+            rank: rowIndex + 1
+          }
+        }
+      }
+
+      console.log(this.changedFields)
+      if (Object.keys(this.changedFields).length === 0) {
+        this.pubDisabled = true
+      }
+    },
+    order (rank, scope) {
+      const rowIndex = scope.$index
+      const filterId = scope.row.fid
+      if (this.changedFields[filterId] === void 0) {
+        scope.row.oriOnline = scope.row.online
+        this.pubDisabled = false
+        this.changedFields[filterId] = {
+          online: scope.row.online,
+          rank: rowIndex + 1 + rank
+        }
+      } else {
+        const currentRank = this.changedFields[filterId].rank + rank
+
+        if (currentRank === scope.row.rank && scope.row.online === scope.row.oriOnline) {
+          delete this.changedFields[filterId]
+        } else {
+          this.changedFields[filterId] = {
+            online: scope.row.online,
+            rank: rowIndex + 1 + rank
+          }
+        }
+      }
+      const rowData = this.tableData.splice(rowIndex, 1)
+      this.tableData.splice(rowIndex + rank, 0, rowData[0])
+
+      console.log(this.changedFields)
+      if (Object.keys(this.changedFields).length === 0) {
+        this.pubDisabled = true
+      }
     }
   }
 }
@@ -337,5 +420,34 @@ export default {
 
   .online-text {
     color: #2ECC00;
+  }
+
+  .icon-div {
+    width: 28px;
+    height: 64px;
+    margin-right: 10px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-around;
+    vertical-align: middle;
+  }
+
+  .icon-rank {
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    background-color: #f4f4f5;
+    border-color: #e9e9eb;
+    color: #909399;
+    display: block;
+    padding: 0 6px;
+    line-height: 24px;
+    font-size: 12px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    cursor: pointer;
   }
 </style>
