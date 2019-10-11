@@ -119,6 +119,14 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item>
+          <el-alert
+            title="文件前缀: http://npic.getremark.com/"
+            type="info"
+            :closable="false"
+            show-icon>
+          </el-alert>
+        </el-form-item>
         <el-form-item label="缩略图" prop="photo_url">
           <el-input
             v-model="addForm.photo_url"
@@ -388,31 +396,60 @@ export default {
         this.pubDisabled = true
       }
     },
-    order (rank, scope) {
-      const rowIndex = scope.$index
-      const filterId = scope.row.fid
-      if (this.changedFields[filterId] === void 0) {
-        scope.row.oriOnline = scope.row.online
-        scope.row.changed = true
+    orderChangeFields (rowIndex, rank) {
+      const row = this.tableData[rowIndex]
+
+      if (this.changedFields[row.fid] === void 0) {
+        row.oriOnline = row.online
+        row.changed = true
 
         this.pubDisabled = false
-        this.changedFields[filterId] = {
-          online: scope.row.online,
+        this.changedFields[row.fid] = {
+          online: row.online,
           rank: rowIndex + 1 + rank
         }
       } else {
-        const currentRank = this.changedFields[filterId].rank + rank
+        const currentRank = this.changedFields[row.fid].rank + rank
 
-        if (currentRank === scope.row.rank && scope.row.online === scope.row.oriOnline) {
-          delete this.changedFields[filterId]
-          scope.row.changed = false
+        if (currentRank === row.rank && row.online === row.oriOnline) {
+          delete this.changedFields[row.fid]
+          row.changed = false
         } else {
-          this.changedFields[filterId] = {
-            online: scope.row.online,
+          this.changedFields[row.fid] = {
+            online: row.online,
             rank: rowIndex + 1 + rank
           }
         }
       }
+    },
+    order (rank, scope) {
+      const rowIndex = scope.$index
+      this.orderChangeFields(rowIndex, rank)
+      this.orderChangeFields(rowIndex + rank, -1 * rank)
+      // const filterId = scope.row.fid
+
+      // if (this.changedFields[filterId] === void 0) {
+      //   scope.row.oriOnline = scope.row.online
+      //   scope.row.changed = true
+
+      //   this.pubDisabled = false
+      //   this.changedFields[filterId] = {
+      //     online: scope.row.online,
+      //     rank: rowIndex + 1 + rank
+      //   }
+      // } else {
+      //   const currentRank = this.changedFields[filterId].rank + rank
+
+      //   if (currentRank === scope.row.rank && scope.row.online === scope.row.oriOnline) {
+      //     delete this.changedFields[filterId]
+      //     scope.row.changed = false
+      //   } else {
+      //     this.changedFields[filterId] = {
+      //       online: scope.row.online,
+      //       rank: rowIndex + 1 + rank
+      //     }
+      //   }
+      // }
       const rowData = this.tableData.splice(rowIndex, 1)
       this.tableData.splice(rowIndex + rank, 0, rowData[0])
 
