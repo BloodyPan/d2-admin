@@ -26,6 +26,13 @@
       style="width: 100%;margin-bottom: 15px"
       max-height="800"
       :row-class-name="tableRowClassName">
+      <el-table-column width="50">
+        <template slot-scope="scope">
+          <span v-if="scope.row.changed" style="color: #f56c6c; font-size: 20px;">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column type="index"></el-table-column>
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop="name" label="缩略图">
@@ -91,6 +98,21 @@
             @click="online(scope, true)">
             上架
           </el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="" width="50">
+        <template slot-scope="scope">
+          <span v-if="scope.row.rankChange">
+            <span class="icon-up" v-if="scope.row.rankChange > 0">
+              <i class="fa fa-chevron-up" aria-hidden="true"></i>
+              {{ scope.row.rankChange }}
+            </span>
+            <span class="icon-down" v-else>
+              <i class="fa fa-chevron-down" aria-hidden="true"></i>
+              {{ Math.abs(scope.row.rankChange) }}
+            </span>
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -245,9 +267,7 @@ export default {
   },
   methods: {
     tableRowClassName ({ row, rowIndex }) {
-      if (row.changed) {
-        return 'change-row'
-      } else if (rowIndex % 2 === 1) {
+      if (rowIndex % 2 === 1) {
         return 'success-row'
       }
       return ''
@@ -421,35 +441,14 @@ export default {
           }
         }
       }
+
+      row.rankChange = row.rank - (rowIndex + 1 + rank)
     },
     order (rank, scope) {
       const rowIndex = scope.$index
       this.orderChangeFields(rowIndex, rank)
       this.orderChangeFields(rowIndex + rank, -1 * rank)
-      // const filterId = scope.row.fid
 
-      // if (this.changedFields[filterId] === void 0) {
-      //   scope.row.oriOnline = scope.row.online
-      //   scope.row.changed = true
-
-      //   this.pubDisabled = false
-      //   this.changedFields[filterId] = {
-      //     online: scope.row.online,
-      //     rank: rowIndex + 1 + rank
-      //   }
-      // } else {
-      //   const currentRank = this.changedFields[filterId].rank + rank
-
-      //   if (currentRank === scope.row.rank && scope.row.online === scope.row.oriOnline) {
-      //     delete this.changedFields[filterId]
-      //     scope.row.changed = false
-      //   } else {
-      //     this.changedFields[filterId] = {
-      //       online: scope.row.online,
-      //       rank: rowIndex + 1 + rank
-      //     }
-      //   }
-      // }
       const rowData = this.tableData.splice(rowIndex, 1)
       this.tableData.splice(rowIndex + rank, 0, rowData[0])
 
@@ -482,10 +481,6 @@ export default {
 <style>
   .el-table .success-row {
     background: #f0f9eb;
-  }
-
-  .el-table .change-row {
-    background: #f3d19e;
   }
 </style>
 
@@ -525,5 +520,15 @@ export default {
     box-sizing: border-box;
     white-space: nowrap;
     cursor: pointer;
+  }
+
+  .icon-up {
+    color: #24ff33;
+    vertical-align: middle;
+  }
+
+  .icon-down {
+    color: #d62733;
+    vertical-align: middle;
   }
 </style>
