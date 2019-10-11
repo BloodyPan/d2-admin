@@ -13,6 +13,12 @@
       type="success">
       保存并发布
     </el-button>
+    <el-button
+      size="medium"
+      type="primary"
+      @click="fetch">
+      <i class="fa fa-undo" aria-hidden="true"></i>
+    </el-button>
     <el-table
       :data="tableData"
       style="width: 100%;margin-bottom: 15px"
@@ -228,7 +234,9 @@ export default {
   },
   methods: {
     tableRowClassName ({ row, rowIndex }) {
-      if (rowIndex % 2 === 1) {
+      if (row.changed) {
+        return 'change-row'
+      } else if (rowIndex % 2 === 1) {
         return 'success-row'
       }
       return ''
@@ -248,6 +256,7 @@ export default {
       }
     },
     async fetch () {
+      this.pubDisabled = true
       const res = await CameraFilterList({})
       this.total = res.content.total
       this.tableData = res.content.filters
@@ -350,6 +359,8 @@ export default {
       scope.row.online = flag
       if (this.changedFields[filterId] === void 0) {
         scope.row.oriOnline = currentOnline
+        scope.row.changed = true
+
         this.pubDisabled = false
         this.changedFields[filterId] = {
           online: flag,
@@ -360,6 +371,7 @@ export default {
 
         if (currentRank === scope.row.rank && scope.row.oriOnline === scope.row.online) {
           delete this.changedFields[filterId]
+          scope.row.changed = false
         } else {
           this.changedFields[filterId] = {
             online: flag,
@@ -378,6 +390,8 @@ export default {
       const filterId = scope.row.fid
       if (this.changedFields[filterId] === void 0) {
         scope.row.oriOnline = scope.row.online
+        scope.row.changed = true
+
         this.pubDisabled = false
         this.changedFields[filterId] = {
           online: scope.row.online,
@@ -388,6 +402,7 @@ export default {
 
         if (currentRank === scope.row.rank && scope.row.online === scope.row.oriOnline) {
           delete this.changedFields[filterId]
+          scope.row.changed = false
         } else {
           this.changedFields[filterId] = {
             online: scope.row.online,
@@ -410,6 +425,10 @@ export default {
 <style>
   .el-table .success-row {
     background: #f0f9eb;
+  }
+
+  .el-table .change-row {
+    background: #f3d19e;
   }
 </style>
 
