@@ -111,3 +111,11 @@ export function InappropriateSongs (params) {
     params: params
   })
 }
+
+export function CheckInappropriateSongs (data) {
+  return request({
+    url: '/spotcms/InappropriateSongs',
+    method: 'post',
+    data: data
+  })
+}

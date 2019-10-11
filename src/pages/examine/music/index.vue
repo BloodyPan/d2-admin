@@ -47,7 +47,7 @@
 <script>
 import dayjs from 'dayjs'
 import bs from '@/components/common/bs'
-import { InappropriateSongs } from '@/api/pages/examine/inappropriate'
+import { InappropriateSongs, CheckInappropriateSongs } from '@/api/pages/examine/inappropriate'
 
 export default {
   mixins: [
@@ -106,13 +106,25 @@ export default {
         })
       }
     },
+    async checkSongs (songIds, online) {
+      const res = await CheckInappropriateSongs({
+        song_ids: songIds,
+        online: online
+      })
+      console.log(res)
+      this.$notify.info({
+        title: '',
+        message: (online === 1 ? '下架' : '上架') + '成功',
+        position: 'bottom-right'
+      })
+    },
     online (row) {
-      console.log(row)
       row.handleType = 2
+      this.checkSongs('' + row.songId, 2)
     },
     offline (row) {
-      console.log(row)
       row.handleType = 1
+      this.checkSongs('' + row.songId, 1)
     }
   },
   mounted () {
