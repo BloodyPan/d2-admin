@@ -152,16 +152,20 @@
         <el-form-item label="缩略图" prop="photo_url">
           <el-input
             v-model="addForm.photo_url"
+            disabled
             auto-complete="off"
-            placeholder="请输入缩略图文件名">
+            placeholder="请上传缩略图">
           </el-input>
+          <file-upload @success="uploadedAvatar" @remove="removeAvatar"></file-upload>
         </el-form-item>
         <el-form-item label="数据包" prop="effect_url">
           <el-input
             v-model="addForm.effect_url"
+            disabled
             auto-complete="off"
-            placeholder="请输入数据包文件名">
+            placeholder="请上传滤镜数据包">
           </el-input>
+          <file-upload @success="uploadedZip" @remove="removeZip"></file-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -201,9 +205,12 @@
 </template>
 
 <script>
+import fileUpload from '../../../components/file-upload'
 import { CameraFilterList, AddCameraFilter, RemoveCameraFilter, ModifyCameraFilter, CameraFilterPublish } from '@/api/pages/settings/camera-filters'
 export default {
-  name: 'android',
+  components: {
+    'file-upload': fileUpload
+  },
   data () {
     return {
       tableData: [],
@@ -291,6 +298,18 @@ export default {
       const res = await CameraFilterList({})
       this.total = res.content.total
       this.tableData = res.content.filters
+    },
+    uploadedAvatar (filename) {
+      this.addForm.photo_url = filename
+    },
+    removeAvatar () {
+      this.addForm.photo_url = ''
+    },
+    uploadedZip (filename) {
+      this.addForm.effect_url = filename
+    },
+    removeZip () {
+      this.addForm.effect_url = ''
     },
     async saveFilter () {
       const res = await AddCameraFilter(this.addForm)
