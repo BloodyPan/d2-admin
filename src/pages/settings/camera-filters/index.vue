@@ -9,8 +9,10 @@
     </el-button>
     <el-button
       :disabled="pubDisabled"
+      :loading="pubLoading"
       size="medium"
-      type="success">
+      type="success"
+      @click="publish">
       保存并发布
     </el-button>
     <el-button
@@ -169,13 +171,14 @@
 </template>
 
 <script>
-import { CameraFilterList, AddCameraFilter, RemoveCameraFilter, ModifyCameraFilter } from '@/api/pages/settings/camera-filters'
+import { CameraFilterList, AddCameraFilter, RemoveCameraFilter, ModifyCameraFilter, CameraFilterPublish } from '@/api/pages/settings/camera-filters'
 export default {
   name: 'android',
   data () {
     return {
       tableData: [],
       pubDisabled: true,
+      pubLoading: false,
       noSaving: true,
       saveBtnLoading: false,
       editBtnLoading: false,
@@ -417,6 +420,23 @@ export default {
       if (Object.keys(this.changedFields).length === 0) {
         this.pubDisabled = true
       }
+    },
+    async filterPublish () {
+      const res = await CameraFilterPublish({
+        data: JSON.stringify(this.changedFields)
+      })
+      this.pubDisabled = true
+      this.pubLoading = false
+      this.changedFields = {}
+      this.$notify({
+        title: res.msg,
+        duration: 3000
+      })
+      this.fetch()
+    },
+    publish () {
+      this.pubLoading = true
+      this.filterPublish()
     }
   }
 }

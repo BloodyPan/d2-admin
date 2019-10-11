@@ -31,3 +31,11 @@ export function ModifyCameraFilter (data) {
     data: data
   })
 }
+
+export function CameraFilterPublish (data) {
+  return request({
+    url: '/spotcms/CameraFilterPublish',
+    method: 'post',
+    data: data
+  })
+}
