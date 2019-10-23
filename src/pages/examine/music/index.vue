@@ -148,14 +148,14 @@ export default {
 </script>
 
 <style scoped>
-    .total {
-        display: inline-block;
-        padding: 6px 10px;
-        background-color:#409eff;
-        color: white;
-        font-weight: bolder;
-        font-size: 14px;
-    }
+  .total {
+      display: inline-block;
+      padding: 6px 10px;
+      background-color:#409eff;
+      color: white;
+      font-weight: bolder;
+      font-size: 14px;
+  }
 </style>
 
 <style>
