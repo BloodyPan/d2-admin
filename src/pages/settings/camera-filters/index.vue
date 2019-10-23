@@ -118,6 +118,7 @@
     </el-table>
     <el-dialog
     title="添加滤镜"
+    :before-close="resetAddForm"
     :show-close="noSaving"
     :close-on-click-modal="noSaving"
     :close-on-press-escape="noSaving"
@@ -156,7 +157,7 @@
             auto-complete="off"
             placeholder="请上传缩略图">
           </el-input>
-          <file-upload @success="uploadedAvatar" @remove="removeAvatar"></file-upload>
+          <file-upload ref="uploadAvatar" @success="uploadedAvatar" @remove="removeAvatar"></file-upload>
         </el-form-item>
         <el-form-item label="数据包" prop="effect_url">
           <el-input
@@ -165,11 +166,11 @@
             auto-complete="off"
             placeholder="请上传滤镜数据包">
           </el-input>
-          <file-upload @success="uploadedZip" @remove="removeZip"></file-upload>
+          <file-upload ref="uploadZip" @success="uploadedZip" @remove="removeZip"></file-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :loading="saveBtnLoading" @click="addDialogVisible = false">取 消</el-button>
+        <el-button :loading="saveBtnLoading" @click="resetAddForm">取 消</el-button>
         <el-button :loading="saveBtnLoading" type="primary" @click="submitSaveFilter">添 加</el-button>
       </div>
     </el-dialog>
@@ -249,7 +250,7 @@ export default {
       addRules: {
         name: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] },
-          { min: 1, max: 16, message: '长度在 1 到 64 个字符', trigger: ['blur', 'change'] }
+          { min: 1, max: 64, message: '长度在 1 到 64 个字符', trigger: ['blur', 'change'] }
         ],
         photo_url: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] }
@@ -264,7 +265,7 @@ export default {
       editRules: {
         name: [
           { required: true, message: '不能为空', trigger: ['blur', 'change'] },
-          { min: 1, max: 16, message: '长度在 1 到 64 个字符', trigger: ['blur', 'change'] }
+          { min: 1, max: 64, message: '长度在 1 到 64 个字符', trigger: ['blur', 'change'] }
         ]
       }
     }
@@ -311,13 +312,18 @@ export default {
     removeZip () {
       this.addForm.effect_url = ''
     },
+    resetAddForm () {
+      this.$refs.addForm.resetFields()
+      this.$refs.uploadAvatar.clearUpload()
+      this.$refs.uploadZip.clearUpload()
+      this.addDialogVisible = false
+    },
     async saveFilter () {
       const res = await AddCameraFilter(this.addForm)
       console.log(res.pk)
-      this.$refs.addForm.resetFields()
-      this.addDialogVisible = false
       this.noSaving = true
       this.saveBtnLoading = false
+      this.resetAddForm()
       this.fetch()
     },
     submitSaveFilter () {

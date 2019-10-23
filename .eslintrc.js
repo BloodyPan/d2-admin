@@ -13,7 +13,15 @@ module.exports = {
     // allow async-await
     'generator-star-spacing': 0,
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'indent': [
+      'error',
+      2,
+      {
+        SwitchCase: 1,
+        flatTernaryExpressions: true
+      }
+    ],
   },
   parserOptions: {
     parser: 'babel-eslint'

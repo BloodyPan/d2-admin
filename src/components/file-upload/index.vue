@@ -1,5 +1,6 @@
 <template>
   <el-upload
+    ref="upload"
     class="upload-demo"
     :action="domain"
     :data="QiniuData"
@@ -38,6 +39,9 @@ export default {
     this.getQiniuToken()
   },
   methods: {
+    clearUpload () {
+      this.$refs.upload.clearFiles()
+    },
     beforeUpload (file) {
       this.getQiniuToken()
       this.QiniuData.key = file.name
