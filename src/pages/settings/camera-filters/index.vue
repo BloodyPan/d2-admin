@@ -241,7 +241,7 @@ export default {
         name: '',
         photo_url: '',
         effect_url: '',
-        filter_type: ''
+        filter_type: 0
       },
       editForm: {
         name: '',
